@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코더 스레드글 작성 튜토리얼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080c;
+    --surface: #111118;
+    --surface-2: #19192a;
+    --surface-hover: #1e1e32;
+    --border: #2a2a40;
+    --border-light: #353555;
+    --accent: #6d5cff;
+    --accent2: #a78bfa;
+    --accent3: #38bdf8;
+    --neon: #22d3ee;
+    --glow: rgba(109, 92, 255, 0.35);
+    --glow-cyan: rgba(34, 211, 238, 0.25);
+    --text: #f0f0ff;
+    --text-muted: #9898b8;
+    --text-dim: #555570;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans KR', 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(109,92,255,0.15), transparent),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(34,211,238,0.08), transparent),
+      radial-gradient(ellipse 30% 30% at 10% 60%, rgba(244,114,182,0.06), transparent);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(109,92,255,0.1);
+    border: 1px solid rgba(109,92,255,0.25);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease;
+  }
+
+  .hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero-title .gradient {
+    background: linear-gradient(135deg, var(--accent2), var(--neon), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: shimmer 4s ease infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-desc {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 600px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .cta-btn {
+    padding: 16px 36px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    text-decoration: none;
+    color: white;
+  }
+
+  .cta-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 4px 20px var(--glow);
+  }
+  .cta-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 32px var(--glow); }
+
+  .cta-secondary {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .cta-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    font-size: 13px;
+    color: var(--text-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: bounce 2s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ PROGRESS BAR ============ */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.3);
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+    transition: width 0.3s ease;
+    box-shadow: 0 0 12px var(--glow-cyan);
+  }
+
+  /* ============ NAV ============ */
+  .sticky-nav {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: rgba(17, 17, 24, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 8px 12px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  .sticky-nav.visible { opacity: 1; pointer-events: auto; }
+
+  .nav-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border: none;
+    background: none;
+    font-family: inherit;
+  }
+  .nav-dot:hover { color: var(--text-muted); background: rgba(255,255,255,0.04); }
+  .nav-dot.active { color: var(--accent2); background: rgba(109,92,255,0.12); }
+  .nav-dot .num {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+  .nav-dot.active .num {
+    background: rgba(109,92,255,0.2);
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  /* ============ SECTIONS ============ */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 24px;
+  }
+
+  .section-header {
+    margin-bottom: 48px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-num::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    max-width: 120px;
+  }
+
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 680px;
+  }
+
+  /* ============ CARDS ============ */
+  .lesson-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .lesson-card:hover {
+    border-color: var(--border-light);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  .lesson-card.highlight {
+    border-color: rgba(109,92,255,0.3);
+    background: linear-gradient(135deg, var(--surface), rgba(109,92,255,0.03));
+  }
+  .lesson-card.highlight::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--neon), transparent);
+  }
+
+  .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .card-icon.purple { background: rgba(109,92,255,0.12); border: 1px solid rgba(109,92,255,0.2); }
+  .card-icon.cyan { background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); }
+  .card-icon.green { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); }
+  .card-icon.orange { background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.2); }
+  .card-icon.pink { background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.2); }
+
+  .card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .card-desc {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.75;
+    margin-bottom: 20px;
+  }
+
+  /* ============ CODE BLOCKS ============ */
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neon);
+    letter-spacing: 0.05em;
+  }
+
+  .code-copy {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .code-copy:hover { border-color: var(--accent); color: var(--accent2); }
+
+  .code-body {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+
+  .code-body .keyword { color: var(--accent2); }
+  .code-body .string { color: var(--green); }
+  .code-body .comment { color: var(--text-dim); font-style: italic; }
+  .code-body .func { color: var(--neon); }
+  .code-body .tag { color: var(--orange); }
+
+  /* ============ EXAMPLE THREADS ============ */
+  .thread-example {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  .thread-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .thread-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .thread-avatar.a { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .thread-avatar.b { background: linear-gradient(135deg, var(--neon), var(--green)); }
+  .thread-avatar.c { background: linear-gradient(135deg, var(--orange), var(--pink)); }
+
+  .thread-user { font-weight: 700; font-size: 15px; }
+  .thread-handle { font-size: 13px; color: var(--text-dim); }
+
+  .thread-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+  }
+
+  .thread-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .thread-tag {
+    color: #6d8dff;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .thread-actions {
+    display: flex;
+    gap: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .thread-action {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .label-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .label-good { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+  .label-bad { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+  .label-tip { background: rgba(251,191,36,0.12); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+
+  /* ============ CHECKLIST ============ */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .checklist li:hover { border-color: var(--border-light); }
+  .checklist li.checked { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.03); }
+
+  .check-box {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-size: 12px;
+    margin-top: 1px;
+  }
+  .checked .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  /* ============ GRID LAYOUTS ============ */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .stat-num.purple { color: var(--accent2); }
+  .stat-num.cyan { color: var(--neon); }
+  .stat-num.green { color: var(--green); }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* ============ INTERACTIVE PRACTICE ============ */
+  .practice-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    background: rgba(109,92,255,0.05);
+    border-bottom: 1px solid var(--border);
+  }
+  .practice-title {
+    font-weight: 700;
+    font-size: 15px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .practice-body { padding: 24px; }
+
+  .practice-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    resize: none;
+    outline: none;
+    min-height: 160px;
+    transition: border-color 0.2s;
+  }
+  .practice-textarea:focus { border-color: var(--accent); }
+  .practice-textarea::placeholder { color: var(--text-dim); }
+
+  .practice-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .char-meter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .char-meter.warn { color: var(--yellow); }
+  .char-meter.over { color: var(--red); font-weight: 700; }
+
+  .practice-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .practice-btn.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+  .practice-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--glow); }
+
+  /* ============ FORMULA ============ */
+  .formula-box {
+    background: linear-gradient(135deg, rgba(109,92,255,0.06), rgba(34,211,238,0.04));
+    border: 1px solid rgba(109,92,255,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .formula-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .formula-text .op { color: var(--accent2); margin: 0 8px; }
+  .formula-text .eq { color: var(--neon); margin: 0 12px; }
+  .formula-text .result { color: var(--green); }
+
+  /* ============ TIPS CALLOUT ============ */
+  .tip-callout {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(251,191,36,0.04);
+    border: 1px solid rgba(251,191,36,0.15);
+    border-radius: 14px;
+    margin: 20px 0;
+  }
+  .tip-callout .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .tip-callout .text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  .danger-callout {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(248,113,113,0.04);
+    border: 1px solid rgba(248,113,113,0.15);
+    border-radius: 14px;
+    margin: 20px 0;
+  }
+  .danger-callout .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .danger-callout .text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ============ STEP FLOW ============ */
+  .step-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+  }
+
+  .step-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+    flex-shrink: 0;
+    z-index: 2;
+  }
+  .step-item.active .step-circle {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 0 16px var(--glow);
+  }
+
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px 0;
+  }
+  .step-item:last-child .step-line { display: none; }
+
+  .step-content { flex: 1; padding-bottom: 8px; }
+  .step-title {
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ============ TABS ============ */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: rgba(109,92,255,0.15);
+    color: var(--accent2);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text-muted); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    text-align: center;
+    padding: 60px 24px 80px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-text {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 9999;
+    pointer-events: none;
+    background: var(--surface);
+    border: 1px solid var(--green);
+    color: var(--green);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .sticky-nav { display: none; }
+    .section { padding: 60px 20px; }
+    .lesson-card { padding: 24px; }
+    .hero-cta { flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .tabs { flex-direction: column; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- Sticky Nav -->
+<nav class="sticky-nav" id="stickyNav">
+  <button class="nav-dot" onclick="scrollTo_('#s1')"><span class="num">1</span> 구조</button>
+  <button class="nav-dot" onclick="scrollTo_('#s2')"><span class="num">2</span> 공식</button>
+  <button class="nav-dot" onclick="scrollTo_('#s3')"><span class="num">3</span> 유형</button>
+  <button class="nav-dot" onclick="scrollTo_('#s4')"><span class="num">4</span> 실전</button>
+  <button class="nav-dot" onclick="scrollTo_('#s5')"><span class="num">5</span> 체크</button>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-badge">🧵 코더를 위한 스레드 완전정복</div>
+  <h1 class="hero-title">
+    스레드글,<br>
+    <span class="gradient">개발자답게 쓰는 법</span>
+  </h1>
+  <p class="hero-desc">
+    코딩 지식 공유부터 커리어 이야기까지,<br>
+    IT 코더가 스레드에서 임팩트 있는 글을 쓰는 5단계 튜토리얼
+  </p>
+  <div class="hero-cta">
+    <a class="cta-btn cta-primary" href="#s1">튜토리얼 시작하기</a>
+    <a class="cta-btn cta-secondary" href="#s4">바로 연습하기</a>
+  </div>
+  <div class="scroll-hint">
+    아래로 스크롤
+    <span style="font-size:18px">↓</span>
+  </div>
+</section>
+
+<!-- ============ SECTION 1: 구조 이해 ============ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">STEP 01</div>
+    <h2 class="section-title">스레드글의 기본 구조</h2>
+    <p class="section-subtitle">좋은 스레드글에는 공통된 뼈대가 있어요. 먼저 기본 구조부터 파악해볼게요.</p>
+  </div>
+
+  <div class="grid-3" style="margin-bottom: 32px;">
+    <div class="stat-card">
+      <div class="stat-num purple">500</div>
+      <div class="stat-label">글자 수 제한</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num cyan">3~5줄</div>
+      <div class="stat-label">최적 길이</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num green">2초</div>
+      <div class="stat-label">첫 줄 승부 시간</div>
+    </div>
+  </div>
+
+  <div class="lesson-card highlight">
+    <div class="card-icon purple">🏗️</div>
+    <div class="card-title">스레드글 3단 구조</div>
+    <div class="card-desc">모든 좋은 스레드글은 이 3가지 파트로 구성돼요.</div>
+
+    <div class="step-flow">
+      <div class="step-item active">
+        <div class="step-marker">
+          <div class="step-circle">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">🪝 Hook (첫 줄) — 멈추게 만드는 한 줄</div>
+          <div class="step-desc">피드를 스크롤하다 멈추게 만드는 결정적 첫 문장. 질문, 반전, 숫자, 공감 중 하나를 선택하세요. "이 한 줄만 읽고 지나가도 괜찮을까?" 테스트를 통과해야 합니다.</div>
+        </div>
+      </div>
+
+      <div class="step-item active">
+        <div class="step-marker">
+          <div class="step-circle">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">📖 Body (본문) — 가치를 전달하는 핵심</div>
+          <div class="step-desc">꿀팁, 경험, 인사이트를 2~3문장으로 전달합니다. 한 포스트에 한 가지 메시지만 담으세요. 구체적 숫자나 사례가 있으면 신뢰도가 급상승합니다.</div>
+        </div>
+      </div>
+
+      <div class="step-item active">
+        <div class="step-marker">
+          <div class="step-circle">3</div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">🎯 CTA (마무리) — 반응을 이끄는 한 줄</div>
+          <div class="step-desc">댓글 유도, 공유 유도, 또는 다음 액션 제안으로 마무리합니다. "여러분은 어떠세요?" 같은 열린 질문이 가장 효과적이에요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-callout">
+    <div class="icon">💡</div>
+    <div class="text"><strong>코더 Tip:</strong> 코드 블록은 스레드에서 쓸 수 없어요. 대신 줄바꿈과 이모지로 코드의 구조감을 표현하세요. 실제 코드는 이미지나 외부 링크로 첨부하는 게 좋아요.</div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2: 공식 ============ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">STEP 02</div>
+    <h2 class="section-title">코더 스레드글 공식</h2>
+    <p class="section-subtitle">IT/개발 분야에서 잘 먹히는 검증된 글쓰기 공식 3가지를 소개해요.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(0)">🔥 TIL 공식</button>
+    <button class="tab-btn" onclick="switchTab(1)">⚡ 문제→해결 공식</button>
+    <button class="tab-btn" onclick="switchTab(2)">🎯 비교 공식</button>
+  </div>
+
+  <!-- Tab 1: TIL -->
+  <div class="tab-panel active" id="tab0">
+    <div class="formula-box">
+      <div class="formula-text">
+        오늘 배운 것 <span class="op">+</span> 핵심 인사이트 <span class="op">+</span> 적용법 <span class="eq">=</span> <span class="result">TIL 포스트</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="label-badge label-good">✓ GOOD EXAMPLE</div>
+        <div class="thread-example">
+          <div class="thread-meta">
+            <div class="thread-avatar a">D</div>
+            <div>
+              <div class="thread-user">데브코더</div>
+              <div class="thread-handle">@dev_coder · 2시간</div>
+            </div>
+          </div>
+          <div class="thread-body">오늘 알게 된 충격적인 사실 🤯
+
+JS에서 [] == ![] 는 true입니다.
+
+타입 강제 변환(type coercion) 때문인데,
+빈 배열이 falsy가 아니라 truthy라는 게 핵심이에요.
+
+TypeScript 쓰는 이유가 또 하나 생겼네요 😅
+
+혹시 타입 강제 변환에 당해본 적 있으세요? 👇</div>
+          <div class="thread-tags">
+            <span class="thread-tag">#JavaScript</span>
+            <span class="thread-tag">#TIL</span>
+            <span class="thread-tag">#코딩</span>
+          </div>
+          <div class="thread-actions">
+            <span class="thread-action">❤️ 847</span>
+            <span class="thread-action">💬 92</span>
+            <span class="thread-action">🔁 215</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label-badge label-bad">✕ BAD EXAMPLE</div>
+        <div class="thread-example">
+          <div class="thread-meta">
+            <div class="thread-avatar c">X</div>
+            <div>
+              <div class="thread-user">초보개발자</div>
+              <div class="thread-handle">@newbie_dev · 3시간</div>
+            </div>
+          </div>
+          <div class="thread-body">오늘 자바스크립트 공부했습니다. 타입 변환이 좀 어렵네요. 열심히 해야겠습니다. 화이팅!</div>
+          <div class="thread-actions">
+            <span class="thread-action">❤️ 3</span>
+            <span class="thread-action">💬 0</span>
+            <span class="thread-action">🔁 0</span>
+          </div>
+        </div>
+        <div class="danger-callout" style="margin-top:12px">
+          <div class="icon">⚠️</div>
+          <div class="text"><strong>문제점:</strong> Hook이 없고, 구체적 내용이 없으며, CTA도 빠져 있어서 반응을 이끌어낼 수 없어요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Problem→Solution -->
+  <div class="tab-panel" id="tab1">
+    <div class="formula-box">
+      <div class="formula-text">
+        겪은 문제 <span class="op">+</span> 삽질 과정 <span class="op">+</span> 해결법 <span class="eq">=</span> <span class="result">문제해결 포스트</span>
+      </div>
+    </div>
+
+    <div class="label-badge label-good">✓ GOOD EXAMPLE</div>
+    <div class="thread-example">
+      <div class="thread-meta">
+        <div class="thread-avatar b">M</div>
+        <div>
+          <div class="thread-user">풀스택민</div>
+          <div class="thread-handle">@fullstack_min · 1시간</div>
+        </div>
+      </div>
+      <div class="thread-body">3시간 동안 API가 안 되던 이유가
+고작 trailing slash 하나였습니다 🫠
+
+/api/users → ❌ 404
+/api/users/ → ✅ 200
+
+Django는 기본적으로 APPEND_SLASH=True라서
+리다이렉트 과정에서 POST 데이터가 날아간 거였어요.
+
+이 삽질로 얻은 교훈:
+에러가 안 잡히면 URL부터 의심하세요 🔍
+
+비슷한 경험 있으신 분? 👇</div>
+      <div class="thread-tags">
+        <span class="thread-tag">#Django</span>
+        <span class="thread-tag">#디버깅</span>
+        <span class="thread-tag">#개발일상</span>
+      </div>
+      <div class="thread-actions">
+        <span class="thread-action">❤️ 1.2K</span>
+        <span class="thread-action">💬 156</span>
+        <span class="thread-action">🔁 389</span>
+      </div>
+    </div>
+
+    <div class="tip-callout">
+      <div class="icon">💡</div>
+      <div class="text"><strong>핵심:</strong> "삽질 + 해결"은 개발자 커뮤니티에서 가장 공감을 얻는 포맷이에요. 구체적인 에러 메시지나 코드를 포함하면 검색 유입에도 도움이 됩니다.</div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Comparison -->
+  <div class="tab-panel" id="tab2">
+    <div class="formula-box">
+      <div class="formula-text">
+        A vs B <span class="op">+</span> 차이점 요약 <span class="op">+</span> 내 선택 <span class="eq">=</span> <span class="result">비교 포스트</span>
+      </div>
+    </div>
+
+    <div class="label-badge label-good">✓ GOOD EXAMPLE</div>
+    <div class="thread-example">
+      <div class="thread-meta">
+        <div class="thread-avatar a">S</div>
+        <div>
+          <div class="thread-user">시니어서</div>
+          <div class="thread-handle">@senior_seo · 4시간</div>
+        </div>
+      </div>
+      <div class="thread-body">React vs Vue, 2025년 기준 솔직 비교 ⚡
+
+🔵 React — 거대 생태계, 자유도 높음, 러닝커브 있음
+🟢 Vue — 쉬운 진입, 공식 도구 완비, 중소규모에 강함
+
+채용 시장: React 7 : Vue 3
+개인 프로젝트: Vue 추천
+팀 프로젝트: React 추천
+
+정답은 없지만, "뭘 만들 건지"가 선택 기준이에요 🎯
+
+여러분의 선택은? React 🔵 or Vue 🟢</div>
+      <div class="thread-tags">
+        <span class="thread-tag">#React</span>
+        <span class="thread-tag">#Vue</span>
+        <span class="thread-tag">#프론트엔드</span>
+      </div>
+      <div class="thread-actions">
+        <span class="thread-action">❤️ 2.3K</span>
+        <span class="thread-action">💬 412</span>
+        <span class="thread-action">🔁 567</span>
+      </div>
+    </div>
+
+    <div class="tip-callout">
+      <div class="icon">💡</div>
+      <div class="text"><strong>핵심:</strong> 비교글은 논쟁을 유발해서 댓글이 폭발합니다. 중립적 입장 + 마지막에 투표형 CTA를 넣으면 효과 극대화!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3: 유형별 템플릿 ============ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">STEP 03</div>
+    <h2 class="section-title">유형별 템플릿 5가지</h2>
+    <p class="section-subtitle">상황에 맞는 템플릿을 골라서 빈칸만 채우면 바로 완성돼요.</p>
+  </div>
+
+  <div class="lesson-card">
+    <div class="card-icon cyan">📋</div>
+    <div class="card-title">1. TIL (Today I Learned)</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TEMPLATE</span>
+        <button class="code-copy" onclick="copyCode(this)">복사</button>
+      </div>
+      <div class="code-body">오늘 알게 된 <span class="tag">[충격/흥미로운]</span> 사실 <span class="tag">[이모지]</span>
+
+<span class="tag">[구체적 발견/사실]</span>
+
+<span class="tag">[왜 중요한지 1~2줄 설명]</span>
+
+<span class="tag">[나의 한줄 감상/교훈]</span>
+
+여러분은 <span class="tag">[관련 질문]</span>? 👇</div>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <div class="card-icon green">🐛</div>
+    <div class="card-title">2. 삽질/디버깅 일지</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TEMPLATE</span>
+        <button class="code-copy" onclick="copyCode(this)">복사</button>
+      </div>
+      <div class="code-body"><span class="tag">[N시간/N일]</span> 동안 <span class="tag">[문제]</span>로 삽질한 이유 <span class="tag">[이모지]</span>
+
+<span class="tag">[잘못된 시도]</span> → ❌
+<span class="tag">[실제 원인]</span> → ✅
+
+<span class="tag">[이 경험에서 얻은 교훈 1줄]</span>
+
+비슷한 경험 있으신 분? 👇</div>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <div class="card-icon orange">⚔️</div>
+    <div class="card-title">3. A vs B 비교</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TEMPLATE</span>
+        <button class="code-copy" onclick="copyCode(this)">복사</button>
+      </div>
+      <div class="code-body"><span class="tag">[A]</span> vs <span class="tag">[B]</span>, 솔직 비교 ⚡
+
+🔵 <span class="tag">[A 장단점 한줄]</span>
+🟢 <span class="tag">[B 장단점 한줄]</span>
+
+<span class="tag">[기준별 비교 2~3가지]</span>
+
+<span class="tag">[나의 결론 한줄]</span>
+
+여러분의 선택은? <span class="tag">[A 이모지]</span> or <span class="tag">[B 이모지]</span></div>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <div class="card-icon pink">🚀</div>
+    <div class="card-title">4. 꿀팁/추천 리스트</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TEMPLATE</span>
+        <button class="code-copy" onclick="copyCode(this)">복사</button>
+      </div>
+      <div class="code-body"><span class="tag">[직업/역할]</span>이라면 반드시 알아야 할 <span class="tag">[N]</span>가지 <span class="tag">[이모지]</span>
+
+1️⃣ <span class="tag">[팁1 — 간결하게]</span>
+2️⃣ <span class="tag">[팁2 — 간결하게]</span>
+3️⃣ <span class="tag">[팁3 — 간결하게]</span>
+
+특히 <span class="tag">[N번]</span>은 알고 나서 인생이 바뀜 🔥
+
+저장 필수! 🔖</div>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <div class="card-icon purple">💭</div>
+    <div class="card-title">5. 커리어/회고</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">TEMPLATE</span>
+        <button class="code-copy" onclick="copyCode(this)">복사</button>
+      </div>
+      <div class="code-body"><span class="tag">[개발 N년차]</span>가 되고 나서야 깨달은 것 <span class="tag">[이모지]</span>
+
+<span class="tag">[과거의 나]</span>: "<span class="tag">[잘못된 생각]</span>"
+<span class="tag">[현재의 나]</span>: "<span class="tag">[바뀐 생각]</span>"
+
+<span class="tag">[구체적 계기/스토리 2~3줄]</span>
+
+<span class="tag">[후배들에게 한마디]</span>
+
+공감되시는 분 ❤️ 눌러주세요</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4: 실전 연습 ============ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">STEP 04</div>
+    <h2 class="section-title">실전 연습하기</h2>
+    <p class="section-subtitle">배운 공식을 바로 적용해보세요. 실시간으로 글자 수와 구조를 체크해드려요.</p>
+  </div>
+
+  <div class="practice-area">
+    <div class="practice-header">
+      <div class="practice-title">✏️ 스레드글 연습장</div>
+      <select id="templateSelect" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px;outline:none;cursor:pointer;">
+        <option value="">빈 문서로 시작</option>
+        <option value="til">📚 TIL 템플릿</option>
+        <option value="debug">🐛 삽질일지 템플릿</option>
+        <option value="compare">⚔️ A vs B 템플릿</option>
+        <option value="tips">🚀 꿀팁 리스트 템플릿</option>
+        <option value="career">💭 커리어 회고 템플릿</option>
+      </select>
+    </div>
+    <div class="practice-body">
+      <textarea
+        class="practice-textarea"
+        id="practiceText"
+        placeholder="여기에 스레드글을 작성해보세요...
+
+💡 Tip: 위에서 템플릿을 선택하면 자동으로 채워져요!"
+        oninput="updatePractice()"
+        maxlength="600"
+      ></textarea>
+    </div>
+    <div class="practice-footer">
+      <div class="char-meter" id="practiceMeter">0 / 500</div>
+      <div style="display:flex; gap:8px;">
+        <button class="practice-btn" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);" onclick="clearPractice()">초기화</button>
+        <button class="practice-btn primary" onclick="analyzePractice()">✦ 구조 분석</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis Result -->
+  <div id="analysisResult" style="margin-top:24px; display:none;">
+    <div class="lesson-card highlight">
+      <div class="card-title">📊 구조 분석 결과</div>
+      <div id="analysisContent"></div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div style="margin-top: 24px;">
+    <div class="lesson-card" style="padding:0; overflow:hidden;">
+      <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); font-weight:700; font-size:15px; display:flex; align-items:center; gap:8px;">
+        📱 스레드 미리보기
+      </div>
+      <div style="padding:24px;">
+        <div class="thread-example" style="margin:0; border:none; padding:0; background:transparent;">
+          <div class="thread-meta">
+            <div class="thread-avatar a">C</div>
+            <div>
+              <div class="thread-user">코더</div>
+              <div class="thread-handle">@coder · 방금 전</div>
+            </div>
+          </div>
+          <div class="thread-body" id="livePreview" style="color:var(--text-dim); font-style:italic;">글을 작성하면 여기에 미리보기가 표시됩니다.</div>
+          <div class="thread-actions" style="border-top:1px solid var(--border);">
+            <span class="thread-action">❤️</span>
+            <span class="thread-action">💬</span>
+            <span class="thread-action">🔁</span>
+            <span class="thread-action">➤</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 5: 최종 체크리스트 ============ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">STEP 05</div>
+    <h2 class="section-title">게시 전 최종 체크리스트</h2>
+    <p class="section-subtitle">게시 버튼 누르기 전, 이 7가지만 확인하세요.</p>
+  </div>
+
+  <ul class="checklist" id="checklist">
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>첫 줄이 스크롤을 멈추게 하는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">질문, 숫자, 반전, 공감 중 하나가 포함되어 있는지 확인</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>한 포스트에 한 가지 메시지만 담았는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">두 가지 이상의 주제가 섞이면 임팩트가 반감돼요</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>500자 이내인가?</strong><br><span style="color:var(--text-dim); font-size:13px;">300~400자가 황금 구간. 너무 짧으면 깊이 부족, 너무 길면 이탈</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>줄바꿈으로 가독성을 확보했는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">한 문단은 2줄 이내. 문단 사이에 빈 줄 필수</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>CTA(Call to Action)가 있는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">"여러분은?", "공감되시면 ❤️", "저장 🔖" 등 반응 유도</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>해시태그를 2~4개 달았는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">너무 많으면 스팸처럼 보여요. 핵심 태그만 선별</span></div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div><strong>소리 내어 읽어봤는가?</strong><br><span style="color:var(--text-dim); font-size:13px;">어색한 문장은 소리 내어 읽으면 바로 잡혀요</span></div>
+    </li>
+  </ul>
+
+  <div id="checklistComplete" style="display:none; margin-top:24px;">
+    <div class="formula-box" style="background:linear-gradient(135deg, rgba(52,211,153,0.08), rgba(34,211,238,0.05)); border-color:rgba(52,211,153,0.25);">
+      <div style="font-size:32px; margin-bottom:12px;">🎉</div>
+      <div class="formula-text" style="font-size:18px;">
+        <span class="result">체크 완료! 게시해도 좋아요</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bonus Tips -->
+  <div class="lesson-card" style="margin-top: 32px;">
+    <div class="card-icon green">🎁</div>
+    <div class="card-title">보너스: 고급 팁</div>
+    <div class="card-desc" style="margin-bottom:0;">
+      <strong style="color:var(--neon);">게시 시간:</strong> 출근 시간(8~9시), 점심(12~13시), 퇴근 후(18~20시)에 올리면 노출 극대화<br><br>
+      <strong style="color:var(--accent2);">첫 댓글:</strong> 본문에 못 넣은 보충 설명을 첫 댓글로 달아두면 스레드 길이 ↑ 노출 ↑<br><br>
+      <strong style="color:var(--pink);">시리즈화:</strong> "JavaScript 꿀팁 시리즈 #3" 처럼 연재하면 팔로워 고정 효과<br><br>
+      <strong style="color:var(--yellow);">이모지 법칙:</strong> 문단당 이모지 1개. 3개 이상 연속 사용은 가독성을 해쳐요
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <p class="footer-text">
+    Made with ⚡ by <span class="footer-brand">Ray</span> — 코더를 위한 스레드 튜토리얼
+  </p>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== SCROLL PROGRESS =====
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (scrollTop / docHeight) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Sticky nav visibility
+  const nav = document.getElementById('stickyNav');
+  nav.classList.toggle('visible', scrollTop > window.innerHeight * 0.7);
+
+  // Active nav dot
+  const sections = ['s1','s2','s3','s4','s5'];
+  const dots = document.querySelectorAll('.nav-dot');
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    dots[i].classList.toggle('active', rect.top < 300 && rect.bottom > 200);
+  });
+});
+
+function scrollTo_(sel) {
+  document.querySelector(sel).scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== TABS =====
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+// ===== PRACTICE AREA =====
+const templates = {
+  til: `오늘 알게 된 충격적인 사실 🤯
+
+[여기에 구체적 발견을 적으세요]
+
+[왜 중요한지 1~2줄 설명]
+
+[나의 한줄 감상/교훈]
+
+여러분은 어떠세요? 👇`,
+  debug: `[N시간] 동안 [문제]로 삽질한 이유 🫠
+
+[잘못된 시도] → ❌
+[실제 원인] → ✅
+
+[이 경험에서 얻은 교훈 1줄]
+
+비슷한 경험 있으신 분? 👇`,
+  compare: `[A] vs [B], 솔직 비교 ⚡
+
+🔵 [A 장단점 한줄]
+🟢 [B 장단점 한줄]
+
+[기준1]: A 우세
+[기준2]: B 우세
+[기준3]: 비슷
+
+[나의 결론 한줄] 🎯
+
+여러분의 선택은?`,
+  tips: `[역할]이라면 반드시 알아야 할 3가지 🔥
+
+1️⃣ [팁1]
+2️⃣ [팁2]
+3️⃣ [팁3]
+
+특히 [N번]은 알고 나서 인생이 바뀜 ✨
+
+저장 필수! 🔖`,
+  career: `개발 [N]년차가 되고 나서야 깨달은 것 💭
+
+과거의 나: "[잘못된 생각]"
+현재의 나: "[바뀐 생각]"
+
+[구체적 계기 2~3줄]
+
+[후배들에게 한마디]
+
+공감되시는 분 ❤️ 눌러주세요`
+};
+
+document.getElementById('templateSelect').addEventListener('change', function() {
+  const ta = document.getElementById('practiceText');
+  ta.value = this.value ? templates[this.value] : '';
+  updatePractice();
+  ta.focus();
+});
+
+function updatePractice() {
+  const text = document.getElementById('practiceText').value;
+  const len = text.length;
+  const meter = document.getElementById('practiceMeter');
+  meter.textContent = `${len} / 500`;
+  meter.className = 'char-meter' + (len > 450 ? (len > 500 ? ' over' : ' warn') : '');
+
+  // Live preview
+  const preview = document.getElementById('livePreview');
+  if (text.trim()) {
+    preview.textContent = text;
+    preview.style.color = 'var(--text)';
+    preview.style.fontStyle = 'normal';
+  } else {
+    preview.textContent = '글을 작성하면 여기에 미리보기가 표시됩니다.';
+    preview.style.color = 'var(--text-dim)';
+    preview.style.fontStyle = 'italic';
+  }
+}
+
+function clearPractice() {
+  document.getElementById('practiceText').value = '';
+  document.getElementById('templateSelect').value = '';
+  document.getElementById('analysisResult').style.display = 'none';
+  updatePractice();
+}
+
+function analyzePractice() {
+  const text = document.getElementById('practiceText').value.trim();
+  if (!text) { showToast('먼저 글을 작성해주세요!'); return; }
+
+  const lines = text.split('\n').filter(l => l.trim());
+  const len = text.length;
+  const hasEmoji = /[\p{Emoji}]/u.test(text);
+  const hasQuestion = /\?|여러분|어떠세요|있으세요|있으신|해보세요/g.test(text);
+  const lineBreaks = (text.match(/\n\n/g) || []).length;
+  const hasHashtag = /#\w/.test(text);
+
+  let score = 0;
+  let feedback = [];
+
+  // Hook check
+  const firstLine = lines[0] || '';
+  const hasHook = firstLine.length < 50 && (
+    /[🤯😱⚡🔥💡❗?\!]/.test(firstLine) ||
+    /\d/.test(firstLine) ||
+    firstLine.endsWith('?')
+  );
+  if (hasHook) {
+    score += 20;
+    feedback.push({ icon: '✅', text: '강력한 Hook이 있어요!', color: 'var(--green)' });
+  } else {
+    feedback.push({ icon: '⚠️', text: '첫 줄을 더 임팩트 있게 바꿔보세요 (질문/숫자/이모지 활용)', color: 'var(--yellow)' });
+  }
+
+  // Length
+  if (len >= 200 && len <= 450) {
+    score += 20;
+    feedback.push({ icon: '✅', text: `글자 수 ${len}자 — 황금 구간이에요!`, color: 'var(--green)' });
+  } else if (len < 200) {
+    feedback.push({ icon: '⚠️', text: `글자 수 ${len}자 — 조금 더 내용을 보강해보세요`, color: 'var(--yellow)' });
+  } else {
+    feedback.push({ icon: '⚠️', text: `글자 수 ${len}자 — 조금 줄이면 더 좋아요`, color: 'var(--yellow)' });
+  }
+
+  // Line breaks
+  if (lineBreaks >= 2) {
+    score += 20;
+    feedback.push({ icon: '✅', text: '줄바꿈으로 가독성이 좋아요!', color: 'var(--green)' });
+  } else {
+    feedback.push({ icon: '⚠️', text: '문단 사이에 빈 줄을 추가해서 가독성을 높여보세요', color: 'var(--yellow)' });
+  }
+
+  // CTA
+  if (hasQuestion) {
+    score += 20;
+    feedback.push({ icon: '✅', text: 'CTA가 포함되어 있어 반응을 이끌어낼 수 있어요!', color: 'var(--green)' });
+  } else {
+    feedback.push({ icon: '⚠️', text: '마지막에 질문이나 반응 유도 문구를 추가해보세요', color: 'var(--yellow)' });
+  }
+
+  // Emoji
+  if (hasEmoji) {
+    score += 10;
+    feedback.push({ icon: '✅', text: '이모지 활용 👍', color: 'var(--green)' });
+  } else {
+    feedback.push({ icon: '💡', text: '적절한 이모지를 추가하면 눈에 더 잘 띄어요', color: 'var(--text-muted)' });
+  }
+
+  // Lines count
+  if (lines.length >= 4) {
+    score += 10;
+  }
+
+  // Render
+  const container = document.getElementById('analysisContent');
+  const grade = score >= 80 ? { label: '🏆 GREAT', color: 'var(--green)' }
+               : score >= 50 ? { label: '👍 GOOD', color: 'var(--yellow)' }
+               : { label: '💪 KEEP GOING', color: 'var(--orange)' };
+
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <div style="font-size:48px;font-family:'JetBrains Mono',monospace;font-weight:700;color:${grade.color};">${score}</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;color:${grade.color};margin-bottom:2px;">${grade.label}</div>
+        <div style="font-size:13px;color:var(--text-dim);">/ 100점</div>
+      </div>
+    </div>
+    ${feedback.map(f => `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--border);">
+        <span style="font-size:16px;">${f.icon}</span>
+        <span style="font-size:14px;color:${f.color};line-height:1.6;">${f.text}</span>
+      </div>
+    `).join('')}
+  `;
+
+  document.getElementById('analysisResult').style.display = 'block';
+  document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  showToast('✦ 분석 완료!');
+}
+
+// ===== CHECKLIST =====
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const cb = el.querySelector('.check-box');
+  cb.textContent = el.classList.contains('checked') ? '✓' : '';
+
+  // Check if all done
+  const all = document.querySelectorAll('.checklist li');
+  const checked = document.querySelectorAll('.checklist li.checked');
+  document.getElementById('checklistComplete').style.display =
+    checked.length === all.length ? 'block' : 'none';
+}
+
+// ===== COPY CODE =====
+function copyCode(btn) {
+  const block = btn.closest('.code-block');
+  const code = block.querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '복사됨 ✓';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = '복사';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

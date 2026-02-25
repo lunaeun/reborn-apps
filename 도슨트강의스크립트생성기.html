@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도슨트 마스터 — 강의 스크립트 생성기</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@400;600;700;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0a0a12;--bg2:#10101c;--bg3:#161628;
+            --card:#13132a;--card2:#1a1a36;--card3:#20203e;
+            --gold:#d4a853;--gold-l:#f0d78c;--gold-d:#a8842f;
+            --txt:#e8e6e3;--txt2:#a09e9b;--txt3:#6b6966;
+            --green:#6ec89a;--blue:#7aacf0;--pink:#e87faf;
+            --red:#f87171;--cyan:#5ed4e6;--purple:#b08aed;
+            --border:rgba(212,168,83,.12);--border2:rgba(255,255,255,.06);
+            --glass:rgba(255,255,255,.02);
+        }
+        body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 25% 0%,rgba(212,168,83,.03) 0%,transparent 60%),radial-gradient(ellipse at 75% 100%,rgba(180,130,70,.02) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+        .app{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 20px}
+
+        /* HEADER */
+        .header{text-align:center;padding:50px 20px 40px;border-bottom:1px solid var(--border)}
+        .header .badge{display:inline-block;padding:5px 18px;border:1px solid var(--gold);color:var(--gold);font-size:.68rem;font-weight:600;letter-spacing:3px;border-radius:30px;margin-bottom:20px}
+        .header h1{font-family:'Noto Serif KR',serif;font-size:2.2rem;font-weight:900;color:var(--gold-l);margin-bottom:8px}
+        .header p{color:var(--txt2);font-size:.9rem;max-width:600px;margin:0 auto}
+
+        /* LAYOUT */
+        .main-layout{display:grid;grid-template-columns:320px 1fr;gap:0;min-height:calc(100vh - 200px);margin-top:0}
+        @media(max-width:900px){.main-layout{grid-template-columns:1fr}}
+
+        /* SIDEBAR */
+        .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;overflow-y:auto;max-height:calc(100vh - 160px);position:sticky;top:0}
+        @media(max-width:900px){.sidebar{max-height:none;position:relative;border-right:none;border-bottom:1px solid var(--border)}}
+        .sidebar h3{font-size:.72rem;color:var(--gold-d);letter-spacing:2px;padding:12px 20px 8px;font-weight:700}
+        .sb-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;font-size:.82rem;color:var(--txt2)}
+        .sb-item:hover{background:rgba(212,168,83,.04);color:var(--txt)}
+        .sb-item.active{background:rgba(212,168,83,.06);border-left-color:var(--gold);color:var(--gold-l);font-weight:600}
+        .sb-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+        .sb-sub{font-size:.68rem;color:var(--txt3);margin-left:48px;padding:2px 20px 2px 0}
+        .sb-divider{height:1px;background:var(--border);margin:12px 20px}
+
+        /* MAIN CONTENT */
+        .content{padding:30px;overflow-y:auto}
+        @media(max-width:900px){.content{padding:20px 0}}
+
+        /* GENERATOR PANEL */
+        .gen-panel{display:none;animation:fadeUp .4s ease}
+        .gen-panel.active{display:block}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        /* FORM SECTIONS */
+        .form-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
+        .form-section h2{font-family:'Noto Serif KR',serif;font-size:1.2rem;font-weight:700;color:var(--gold-l);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+        .form-section .subtitle{font-size:.8rem;color:var(--txt3);margin-bottom:20px}
+
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+        @media(max-width:600px){.form-row{grid-template-columns:1fr}}
+        .form-row.full{grid-template-columns:1fr}
+
+        .form-group{display:flex;flex-direction:column;gap:6px}
+        .form-label{font-size:.75rem;color:var(--txt2);font-weight:600;letter-spacing:.5px}
+        .form-input,.form-select,.form-textarea{
+            background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;
+            padding:10px 14px;color:var(--txt);font-family:'Noto Sans KR',sans-serif;font-size:.88rem;
+            transition:all .3s;width:100%}
+        .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold);background:rgba(212,168,83,.04)}
+        .form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23a09e9b'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+        .form-select option{background:var(--bg2);color:var(--txt)}
+        .form-textarea{min-height:80px;resize:vertical;line-height:1.8}
+
+        .chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+        .chip{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:.75rem;color:var(--txt2);cursor:pointer;transition:all .2s;user-select:none}
+        .chip:hover{border-color:var(--gold);color:var(--gold)}
+        .chip.selected{background:rgba(212,168,83,.15);border-color:var(--gold);color:var(--gold-l);font-weight:600}
+
+        /* BUTTONS */
+        .btn-generate{
+            display:flex;align-items:center;justify-content:center;gap:10px;
+            width:100%;padding:16px;background:linear-gradient(135deg,var(--gold-d),var(--gold));
+            border:none;border-radius:12px;color:#0a0a12;font-size:1rem;font-weight:800;
+            cursor:pointer;font-family:'Noto Serif KR',serif;letter-spacing:1px;
+            transition:all .3s;margin-top:8px}
+        .btn-generate:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,168,83,.3)}
+        .btn-generate:active{transform:translateY(0)}
+        .btn-generate.loading{opacity:.7;pointer-events:none}
+
+        .btn-secondary{padding:10px 24px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--txt2);font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+        .btn-secondary:hover{background:rgba(212,168,83,.06);border-color:var(--gold);color:var(--gold)}
+
+        .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+        /* OUTPUT */
+        .output-area{display:none;margin-top:30px}
+        .output-area.visible{display:block;animation:fadeUp .5s ease}
+
+        .script-output{
+            background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+            padding:0;overflow:hidden}
+        .script-header{padding:20px 28px;background:rgba(212,168,83,.04);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .script-header h3{font-family:'Noto Serif KR',serif;font-size:1.1rem;color:var(--gold-l)}
+        .script-header .meta{font-size:.72rem;color:var(--txt3)}
+        .script-body{padding:28px;font-size:.9rem;line-height:2.1;color:var(--txt2);white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif}
+        .script-body .section-mark{color:var(--gold);font-weight:700;font-size:.82rem;letter-spacing:1px;display:block;margin:24px 0 8px;padding-top:20px;border-top:1px solid var(--border2)}
+        .script-body .section-mark:first-child{margin-top:0;padding-top:0;border-top:none}
+        .script-body .stage-direction{color:var(--green);font-size:.78rem;font-style:italic;display:block;margin:8px 0}
+        .script-body .key-term{color:var(--gold-l);font-weight:600}
+        .script-body .question{color:var(--cyan);font-weight:500}
+        .script-body .personal{color:var(--pink);font-style:italic}
+        .script-body .bridge{color:var(--purple);font-size:.84rem;display:block;margin:16px 0;padding:10px 16px;background:rgba(176,138,237,.04);border-left:2px solid var(--purple);border-radius:0 8px 8px 0}
+        .script-body .ref-note{font-size:.75rem;color:var(--txt3);display:block;margin-top:20px;padding-top:16px;border-top:1px solid var(--border2)}
+
+        /* TIMER */
+        .timer-bar{display:flex;align-items:center;gap:12px;padding:12px 20px;background:rgba(212,168,83,.04);border-radius:10px;margin-bottom:16px;font-size:.82rem;color:var(--txt2)}
+        .timer-bar .timer-val{color:var(--gold);font-weight:700;font-size:1.1rem}
+
+        /* TABS INSIDE GENERATOR */
+        .gen-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px}
+        .gen-tab{padding:12px 20px;font-size:.82rem;font-weight:500;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+        .gen-tab:hover{color:var(--txt)}
+        .gen-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+
+        /* PRESET CARDS */
+        .preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+        .preset-card{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:18px;cursor:pointer;transition:all .3s}
+        .preset-card:hover{border-color:rgba(212,168,83,.3);background:var(--card2)}
+        .preset-card.selected{border-color:var(--gold);background:rgba(212,168,83,.06)}
+        .preset-card h4{font-size:.88rem;color:var(--gold-l);margin-bottom:4px;font-weight:600}
+        .preset-card p{font-size:.75rem;color:var(--txt3);line-height:1.5}
+        .preset-card .tag{display:inline-block;font-size:.65rem;padding:2px 8px;border-radius:10px;background:rgba(212,168,83,.08);color:var(--gold);margin-top:8px}
+
+        /* TOOLTIP */
+        .info-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(212,168,83,.15);color:var(--gold);font-size:.6rem;font-weight:700;cursor:help;margin-left:4px;position:relative}
+        .info-tip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card3);color:var(--txt);padding:8px 12px;border-radius:8px;font-size:.72rem;white-space:nowrap;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.4);font-style:normal;font-weight:400;max-width:250px;white-space:normal;line-height:1.5}
+
+        /* LOADING */
+        .loading-dots{display:inline-flex;gap:4px}
+        .loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce .6s infinite alternate}
+        .loading-dots span:nth-child(2){animation-delay:.2s}
+        .loading-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes bounce{to{opacity:.3;transform:translateY(-4px)}}
+
+        /* EXPORT BAR */
+        .export-bar{display:flex;gap:10px;flex-wrap:wrap;padding:16px 28px;background:rgba(255,255,255,.02);border-top:1px solid var(--border2)}
+        .export-btn{padding:8px 18px;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;border:1px solid var(--border2);background:var(--glass);color:var(--txt2)}
+        .export-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,83,.05)}
+
+        /* WORD COUNT */
+        .word-count{font-size:.72rem;color:var(--txt3);text-align:right;margin-top:4px}
+
+        /* FOOTER */
+        .footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border);margin-top:30px}
+        .footer p{font-size:.72rem;color:var(--txt3)}
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="badge">SCRIPT GENERATOR v1.0</div>
+        <h1>도슨트 강의 스크립트 생성기</h1>
+        <p>XML 문서구조도 기반 — 서양미술사·동양미술사·전시기획 실무 강의 스크립트를 자동 생성합니다</p>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <h3>서양미술사 (M01)</h3>
+            <div class="sb-item active" data-module="W01" data-era="선사시대 &amp; 고대 근동" data-period="BC 30,000 ~ BC 332">
+                <div class="sb-icon" style="background:rgba(212,168,83,.1);color:var(--gold)">W1</div>
+                <div>선사시대 &amp; 고대 근동</div>
+            </div>
+            <div class="sb-item" data-module="W02" data-era="그리스 &amp; 로마 미술" data-period="BC 800 ~ AD 476">
+                <div class="sb-icon" style="background:rgba(122,172,240,.1);color:var(--blue)">W2</div>
+                <div>그리스 &amp; 로마</div>
+            </div>
+            <div class="sb-item" data-module="W03" data-era="중세 미술" data-period="5C ~ 14C">
+                <div class="sb-icon" style="background:rgba(110,200,154,.1);color:var(--green)">W3</div>
+                <div>중세 (비잔틴·고딕)</div>
+            </div>
+            <div class="sb-item" data-module="W04" data-era="르네상스 &amp; 매너리즘" data-period="14C ~ 16C">
+                <div class="sb-icon" style="background:rgba(232,127,175,.1);color:var(--pink)">W4</div>
+                <div>르네상스 &amp; 매너리즘</div>
+            </div>
+            <div class="sb-item" data-module="W05" data-era="바로크 · 로코코 · 신고전 · 낭만주의" data-period="17C ~ 19C 초">
+                <div class="sb-icon" style="background:rgba(176,138,237,.1);color:var(--purple)">W5</div>
+                <div>바로크 ~ 낭만주의</div>
+            </div>
+            <div class="sb-item" data-module="W06" data-era="인상주의 · 후기인상주의" data-period="19C 중반 ~ 20C 초">
+                <div class="sb-icon" style="background:rgba(94,212,230,.1);color:var(--cyan)">W6</div>
+                <div>인상주의 ~ 후기인상</div>
+            </div>
+            <div class="sb-item" data-module="W07" data-era="20세기 모더니즘 &amp; 동시대미술" data-period="20C ~ 현재">
+                <div class="sb-icon" style="background:rgba(248,113,113,.1);color:var(--red)">W7</div>
+                <div>모더니즘 &amp; 동시대</div>
+            </div>
+
+            <div class="sb-divider"></div>
+            <h3>동양미술사 (M02)</h3>
+            <div class="sb-item" data-module="E01" data-era="인도 미술 &amp; 불교미술의 동전" data-period="BC 3C ~ AD 8C">
+                <div class="sb-icon" style="background:rgba(212,168,83,.1);color:var(--gold)">E1</div>
+                <div>인도 &amp; 불교미술</div>
+            </div>
+            <div class="sb-item" data-module="E02" data-era="중국 미술사" data-period="상주 ~ 청 · 근현대">
+                <div class="sb-icon" style="background:rgba(122,172,240,.1);color:var(--blue)">E2</div>
+                <div>중국미술사</div>
+            </div>
+            <div class="sb-item" data-module="E03" data-era="한국 미술사" data-period="선사 ~ 근현대">
+                <div class="sb-icon" style="background:rgba(110,200,154,.1);color:var(--green)">E3</div>
+                <div>한국미술사</div>
+            </div>
+            <div class="sb-item" data-module="E04" data-era="일본 미술사 &amp; 동양미술 비교론" data-period="헤이안 ~ 현대">
+                <div class="sb-icon" style="background:rgba(232,127,175,.1);color:var(--pink)">E4</div>
+                <div>일본미술 &amp; 비교론</div>
+            </div>
+
+            <div class="sb-divider"></div>
+            <h3>전시기획 실무 (M03)</h3>
+            <div class="sb-item" data-module="P01" data-era="전시 콘셉트 개발 &amp; 기획서 작성" data-period="기획 단계">
+                <div class="sb-icon" style="background:rgba(176,138,237,.1);color:var(--purple)">P1</div>
+                <div>콘셉트 &amp; 기획서</div>
+            </div>
+            <div class="sb-item" data-module="P02" data-era="공간설계 · 디스플레이 · 예산" data-period="실행 단계">
+                <div class="sb-icon" style="background:rgba(94,212,230,.1);color:var(--cyan)">P2</div>
+                <div>공간 · 예산 · 실행</div>
+            </div>
+            <div class="sb-item" data-module="P03" data-era="계약서 · 서류 작성 실무" data-period="행정 단계">
+                <div class="sb-icon" style="background:rgba(248,113,113,.1);color:var(--red)">P3</div>
+                <div>계약서 &amp; 서류</div>
+            </div>
+            <div class="sb-item" data-module="P04" data-era="도슨트 스크립트 작성법" data-period="해설 단계">
+                <div class="sb-icon" style="background:rgba(212,168,83,.1);color:var(--gold)">P4</div>
+                <div>스크립트 작성법</div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- STEP 1: SETTINGS -->
+            <div class="form-section">
+                <h2>📋 스크립트 설정</h2>
+                <div class="subtitle" id="selectedModule">선사시대 &amp; 고대 근동 · BC 30,000 ~ BC 332</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="form-label">스크립트 유형 <span class="info-tip" data-tip="강의용: 교육 수강생 대상 / 도슨트용: 미술관 관객 대상 / 기획서용: 전시기획 실무 문서">?</span></div>
+                        <select class="form-select" id="scriptType">
+                            <option value="lecture">📖 강의 스크립트 (수강생 교육용)</option>
+                            <option value="docent">🎤 도슨트 해설 스크립트 (관객 대상)</option>
+                            <option value="planning">📋 전시기획 문서 (실무 템플릿)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">목표 시간</div>
+                        <select class="form-select" id="duration">
+                            <option value="15">15분 (핵심 요약)</option>
+                            <option value="30">30분 (표준)</option>
+                            <option value="45" selected>45분 (심화)</option>
+                            <option value="60">60분 (풀 강의)</option>
+                            <option value="90">90분 (2교시 통합)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="form-label">대상 수준</div>
+                        <select class="form-select" id="level">
+                            <option value="beginner">입문 (비전공자·일반인)</option>
+                            <option value="intermediate" selected>중급 (도슨트 양성과정 수강생)</option>
+                            <option value="advanced">심화 (현직 도슨트·큐레이터)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">톤 &amp; 스타일</div>
+                        <select class="form-select" id="tone">
+                            <option value="academic">학술적 (미술사 강의체)</option>
+                            <option value="storytelling" selected>스토리텔링 (이야기체)</option>
+                            <option value="conversational">대화형 (질문 중심)</option>
+                            <option value="emotional">감성적 (감상 유도형)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONTENT OPTIONS -->
+            <div class="form-section">
+                <h2>🎨 콘텐츠 구성</h2>
+                <div class="subtitle">포함할 요소를 선택하세요 (복수 선택 가능)</div>
+
+                <div class="form-group" style="margin-bottom:16px">
+                    <div class="form-label">스크립트 구성 요소</div>
+                    <div class="chip-group" id="elementsChips">
+                        <div class="chip selected" data-val="opening">오프닝 인사·개요</div>
+                        <div class="chip selected" data-val="context">시대적 맥락</div>
+                        <div class="chip selected" data-val="artworks">핵심 작품 해설</div>
+                        <div class="chip selected" data-val="concepts">핵심 개념 설명</div>
+                        <div class="chip selected" data-val="bridge">작품 간 연결 브릿지</div>
+                        <div class="chip selected" data-val="questions">관객 질문 유도</div>
+                        <div class="chip" data-val="anecdote">작가 일화·에피소드</div>
+                        <div class="chip" data-val="comparison">작품 비교 분석</div>
+                        <div class="chip" data-val="personal">개인적 감상·코멘트</div>
+                        <div class="chip" data-val="quiz">퀴즈·참여 활동</div>
+                        <div class="chip selected" data-val="closing">클로징 요약·정리</div>
+                        <div class="chip" data-val="references">참고문헌 안내</div>
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <div class="form-label">특별히 강조할 작품 또는 주제 (선택사항)</div>
+                        <input class="form-input" id="focusArtwork" placeholder="예: 라스코 동굴벽화, 정면성 법칙, 르네상스 원근법...">
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <div class="form-label">추가 지시사항 (선택사항)</div>
+                        <textarea class="form-textarea" id="additionalNotes" placeholder="예: 어린이 대상으로 쉽게 설명, 현대미술과의 연결고리 강조, 한국미술과 비교..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: PRESET TEMPLATES -->
+            <div class="form-section">
+                <h2>⚡ 프리셋 템플릿</h2>
+                <div class="subtitle">자주 사용하는 스크립트 유형을 빠르게 선택하세요</div>
+
+                <div class="preset-grid">
+                    <div class="preset-card" data-preset="standard-lecture">
+                        <h4>📖 표준 미술사 강의</h4>
+                        <p>시대 개관 → 핵심 작품 3~5점 심층 해설 → 개념 정리 → 다음 시대 예고</p>
+                        <span class="tag">45분 · 중급</span>
+                    </div>
+                    <div class="preset-card" data-preset="museum-docent">
+                        <h4>🎤 미술관 도슨트 해설</h4>
+                        <p>인사·전시 소개 → 작품 5~7점 동선 해설 → 관객 질문 유도 → 클로징</p>
+                        <span class="tag">40분 · 입문</span>
+                    </div>
+                    <div class="preset-card" data-preset="deep-dive">
+                        <h4>🔍 단일 작품 심층 분석</h4>
+                        <p>하나의 작품을 30분간 집중 해설 — 관찰 → 분석 → 해석 → 토론</p>
+                        <span class="tag">30분 · 심화</span>
+                    </div>
+                    <div class="preset-card" data-preset="exhibition-plan">
+                        <h4>📋 전시기획 실무 강의</h4>
+                        <p>기획서 구조 → 공간설계 → 예산편성 → 계약서 핵심 → 사례 분석</p>
+                        <span class="tag">60분 · 중급</span>
+                    </div>
+                    <div class="preset-card" data-preset="script-writing">
+                        <h4>✍️ 스크립트 작성 워크숍</h4>
+                        <p>리서치법 → 구조설계 → 집필 → 리허설 → 피드백 — 실습 위주</p>
+                        <span class="tag">90분 · 중급</span>
+                    </div>
+                    <div class="preset-card" data-preset="contract-class">
+                        <h4>📄 계약서 실무 강의</h4>
+                        <p>문체부 표준계약서 해설 → 독립큐레이터 계약 → 실습 → Q&amp;A</p>
+                        <span class="tag">60분 · 심화</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GENERATE BUTTON -->
+            <button class="btn-generate" id="btnGenerate" onclick="generateScript()">
+                ✦ 강의 스크립트 생성하기
+            </button>
+
+            <!-- OUTPUT -->
+            <div class="output-area" id="outputArea">
+                <div class="timer-bar">
+                    <span>⏱ 예상 소요시간</span>
+                    <span class="timer-val" id="estTime">45분</span>
+                    <span>·</span>
+                    <span id="wordCountDisplay">약 4,500자</span>
+                </div>
+
+                <div class="script-output">
+                    <div class="script-header">
+                        <div>
+                            <h3 id="outputTitle">강의 스크립트</h3>
+                            <div class="meta" id="outputMeta"></div>
+                        </div>
+                        <div class="btn-row" style="margin:0">
+                            <button class="export-btn" onclick="copyScript()">📋 복사</button>
+                            <button class="export-btn" onclick="downloadScript()">📥 다운로드</button>
+                        </div>
+                    </div>
+                    <div class="script-body" id="scriptBody">
+                        <!-- Generated script appears here -->
+                    </div>
+                    <div class="export-bar">
+                        <button class="export-btn" onclick="copyScript()">📋 텍스트 복사</button>
+                        <button class="export-btn" onclick="downloadScript()">📥 TXT 다운로드</button>
+                        <button class="export-btn" onclick="downloadMarkdown()">📝 Markdown 다운로드</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>도슨트 마스터 클래스 · 강의 스크립트 생성기 v1.0 · XML 문서구조도 기반 자동 생성 시스템</p>
+        <p style="margin-top:6px">출처: Gombrich·Janson·안휘준·Michael Sullivan 체계 / 문체부 표준계약서 / 국립현대미술관 도슨트 실무 방법론</p>
+    </div>
+</div>
+
+<script>
+// ============================
+// XML-BASED SCRIPT DATABASE
+// ============================
+const MODULES = {
+    // ─── WESTERN ART HISTORY ───
+    W01: {
+        id:"W01", category:"서양미술사", era:"선사시대 & 고대 근동 미술", period:"BC 30,000 ~ BC 332",
+        question:"인류는 왜 그림을 그리기 시작했는가?",
+        concepts:["주술적 기능설(Sympathetic Magic)","정면성 법칙(Frontality)","카논(Canon)","거석(Megalith) 문화"],
+        artworks:[
+            {name:"라스코 동굴벽화",date:"BC 17,000경",loc:"프랑스 도르도뉴",desc:"동굴 깊은 곳에 그려진 들소·말·사슴은 사냥의 성공을 기원하는 주술적 목적으로 해석됩니다. 단순한 '그림'이 아니라, 생존을 위한 최초의 시각 언어입니다.",analysis:"횃불과 동물 기름 램프의 불빛 아래, 바위의 요철을 동물의 몸통 볼륨으로 활용한 점에 주목하세요. 이것은 3만 년 전 인류가 이미 '입체감'을 인식하고 있었다는 증거입니다."},
+            {name:"빌렌도르프의 비너스",date:"BC 25,000경",loc:"오스트리아",desc:"11cm의 작은 석회암 조각상. 과장된 가슴·배·엉덩이는 다산과 풍요의 상징입니다.",analysis:"얼굴이 없고 발이 없는 이 조각은 '개인'이 아닌 '생명력 자체'를 형상화한 것입니다. 미의 기준은 시대마다 달라진다는 것을 보여주는 첫 번째 증거입니다."},
+            {name:"네페르티티 흉상",date:"BC 1345경",loc:"이집트 아마르나",desc:"이집트 제18왕조 아케나텐의 왕비. 이집트 미술의 정면성 법칙을 따르면서도 사실적 아름다움을 구현한 걸작입니다.",analysis:"왼쪽 눈에 수정이 박히지 않은 채 발견된 이 흉상은, 조각가 투트모세의 작업실 모델이었을 가능성이 높습니다."},
+            {name:"함무라비 법전 석비",date:"BC 1750경",loc:"메소포타미아",desc:"현무암 석비 상단에는 태양신 샤마시로부터 법을 받는 함무라비 왕이 부조로 새겨져 있습니다.",analysis:"미술이 '아름다움'만이 아닌 '권력의 정당화' 도구였음을 보여주는 대표적 예시입니다."}
+        ],
+        references:"Gombrich Ch.1-2 / Janson Ch. Ancient Near East & Egypt / 진중권 『서양미술사: 고전예술편』",
+        nextBridge:"동굴벽화에서 시작된 인류의 시각 표현은 이집트·메소포타미아를 거쳐, 그리스에서 비로소 '아름다움 자체를 위한 미술'로 전환됩니다."
+    },
+    W02: {
+        id:"W02", category:"서양미술사", era:"그리스 & 로마 미술", period:"BC 800 ~ AD 476",
+        question:"'아름다움의 기준'은 누가, 어떻게 세웠는가?",
+        concepts:["콘트라포스토(Contrapposto)","카논(인체비례론)","아르카이크·클래식·헬레니즘","로마의 사실주의 초상"],
+        artworks:[
+            {name:"미론 〈원반던지는 사람(디스코볼로스)〉",date:"BC 450경",loc:"로마 국립박물관(모작)",desc:"정지된 돌 속에 움직임의 순간을 포착한 고전기 그리스 조각의 정점.",analysis:"이 조각은 실제로는 존재할 수 없는 자세입니다. 미론은 '현실'이 아닌 '이상적 움직임의 순간'을 창조한 것입니다."},
+            {name:"파르테논 신전",date:"BC 447-432",loc:"아테네 아크로폴리스",desc:"도리스 양식의 기둥과 정교한 착시 보정(엔타시스). 페이디아스 감독 하에 건설.",analysis:"기둥이 약간 안쪽으로 기울어져 있고, 바닥이 미세하게 볼록합니다. 이 모든 것이 인간의 눈에 '완벽하게 직선으로 보이기 위한' 광학적 보정입니다."},
+            {name:"〈라오콘 군상〉",date:"BC 1C경",loc:"바티칸 미술관",desc:"트로이 사제 라오콘과 두 아들이 뱀에 감겨 고통받는 장면. 헬레니즘 미술의 감정 표현의 극치.",analysis:"이 조각을 본 미켈란젤로는 '이것이야말로 미술의 기적'이라 했습니다. 르네상스로의 다리 역할을 한 작품입니다."},
+            {name:"판테온",date:"AD 125경",loc:"로마",desc:"지름 43.3m의 돔. 천장 중앙의 오큘러스(개구부)에서 빛이 쏟아집니다.",analysis:"2000년이 지난 지금도 무보강 콘크리트 돔으로는 세계 최대입니다. 로마의 위대함은 '미'보다 '공학'에 있었습니다."}
+        ],
+        references:"Winckelmann 『그리스 미술 모방론』(1755) / Gombrich Ch.3-5 / 노르베르트 볼프 『서양미술사』",
+        nextBridge:"그리스·로마가 세운 '이상적 아름다움'의 기준은 기독교의 등장과 함께 완전히 새로운 방향으로 전환됩니다. 눈에 보이는 '육체의 미'에서, 보이지 않는 '신의 영광'으로."
+    },
+    W03: {
+        id:"W03", category:"서양미술사", era:"중세 미술", period:"5C ~ 14C",
+        question:"중세는 정말 '암흑기'였는가? 눈에 보이지 않는 것을 어떻게 그릴 수 있는가?",
+        concepts:["비잔틴 모자이크","이콘(Icon)과 성상파괴(Iconoclasm)","로마네스크의 교훈적 조각","고딕의 수직적 상승감과 스테인드글라스"],
+        artworks:[
+            {name:"산비탈레 성당 모자이크",date:"547년",loc:"이탈리아 라벤나",desc:"유스티니아누스 황제와 테오도라 황후. 금색 배경 위의 납작한 인물들은 영원한 성스러움을 표현합니다.",analysis:"원근법도, 그림자도, 볼륨도 없습니다. 이것은 '실력 부족'이 아니라 '의도적 선택'입니다. 현세의 물리적 공간이 아닌, 영원한 천상의 공간을 표현하려 한 것입니다."},
+            {name:"샤르트르 대성당",date:"1194-1220",loc:"프랑스 샤르트르",desc:"고딕 건축의 정점. 176개의 스테인드글라스 창이 '빛의 신학'을 구현합니다.",analysis:"중세인에게 성당은 '천국의 예고편'이었습니다. 스테인드글라스를 통과한 빛은 곧 신의 은총이었습니다."},
+            {name:"조토 〈애도〉",date:"1305경",loc:"파도바 스크로베니 예배당",desc:"그리스도의 죽음을 슬퍼하는 인물들의 감정이 생생하게 표현됩니다.",analysis:"조토는 중세와 르네상스의 문을 연 사람입니다. 납작했던 인물에 처음으로 '감정'과 '공간감'을 부여했습니다."}
+        ],
+        references:"Umberto Eco 『중세의 미와 예술』 / Gombrich Ch.6-9 / 미셸 파스투로 『중세 상징의 역사』",
+        nextBridge:"조토가 열어놓은 문을 통해, 인류는 다시 '인간'을 발견합니다. 그것이 르네상스, 문자 그대로 '재탄생'의 시대입니다."
+    },
+    W04: {
+        id:"W04", category:"서양미술사", era:"르네상스 & 매너리즘", period:"14C ~ 16C",
+        question:"'인간의 재발견'이란 무엇인가? 원근법은 세상을 어떻게 바꾸었는가?",
+        concepts:["선원근법(Linear Perspective)","명암법(Chiaroscuro)","스푸마토(Sfumato)","디세뇨(Disegno)와 콜로레(Colore)","바자리의 미술가 열전"],
+        artworks:[
+            {name:"보티첼리 〈비너스의 탄생〉",date:"1485경",loc:"피렌체 우피치 미술관",desc:"키프로스 해안에 조개껍데기를 타고 도착하는 비너스. 고대 신화의 부활.",analysis:"중세 1000년간 '이교도의 벌거벗은 여신'은 금기였습니다. 이 그림은 고대 미의 이상을 기독교 세계 안에서 부활시킨 혁명적 작품입니다."},
+            {name:"레오나르도 다 빈치 〈최후의 만찬〉",date:"1495-1498",loc:"밀라노 산타마리아 델레 그라치에",desc:"'너희 중 하나가 나를 배반할 것이다'라는 말에 반응하는 12 제자의 극적 순간.",analysis:"소실점이 정확히 예수의 머리 위에 있습니다. 건축적 공간과 심리적 드라마가 완벽하게 결합된 구도입니다."},
+            {name:"미켈란젤로 〈천지창조〉",date:"1508-1512",loc:"바티칸 시스티나 성당",desc:"약 500㎡의 천장에 그려진 구약성서 9장면. 4년간 홀로 작업.",analysis:"신의 손가락과 아담의 손가락 사이의 간격. 닿을 듯 말 듯한 그 틈새에 '인간과 신의 관계'의 모든 것이 담겨 있습니다."},
+            {name:"라파엘로 〈아테네 학당〉",date:"1509-1511",loc:"바티칸 서명의 방",desc:"플라톤과 아리스토텔레스를 중심으로 고대 철학자들이 한자리에 모인 이상적 장면.",analysis:"한 손으로 하늘을 가리키는 플라톤(이데아의 세계)과 한 손을 땅으로 향하는 아리스토텔레스(현실의 세계). 르네상스가 추구한 '이상과 현실의 조화'가 두 사람의 손짓에 응축되어 있습니다."}
+        ],
+        references:"Vasari 『미술가 열전』(1550/1568) / Alberti 『회화론』(1435) / Gombrich Ch.12-18 / 뵐플린 『르네상스와 바로크』",
+        nextBridge:"르네상스의 '균형과 조화'가 극에 달하면, 그것을 의도적으로 깨뜨리는 매너리즘이 등장하고, 이어서 빛과 감정의 극적 드라마 — 바로크의 시대가 열립니다."
+    },
+    W05: {
+        id:"W05", category:"서양미술사", era:"바로크 · 로코코 · 신고전주의 · 낭만주의", period:"17C ~ 19C 초",
+        question:"미술은 누구를 위한 것인가? 궁정에서 시민으로, 이성에서 감정으로.",
+        concepts:["키아로스쿠로(Chiaroscuro)","테네브리즘(Tenebrism)","바니타스(Vanitas)","숭고(Sublime)"],
+        artworks:[
+            {name:"카라바조 〈성 마태의 소명〉",date:"1600",loc:"로마 산 루이지 데이 프란체시 성당",desc:"어두운 세무서에 한 줄기 빛이 들어와 마태를 가리킵니다. 빛과 어둠의 극적 대비.",analysis:"이 빛은 단순한 자연광이 아닙니다. 신의 부름, 은총 그 자체입니다. 카라바조는 빛을 '서사의 도구'로 바꾼 최초의 화가입니다."},
+            {name:"렘브란트 〈야경〉",date:"1642",loc:"암스테르담 국립미술관",desc:"민병대 출정 장면. 빛과 그림자로 30명 이상의 인물에게 각각의 드라마를 부여합니다.",analysis:"이 그림의 원래 제목은 '프란스 바닝 코크 대장의 민병대'입니다. 19세기에 니스가 어두워져서 '야경'이라는 별명이 붙었죠."},
+            {name:"다비드 〈마라의 죽음〉",date:"1793",loc:"브뤼셀 왕립미술관",desc:"프랑스 혁명의 영웅 마라의 암살 장면. 신고전주의의 이상적 구도.",analysis:"마라의 자세는 미켈란젤로의 피에타를 연상시킵니다. 다비드는 혁명가를 성인(聖人)처럼 묘사하여 정치적 메시지를 전달합니다."},
+            {name:"들라크루아 〈민중을 이끄는 자유의 여신〉",date:"1830",loc:"파리 루브르 박물관",desc:"1830년 7월 혁명. 삼색기를 든 여인이 바리케이드 위에 서 있습니다.",analysis:"이 여인은 실존 인물이 아닌 '자유(Liberté)'의 의인화입니다. 감정과 이상이 폭발하는 낭만주의의 정수입니다."}
+        ],
+        references:"뵐플린 『르네상스와 바로크』 / Gombrich Ch.19-25 / 진중권 『서양미술사: 고전예술편』",
+        nextBridge:"낭만주의의 감정 폭발은 점차 '눈에 보이는 것 자체'에 대한 새로운 관심으로 이어집니다. 쿠르베의 '보이는 것만 그린다'는 선언이 사실주의를, 그리고 모네의 빛에 대한 집착이 인상주의를 탄생시킵니다."
+    },
+    W06: {
+        id:"W06", category:"서양미술사", era:"인상주의 · 후기인상주의", period:"19C 중반 ~ 20C 초",
+        question:"빛은 어떻게 미술의 혁명이 되었는가? '보이는 것'과 '느끼는 것'의 차이는?",
+        concepts:["외광파(En plein air)","보색 대비·색채 분할","세잔의 기하학적 환원","고흐의 표현적 붓터치"],
+        artworks:[
+            {name:"모네 〈인상, 해돋이〉",date:"1872",loc:"파리 마르모탕 미술관",desc:"르아브르 항구의 일출. '인상주의'라는 이름을 탄생시킨 역사적 작품.",analysis:"가까이 다가가면 거친 붓터치와 색점들만 보입니다. 물러서면 항구의 안개 낀 아침이 눈앞에 펼쳐집니다. 모네는 '형태'가 아니라 '빛의 인상'을 포착한 것입니다."},
+            {name:"세잔 〈생빅투아르 산〉 연작",date:"1880s-1906",loc:"여러 미술관",desc:"같은 산을 수십 번 반복해서 그렸습니다. 자연을 '원통, 구, 원추'로 환원하려 한 시도.",analysis:"세잔의 이 유언이 없었다면 피카소의 입체파도, 몬드리안의 추상도 없었을 것입니다. 세잔은 '현대미술의 아버지'라 불립니다."},
+            {name:"고흐 〈별이 빛나는 밤〉",date:"1889",loc:"뉴욕 MoMA",desc:"생레미 정신병원에서 바라본 밤하늘. 소용돌이치는 별과 달.",analysis:"고흐가 본 밤하늘은 '객관적 현실'이 아닙니다. 그의 감정, 불안, 경이, 외로움이 붓터치 하나하나에 실려 있습니다."},
+            {name:"쇠라 〈그랑드 자트 섬의 일요일 오후〉",date:"1884-1886",loc:"시카고 미술관",desc:"점묘법(Pointillism)의 대표작. 수백만 개의 색점으로 구성된 2m×3m 대작.",analysis:"쇠라는 인상주의를 '과학'으로 바꾸려 했습니다. 색채 이론과 광학을 체계적으로 적용한 최초의 화가입니다."}
+        ],
+        references:"Gombrich Ch.25-27 / John Rewald 『인상주의의 역사』 / 진중권 『모더니즘편』",
+        nextBridge:"인상주의가 '보는 방식'을 바꾸었다면, 20세기는 '미술이란 무엇인가'라는 질문 자체를 바꿉니다. 피카소가 형태를 해체하고, 뒤샹이 변기를 미술관에 갖다 놓는 순간, 미술의 모든 규칙이 사라집니다."
+    },
+    W07: {
+        id:"W07", category:"서양미술사", era:"20세기 모더니즘 & 동시대미술", period:"20C ~ 현재",
+        question:"변기가 예술이 될 수 있는가? 미술의 정의는 누가 내리는가?",
+        concepts:["레디메이드(Ready-made)","추상표현주의·액션 페인팅","팝아트","미니멀리즘·개념미술","포스트모더니즘·동시대미술"],
+        artworks:[
+            {name:"피카소 〈아비뇽의 처녀들〉",date:"1907",loc:"뉴욕 MoMA",desc:"5명의 여인의 몸이 기하학적으로 해체됩니다. 입체파의 출발점.",analysis:"오른쪽 두 여인의 얼굴은 아프리카 가면에서 영감을 받았습니다. 피카소는 서양미술 2500년의 원근법 전통을 단 한 작품으로 부숴버렸습니다."},
+            {name:"뒤샹 〈샘(Fountain)〉",date:"1917",loc:"여러 미술관(레플리카)",desc:"남성용 소변기에 'R. Mutt'라고 서명한 레디메이드.",analysis:"'이것은 예술인가?'라는 질문이 곧 이 작품의 내용입니다. 뒤샹 이후, 미술은 '무엇을 만드느냐'가 아니라 '무엇을 선택하느냐'의 문제가 됩니다."},
+            {name:"잭슨 폴록의 드리핑 회화",date:"1947-1950",loc:"뉴욕 MoMA 등",desc:"캔버스를 바닥에 놓고 물감을 뿌리는 '액션 페인팅'.",analysis:"폴록은 붓을 캔버스에 대지 않았습니다. 그의 몸 전체가 붓이었고, 물감을 뿌리는 행위 자체가 예술이었습니다."},
+            {name:"앤디 워홀 〈캠벨 수프 깡통〉",date:"1962",loc:"뉴욕 MoMA",desc:"32개의 캠벨 수프 캔. 대량생산 이미지가 미술관에 들어옵니다.",analysis:"워홀은 묻습니다 — '매일 수프를 마시는 것과 매일 코카콜라를 마시는 것은 대통령도, 노숙자도 똑같다. 미국이 위대한 것은 바로 이것이다.'"},
+            {name:"백남준 〈다다익선〉",date:"1988",loc:"국립현대미술관 과천",desc:"1,003대의 TV 모니터로 구성된 미디어 아트의 기념비적 작품.",analysis:"백남준은 TV를 '일방적 수신 장치'에서 '쌍방향 예술 매체'로 전환시킨 비디오 아트의 창시자입니다. 한국이 낳은 세계적 거장입니다."}
+        ],
+        references:"할 포스터 외 『1900년 이후의 미술사』 / Gombrich Ch.27-28 / 진중권 『후기모더니즘편』 / Rosalind Krauss 『현대 조각의 흐름』",
+        nextBridge:""
+    },
+
+    // ─── EASTERN ART HISTORY ───
+    E01: {
+        id:"E01", category:"동양미술사", era:"인도 미술 & 불교미술의 동전(東傳)", period:"BC 3C ~ AD 8C",
+        question:"부처를 어떻게 형상화할 것인가? 불상은 왜, 어떻게 탄생했는가?",
+        concepts:["무불상 시대(Aniconic Period)","간다라·마투라 양식","법륜·보리수·발자국(삼보 상징)","실크로드를 통한 불교미술 전파"],
+        artworks:[
+            {name:"산치 대탑(Great Stupa)",date:"BC 3C~AD 1C",loc:"인도 마디아프라데시",desc:"아소카 왕이 건립한 초기 불교 건축. 부처의 사리를 봉안한 반구형 구조물.",analysis:"이 시기 불교미술에는 부처의 모습이 없습니다. 법륜, 보리수, 발자국으로 부처의 '존재'를 상징했습니다. '형상 없는 성스러움'이라는 개념입니다."},
+            {name:"간다라 불상",date:"AD 1~3C",loc:"파키스탄·아프가니스탄",desc:"그리스 조각의 영향을 받은 최초의 불상. 웨이브진 머리카락과 토가풍 옷주름.",analysis:"알렉산더 대왕의 동방 원정이 남긴 그리스 문화의 흔적이 부처의 얼굴에 남아 있습니다. 동서양 문명이 교차한 증거입니다."},
+            {name:"아잔타 석굴 벽화",date:"BC 2C~AD 6C",loc:"인도 마하라슈트라",desc:"30개 석굴에 펼쳐진 불교 벽화. 본생담(자타카)과 불전도(부처 생애).",analysis:"어둠 속 석굴에서 횃불 아래 이 벽화를 보았을 고대인의 감동을 상상해 보세요. 그것은 곧 깨달음의 세계로 들어가는 경험이었을 것입니다."},
+            {name:"돈황 막고굴",date:"AD 4C~14C",loc:"중국 간쑤성",desc:"실크로드의 중간 지점. 492개 석굴에 벽화와 불상이 가득합니다.",analysis:"인도에서 출발한 불교미술이 중앙아시아를 거쳐 중국화되는 과정을 한눈에 볼 수 있는 '미술사의 타임캡슐'입니다."}
+        ],
+        references:"Benjamin Rowland 『The Art and Architecture of India』 / 강우방 『인도미술사』 / Sherman E. Lee 『A History of Far Eastern Art』",
+        nextBridge:"실크로드를 따라 동쪽으로 전해진 불교미술은 중국에서 산수화·서화라는 독자적 전통과 만나 완전히 새로운 예술 세계를 펼치게 됩니다."
+    },
+    E02: {
+        id:"E02", category:"동양미술사", era:"중국 미술사", period:"상주 ~ 청 · 근현대",
+        question:"기운생동(氣韻生動)이란 무엇인가? 동양의 '아름다움'은 서양과 무엇이 다른가?",
+        concepts:["사혁의 화육법(畵六法)","기운생동(氣韻生動)","문인화(文人畵)","사의(寫意)와 사실(寫實)"],
+        artworks:[
+            {name:"고개지 〈여사잠도(女史箴圖)〉",date:"AD 4C 원본(현존 당대 모사본)",loc:"런던 대영박물관",desc:"궁녀들의 덕목을 그린 두루마리. 중국 회화사 최초의 거장 고개지의 유일한 전칭작.",analysis:"고개지는 '형사(形似, 외형의 닮음)'보다 '전신(傳神, 정신의 전달)'을 강조했습니다. 이것이 이후 1600년간 동양회화의 근본 원리가 됩니다."},
+            {name:"범관 〈계산행려도(谿山行旅圖)〉",date:"11C 초",loc:"타이베이 고궁박물원",desc:"거대한 산이 화면의 90%를 차지하고, 인간은 점처럼 작습니다.",analysis:"서양의 풍경화가 '인간이 보는 자연'이라면, 동양의 산수화는 '자연 속에 놓인 인간'입니다. 이 시점의 차이가 동서양 미학의 근본적 차이입니다."},
+            {name:"예찬 〈용슬재도(容膝齋圖)〉",date:"1372",loc:"타이베이 고궁박물원",desc:"텅 빈 정자와 마른 나무. 원말 문인화의 정수.",analysis:"'비어있음(虛)'이 곧 충만함이라는 동양적 미학의 극치입니다. 화려함을 걷어낸 뒤에 남는 것, 그것이 문인화의 격(格)입니다."},
+            {name:"팔대산인(주답) 〈하화소조도〉",date:"17C 후반",loc:"다수 소장",desc:"한쪽 눈을 치켜뜬 새, 최소한의 먹으로 그린 연꽃.",analysis:"명나라 황족 출신으로 청나라에 나라를 잃은 팔대산인의 분노와 슬픔이 새의 눈빛에 담겨 있습니다."}
+        ],
+        references:"Michael Sullivan 『The Arts of China』 / 사혁 『고화품록(古畵品錄)』(6C) / James Cahill 『Chinese Painting』 / 정형민 편 『동양미술사』",
+        nextBridge:"중국의 서화 전통은 한반도에 전해져 고구려 고분벽화, 고려 불화, 조선 산수화라는 독자적 꽃을 피웁니다."
+    },
+    E03: {
+        id:"E03", category:"동양미술사", era:"한국 미술사", period:"선사 ~ 근현대",
+        question:"한국미술의 고유한 아름다움은 무엇인가? '소박함 속의 깊이'란?",
+        concepts:["고구려 고분벽화의 역동성","고려청자의 비색(翡色)","진경산수(眞景山水)","단색화(Dansaekhwa) 운동"],
+        artworks:[
+            {name:"반구대 암각화",date:"BC 7,000~BC 3,500경",loc:"울산 울주군",desc:"고래·사슴·호랑이 등 200여 점의 암각 그림. 선사시대 한반도인의 삶이 새겨져 있습니다.",analysis:"라스코 동굴벽화가 유럽의 원점이라면, 반구대 암각화는 한국미술의 원점입니다."},
+            {name:"고구려 강서대묘 사신도",date:"6C 후반",loc:"평안남도 강서군",desc:"청룡·백호·주작·현무. 동아시아 고분벽화 중 최고 걸작으로 평가.",analysis:"비상하는 용의 역동적인 선(線)은 고구려인의 기상 그 자체입니다."},
+            {name:"석굴암 본존불",date:"774경",loc:"경주",desc:"인공 석굴에 봉안된 화강암 본존불. 원형 돔 천장 아래 빛의 건축학이 구현되어 있습니다.",analysis:"석굴 입구에서 들어오는 아침 햇살이 본존불의 이마 백호(白毫)에 반사되도록 설계되었습니다. 이것은 건축·조각·광학의 총합 예술입니다."},
+            {name:"정선 〈인왕제색도(仁王霽色圖)〉",date:"1751",loc:"삼성미술관 리움",desc:"비 갠 뒤 인왕산의 실경. 진경산수의 정점.",analysis:"중국의 관념적 산수화에서 벗어나, '내가 사는 이 땅의 실제 모습'을 그린 것이 진경산수의 혁명성입니다."},
+            {name:"김환기 〈어디서 무엇이 되어 다시 만나랴〉",date:"1970",loc:"환기미술관",desc:"무수한 점들로 이루어진 전면 추상. 2019년 경매에서 한국 미술품 최고가(약 132억 원) 기록.",analysis:"한 점 한 점은 고향, 친구, 하늘, 바다에 대한 그리움입니다. 추상이지만 가장 한국적이고, 가장 서정적인 작품입니다."}
+        ],
+        references:"안휘준 『한국 회화사』 / 유홍준 『나의 문화유산답사기』 / 오광수 『한국현대미술사』 / 최열 『한국 근현대미술사학』",
+        nextBridge:"한국미술의 독자성을 이해한 다음, 이웃 일본미술과의 비교를 통해 동아시아 미학의 공통점과 차이점을 종합합니다."
+    },
+    E04: {
+        id:"E04", category:"동양미술사", era:"일본 미술사 & 동양미술 비교론", period:"헤이안 ~ 현대",
+        question:"우키요에가 없었다면 인상주의도 없었을까? 동아시아 미학의 공통분모는?",
+        concepts:["야마토에(大和繪)","린파(琳派)","우키요에(浮世繪)와 자포니즘","와비사비(侘び寂び)"],
+        artworks:[
+            {name:"호쿠사이 〈가나가와 앞바다의 큰 파도〉",date:"1831경",loc:"여러 미술관",desc:"후지산 연작 '후가쿠 36경' 중 가장 유명한 목판화.",analysis:"이 판화가 파리에 도착했을 때, 모네·드가·반 고흐는 열광했습니다. 대담한 구도, 평면적 색면, 비대칭 구성이 서양 화가들에게 '새로운 눈'을 선물한 것입니다."},
+            {name:"하세가와 토하쿠 〈송림도(松林圖)〉 병풍",date:"16C 후반",loc:"도쿄 국립박물관",desc:"먹의 농담만으로 안개 속 소나무 숲을 표현한 일본 수묵화의 최고봉.",analysis:"그려지지 않은 '여백'이 곧 안개이고 공기이고 시간입니다."},
+            {name:"구사마 야요이 〈무한의 그물(Infinity Nets)〉",date:"1958~현재",loc:"여러 미술관",desc:"끝없이 반복되는 점과 그물 패턴. 강박과 무한의 경계.",analysis:"구사마는 어린 시절부터 환각을 경험했고, 그 환각을 캔버스에 옮기는 것이 '치유'였습니다. 예술과 정신의 관계를 극단적으로 보여주는 사례입니다."}
+        ],
+        references:"정형민 편 『동양미술사』 / Sherman E. Lee 『A History of Far Eastern Art』",
+        nextBridge:""
+    },
+
+    // ─── EXHIBITION PLANNING ───
+    P01: {
+        id:"P01", category:"전시기획 실무", era:"전시 콘셉트 개발 & 기획서 작성", period:"기획 단계",
+        question:"좋은 전시는 좋은 '질문'에서 시작된다. 당신의 질문은 무엇인가?",
+        concepts:["전시 주제문(Statement) 작성법","작가 선정 프로세스","전시기획서 표준 구조","큐레토리얼 리서치 방법론"],
+        artworks:[
+            {name:"전시기획서 표준 구조",date:"",loc:"",desc:"① 전시명(국·영문) ② 전시 개요(200자 이내) ③ 주제문(Statement, 400자 이내) ④ 참여 작가·작품 목록 ⑤ 공간 배치도(Floor Plan) ⑥ 일정표 ⑦ 예산안 ⑧ 홍보 계획 ⑨ 기대 효과",analysis:"전시기획서는 '설득의 문서'입니다. 기관 심사위원이 3분 안에 '이 전시가 왜 지금 필요한가'를 파악할 수 있어야 합니다. A4 10장 이내로 작성하세요."},
+            {name:"큐레토리얼 리서치 방법",date:"",loc:"",desc:"① 현장답사(작가 스튜디오 방문) ② 문헌 연구(도록, 비평, 논문) ③ 유사 전시 사례 분석 ④ 작가 인터뷰 ⑤ 공간 사전 조사",analysis:"기획서를 쓰기 전에 최소 3개월의 리서치 기간이 필요합니다. 리서치 없는 기획서는 빈 껍데기입니다."}
+        ],
+        references:"예술경영지원센터(KAMS) 전시기획 가이드라인 / ARKO 시각예술창작산실 공모 안내서",
+        nextBridge:"기획서가 완성되면, 그것을 물리적 공간에 구현하는 단계로 넘어갑니다."
+    },
+    P02: {
+        id:"P02", category:"전시기획 실무", era:"공간설계 · 디스플레이 · 예산", period:"실행 단계",
+        question:"같은 작품도 어떻게 놓느냐에 따라 전혀 다른 이야기를 한다.",
+        concepts:["동선 설계(관람 흐름)","조명 기준(유화 150-200lux, 종이 50lux 이하)","명제표(캡션) 규격","예산 항목 표준 분류"],
+        artworks:[
+            {name:"공간 설계 핵심 원칙",date:"",loc:"",desc:"① 작품 간 최소 간격 60cm 이상 ② 눈높이 기준선 150cm ③ 조명 각도 30° ④ 벽면 색상은 중성색(백색·회색) 기본 ⑤ 동선은 시계 방향 또는 주제별 구역화",analysis:"조명은 전시의 50%를 결정합니다. 같은 그림도 조명이 바뀌면 완전히 다른 느낌을 줍니다."},
+            {name:"예산 편성 표준 항목",date:"",loc:"",desc:"① 인건비(큐레이터, 어시스턴트, 도슨트) ② 작품운송비 ③ 미술품 보험료 ④ 설치비(가벽, 좌대, 진열장) ⑤ 도록 제작비 ⑥ 홍보비 ⑦ 오프닝 행사비 ⑧ 작가 사례비(미술창작대가 기준 적용)",analysis:"공공 지원금 신청 시 예산서는 가장 중요한 서류입니다. ARKO, 서울문화재단 등의 지원금 신청 양식을 숙지하세요."}
+        ],
+        references:"ARKO 시각예술창작산실 예산편성 가이드 / 문체부 미술창작대가 기준",
+        nextBridge:""
+    },
+    P03: {
+        id:"P03", category:"전시기획 실무", era:"계약서 · 서류 작성 실무", period:"행정 단계",
+        question:"계약서는 분쟁 대비가 아니라 분쟁 예방을 위한 것이다.",
+        concepts:["문체부 표준계약서 12종","전시기획계약서 핵심 조항","작품대여 계약","미술품 보험","저작권과 전시권의 분리"],
+        artworks:[
+            {name:"전시기획계약서 필수 조항 7가지",date:"",loc:"",desc:"① 목적 ② 전시 개요(명칭·기간·장소·작가) ③ 기획료 및 대가 지급(분할 기준) ④ 비용 부담 주체 ⑤ 저작권 및 크레딧 표시 ⑥ 작품 안전·보험 ⑦ 해지 및 분쟁 해결",analysis:"박경린 큐레이터(이화여대/홍익대): '계약서를 쓴다는 것은 곧 그 일의 기준을 세우는 일이며, 궁극적으로 감정을 다루는 일이다.'"},
+            {name:"작품 대여 계약 시 체크리스트",date:"",loc:"",desc:"① 대여 기간 ② 작품 상태 기록(Condition Report) ③ 운송 방법(전문미술품운송사 필수) ④ 보험 가입 주체 ⑤ 촬영·복제 허용 범위 ⑥ 반환 조건",analysis:"작품 상태 기록은 대여 시와 반환 시 반드시 쌍방이 입회하여 작성해야 합니다. 사진 기록은 필수입니다."}
+        ],
+        references:"문체부 고시 제2022-06호 / 한국예술인복지재단 『알기 쉬운 미술 분야 표준계약서』 / 박경린 THE ARTRO (2015.10.2.)",
+        nextBridge:""
+    },
+    P04: {
+        id:"P04", category:"전시기획 실무", era:"도슨트 스크립트 작성법", period:"해설 단계",
+        question:"가장 좋은 해설은 관객이 다시 돌아가서 작품을 한 번 더 보고 싶게 만드는 것이다.",
+        concepts:["스크립트 5단 구조(오프닝·맥락·핵심해설·브릿지·클로징)","작품 해설 4단계 화법","공간 매핑·동선 설계","리허설·피드백·수정 사이클"],
+        artworks:[
+            {name:"스크립트 작성 전 3단계 준비",date:"",loc:"",desc:"① 작품 위치 파악(공간 매핑) — 전시장 평면도에 모든 작품의 위치를 직접 그려넣기\n② 작품 선정 — 해설 시간(40~50분)에 맞게 5~7점 선정, 오디오가이드와 중복 피하기\n③ 동선 설계 — 관객 많을 때/적을 때 분리 계획, 가벽·통로 폭 고려",analysis:"국립현대미술관 도슨트 오조디: '작품 위치를 파악하는 것은 무식하게 그냥 다 써버리는 것이 최선이다. 작품 선정 시에는 오디오가이드로는 부족한, 나의 해설이 더 필요한 작품을 고른다.'"},
+            {name:"작품 해설 4단계 화법",date:"",loc:"",desc:"【관찰 유도】 '이 작품에서 가장 먼저 눈에 들어오는 것은 무엇인가요?'\n【정보 제공】 작가, 시대, 기법에 대한 핵심 정보 (2~3문장)\n【해석 제시】 미술사적 의미, 작가의 의도, 사회적 맥락\n【질문 던지기】 관객 스스로 생각하게 만드는 열린 질문",analysis:"정보 제공 시 '위키피디아식 나열'을 피하세요. 생몰년·수상경력보다 '이 작품이 왜 중요한가'에 집중하세요. 가장 좋은 해설은 관객이 작품을 '자기 것'으로 느끼게 만드는 것입니다."}
+        ],
+        references:"김인아 『미술관 도슨트가 알려주는 전시 스크립트 쓰기』(2024) / Canton Museum of Art 『Docent Handbook』",
+        nextBridge:""
+    }
+};
+
+// ============================
+// SCRIPT GENERATION ENGINE
+// ============================
+function generateScript() {
+    const btn = document.getElementById('btnGenerate');
+    btn.classList.add('loading');
+    btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span> 스크립트를 생성하고 있습니다...';
+
+    setTimeout(() => {
+        const activeItem = document.querySelector('.sb-item.active');
+        const moduleId = activeItem.dataset.module;
+        const mod = MODULES[moduleId];
+        
+        const type = document.getElementById('scriptType').value;
+        const duration = parseInt(document.getElementById('duration').value);
+        const level = document.getElementById('level').value;
+        const tone = document.getElementById('tone').value;
+        const focus = document.getElementById('focusArtwork').value;
+        const notes = document.getElementById('additionalNotes').value;
+
+        const elements = [];
+        document.querySelectorAll('#elementsChips .chip.selected').forEach(c => elements.push(c.dataset.val));
+
+        const script = buildScript(mod, type, duration, level, tone, elements, focus, notes);
+
+        const outputArea = document.getElementById('outputArea');
+        const scriptBody = document.getElementById('scriptBody');
+        const outputTitle = document.getElementById('outputTitle');
+        const outputMeta = document.getElementById('outputMeta');
+        const estTime = document.getElementById('estTime');
+        const wordCount = document.getElementById('wordCountDisplay');
+
+        const typeNames = {lecture:'강의 스크립트',docent:'도슨트 해설 스크립트',planning:'전시기획 실무 강의'};
+        const levelNames = {beginner:'입문',intermediate:'중급',advanced:'심화'};
+
+        outputTitle.textContent = `${mod.era} — ${typeNames[type]}`;
+        outputMeta.textContent = `${mod.category} · ${mod.period} · ${levelNames[level]} · ${duration}분`;
+        estTime.textContent = duration + '분';
+        
+        const charCount = script.replace(/<[^>]*>/g, '').length;
+        wordCount.textContent = `약 ${charCount.toLocaleString()}자`;
+
+        scriptBody.innerHTML = script;
+        outputArea.classList.add('visible');
+        outputArea.scrollIntoView({behavior:'smooth', block:'start'});
+
+        btn.classList.remove('loading');
+        btn.innerHTML = '✦ 강의 스크립트 생성하기';
+    }, 1200);
+}
+
+function buildScript(mod, type, duration, level, tone, elements, focus, notes) {
+    let s = '';
+    const isDocent = type === 'docent';
+    const isLecture = type === 'lecture';
+    const isPlanning = type === 'planning';
+    const artCount = Math.min(mod.artworks.length, duration <= 30 ? 2 : duration <= 45 ? 3 : duration <= 60 ? 4 : mod.artworks.length);
+
+    // ── OPENING ──
+    if (elements.includes('opening')) {
+        s += `<span class="section-mark">【 OPENING · 오프닝 】 예상 ${isDocent ? '2~3분' : '3~5분'}</span>`;
+        
+        if (isDocent) {
+            s += `<span class="stage-direction">[관객이 모이면 밝은 표정으로 인사한다. 작품이 아닌 관객을 바라본다.]</span>\n`;
+            s += `안녕하세요, 반갑습니다. 오늘 전시 해설을 맡은 ________입니다.\n\n`;
+            s += `오늘 함께 보실 전시는 <span class="key-term">${mod.era}</span>을 다루고 있습니다.\n`;
+            s += `이 시대를 관통하는 하나의 질문이 있는데요 —\n\n`;
+            s += `<span class="question">"${mod.question}"</span>\n\n`;
+            s += `오늘 해설은 약 ${duration}분간 진행되며, ${artCount}점의 작품을 함께 보겠습니다. 중간에 궁금한 점이 있으시면 편하게 질문해 주세요.\n`;
+        } else if (isLecture) {
+            s += `여러분, 안녕하세요. 오늘 강의는 <span class="key-term">${mod.era}</span> (${mod.period})입니다.\n\n`;
+            s += `오늘의 핵심 질문을 먼저 던져볼게요.\n`;
+            s += `<span class="question">"${mod.question}"</span>\n\n`;
+            s += `이 질문을 머릿속에 담고, ${artCount}개의 핵심 작품을 통해 답을 찾아가 보겠습니다.\n`;
+            if (level === 'beginner') {
+                s += `\n오늘은 특별히 어려운 용어는 최대한 풀어서 설명드릴 테니, 편안하게 들어주세요.\n`;
+            }
+        } else {
+            s += `오늘 실무 강의 주제는 <span class="key-term">${mod.era}</span>입니다.\n\n`;
+            s += `핵심 질문: <span class="question">"${mod.question}"</span>\n\n`;
+            s += `실제 현장에서 바로 적용할 수 있는 내용 위주로 ${duration}분간 진행하겠습니다.\n`;
+        }
+    }
+
+    // ── CONTEXT ──
+    if (elements.includes('context')) {
+        s += `<span class="section-mark">【 CONTEXT · 시대적 맥락 】 예상 ${isDocent ? '3~5분' : '5~8분'}</span>`;
+        
+        if (mod.concepts && mod.concepts.length > 0) {
+            s += `이 시대를 이해하기 위해 알아야 할 핵심 개념이 있습니다.\n\n`;
+            mod.concepts.forEach((c, i) => {
+                s += `<span class="key-term">${i+1}. ${c}</span>\n`;
+            });
+            s += `\n`;
+        }
+
+        if (tone === 'storytelling') {
+            s += `자, 잠깐 상상해 볼까요? 지금으로부터 ${mod.period.includes('BC') ? mod.period.replace(/[^0-9,]/g, '').split(',')[0] : '수백'}년 전으로 시간을 되돌려 봅시다.\n\n`;
+        }
+        
+        if (mod.id === 'W01') {
+            s += `약 3만 년 전, 인류의 조상은 동굴 깊은 곳에 동물의 기름으로 만든 램프를 들고 들어갔습니다. 그리고 바위벽에 들소와 말을 그렸습니다. 왜일까요?\n\n`;
+            s += `이 시기의 미술은 '감상'을 위한 것이 아니었습니다. 사냥감을 벽에 그리면 실제로 잡을 수 있다는 <span class="key-term">주술적 기능설(Sympathetic Magic Theory)</span>이 가장 유력한 해석입니다.\n\n`;
+            s += `그 후 이집트에서는 미술이 '영원한 생명'을 위한 도구가 됩니다. 파라오의 무덤 벽화는 사후 세계에서 필요한 모든 것을 '기록'합니다. 그래서 이집트 미술은 '아름답게' 그리는 것보다 '정확하게' 그리는 것이 중요했고, 이것이 바로 <span class="key-term">정면성 법칙(Frontality)</span>입니다 — 얼굴은 옆에서, 눈은 정면에서, 가슴은 정면에서, 다리는 옆에서 그리는 독특한 방식이죠.\n`;
+        } else if (mod.id === 'W04') {
+            s += `14세기 이탈리아, 특히 피렌체에서 놀라운 일이 벌어집니다. 중세 1000년 동안 '신'만을 바라보던 인류의 눈이 드디어 '인간 자신'을 향하게 된 것입니다.\n\n`;
+            s += `이것을 가능하게 한 것은 세 가지 혁명입니다.\n`;
+            s += `<span class="key-term">첫째, 선원근법(Linear Perspective)의 발명.</span> 브루넬레스키가 소실점을 발견하고, 알베르티가 『회화론』(1435)에서 이를 체계화합니다.\n`;
+            s += `<span class="key-term">둘째, 해부학의 도입.</span> 레오나르도는 30구 이상의 시체를 직접 해부하며 인체 구조를 연구합니다.\n`;
+            s += `<span class="key-term">셋째, 예술가의 사회적 지위 변화.</span> 중세의 '장인(匠人)'에서 르네상스의 '천재(Genius)'로. 바자리의 『미술가 열전』(1550)이 이 전환의 상징입니다.\n`;
+        } else {
+            s += `${mod.era}는 ${mod.period} 시기에 해당합니다. `;
+            s += `이 시대의 핵심은 "${mod.question}"이라는 질문에 대한 당대인들의 답을 찾는 과정입니다.\n`;
+        }
+    }
+
+    // ── ARTWORKS ──
+    if (elements.includes('artworks')) {
+        const selectedArtworks = mod.artworks.slice(0, artCount);
+        
+        selectedArtworks.forEach((art, idx) => {
+            s += `<span class="section-mark">【 작품 ${idx+1}/${artCount} · ${art.name} 】 예상 ${Math.round((duration - 10) / artCount)}분</span>`;
+            
+            if (isDocent) {
+                s += `<span class="stage-direction">[작품 앞으로 이동. 관객이 작품을 충분히 볼 수 있는 위치에 선다.]</span>\n`;
+            }
+
+            // 관찰 유도
+            if (elements.includes('questions')) {
+                const observeQs = [
+                    `이 작품에서 가장 먼저 눈에 들어오는 것은 무엇인가요?`,
+                    `잠깐 이 작품을 바라봐 주세요. 어떤 느낌이 드시나요?`,
+                    `이 작품의 첫인상이 어떠신가요?`,
+                    `먼저 가까이에서, 그리고 한 발짝 물러서서 봐주세요. 무엇이 달라지나요?`
+                ];
+                s += `<span class="question">【관찰 유도】 "${observeQs[idx % observeQs.length]}"</span>\n\n`;
+            }
+
+            // 정보 제공
+            if (art.date) s += `<span class="key-term">${art.name}</span>`;
+            if (art.date) s += ` (${art.date})`;
+            if (art.loc) s += ` — ${art.loc}`;
+            s += `\n\n`;
+            s += `${art.desc}\n\n`;
+
+            // 분석/해석
+            if (art.analysis) {
+                s += `${art.analysis}\n`;
+            }
+
+            // 개인적 감상
+            if (elements.includes('personal') && idx === 0) {
+                s += `\n<span class="personal">개인적으로 저는 이 작품 앞에 서면 매번 새로운 것을 발견합니다. 오늘 여러분은 어떤 것을 발견하셨나요?</span>\n`;
+            }
+
+            // 질문 던지기
+            if (elements.includes('questions') && idx < artCount - 1) {
+                const deepQs = [
+                    `만약 여러분이 이 시대에 살았다면, 이것을 '미술'이라고 불렀을까요?`,
+                    `이 작품은 왜 수백 년이 지난 지금도 우리에게 감동을 줄까요?`,
+                    `작가는 이 작품을 통해 무엇을 말하고 싶었을까요?`,
+                    `이 작품이 지금 이 시대에 새로 만들어졌다면 어떤 반응을 받았을까요?`
+                ];
+                s += `\n<span class="question">【질문】 "${deepQs[idx % deepQs.length]}"</span>\n`;
+            }
+
+            // 브릿지
+            if (elements.includes('bridge') && idx < artCount - 1) {
+                const nextArt = selectedArtworks[idx + 1];
+                s += `\n<span class="bridge">【브릿지 → 다음 작품】 방금 보신 〈${art.name}〉이 ${art.desc.split('.')[0].slice(-10)}을 보여주었다면, 지금부터 보실 〈${nextArt.name}〉은 또 다른 관점을 제시합니다. 이쪽으로 이동하시죠.</span>\n`;
+            }
+        });
+    }
+
+    // ── CONCEPTS ──
+    if (elements.includes('concepts') && isLecture) {
+        s += `<span class="section-mark">【 KEY CONCEPTS · 핵심 개념 정리 】</span>`;
+        s += `오늘 강의에서 반드시 기억해야 할 핵심 개념을 정리합니다.\n\n`;
+        mod.concepts.forEach((c, i) => {
+            s += `<span class="key-term">${i+1}. ${c}</span>\n`;
+        });
+        s += `\n이 개념들은 다음 시간에도 계속 등장하니, 꼭 정리해 두세요.\n`;
+    }
+
+    // ── CLOSING ──
+    if (elements.includes('closing')) {
+        s += `<span class="section-mark">【 CLOSING · 마무리 】 예상 2~3분</span>`;
+        
+        if (isDocent) {
+            s += `<span class="stage-direction">[마지막 작품 앞 또는 전시 출구 근처에서 관객을 바라보며]</span>\n`;
+            s += `오늘 함께 보신 ${mod.era}의 작품들을 관통하는 질문은 이것이었습니다 —\n\n`;
+            s += `<span class="question">"${mod.question}"</span>\n\n`;
+            s += `이 질문에 대한 정답은 없습니다. 다만, 오늘 보신 작품들이 여러분에게 자기만의 답을 찾는 실마리가 되었으면 좋겠습니다.\n\n`;
+            if (mod.nextBridge) {
+                s += `${mod.nextBridge}\n\n`;
+            }
+            s += `혹시 질문 있으신 분 계신가요?\n\n`;
+            s += `<span class="stage-direction">[Q&A 시간. 모르는 질문은 "좋은 질문입니다. 제가 확인 후 안내드리겠습니다"로 대응.]</span>\n\n`;
+            s += `오늘 해설 들어주셔서 감사합니다. 혹시 아까 지나온 작품 중 다시 보고 싶은 것이 있으시다면, 돌아가서 천천히 감상해 보시기를 권합니다. 감사합니다.\n`;
+        } else if (isLecture) {
+            s += `오늘 강의의 핵심을 세 줄로 요약합니다.\n\n`;
+            s += `<span class="key-term">1.</span> ${mod.era}는 "${mod.question}"이라는 질문에 대한 당대인들의 답입니다.\n`;
+            s += `<span class="key-term">2.</span> 핵심 개념: ${mod.concepts.slice(0, 3).join(', ')}.\n`;
+            s += `<span class="key-term">3.</span> 다음 시간 예고: ${mod.nextBridge || '다음 시대로 이어집니다.'}\n\n`;
+            s += `과제: 오늘 다룬 작품 중 하나를 골라, 300자 이내의 '나만의 해설 스크립트'를 작성해 오세요.\n`;
+        } else {
+            s += `오늘 다룬 내용을 실무에 적용할 때의 핵심 포인트를 정리합니다.\n\n`;
+            s += `<span class="question">"${mod.question}"</span>\n\n`;
+            s += `이 질문을 항상 기억하면서 실무에 임해 주세요. 수고하셨습니다.\n`;
+        }
+    }
+
+    // ── REFERENCES ──
+    if (elements.includes('references') && mod.references) {
+        s += `\n<span class="ref-note">【참고문헌】 ${mod.references}</span>`;
+    }
+
+    // ── ADDITIONAL NOTES ──
+    if (focus || notes) {
+        s += `\n<span class="ref-note">【추가 지시사항 반영】`;
+        if (focus) s += ` 강조 포인트: ${focus}.`;
+        if (notes) s += ` 참고: ${notes}.`;
+        s += `\n※ 이 부분은 생성된 기본 스크립트에 직접 반영하여 수정해 주세요.</span>`;
+    }
+
+    return s;
+}
+
+// ============================
+// UI INTERACTIONS
+// ============================
+
+// Sidebar navigation
+document.querySelectorAll('.sb-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById('selectedModule').textContent = `${item.dataset.era} · ${item.dataset.period}`;
+        document.getElementById('outputArea').classList.remove('visible');
+    });
+});
+
+// Chips toggle
+document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('selected'));
+});
+
+// Presets
+document.querySelectorAll('.preset-card').forEach(card => {
+    card.addEventListener('click', () => {
+        document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        const preset = card.dataset.preset;
+        
+        const presetConfig = {
+            'standard-lecture':  {type:'lecture',dur:'45',level:'intermediate',tone:'storytelling'},
+            'museum-docent':     {type:'docent',dur:'45',level:'beginner',tone:'conversational'},
+            'deep-dive':         {type:'docent',dur:'30',level:'advanced',tone:'emotional'},
+            'exhibition-plan':   {type:'planning',dur:'60',level:'intermediate',tone:'academic'},
+            'script-writing':    {type:'lecture',dur:'90',level:'intermediate',tone:'storytelling'},
+            'contract-class':    {type:'planning',dur:'60',level:'advanced',tone:'academic'},
+        };
+        
+        const cfg = presetConfig[preset];
+        if (cfg) {
+            document.getElementById('scriptType').value = cfg.type;
+            document.getElementById('duration').value = cfg.dur;
+            document.getElementById('level').value = cfg.level;
+            document.getElementById('tone').value = cfg.tone;
+        }
+    });
+});
+
+// Copy
+function copyScript() {
+    const text = document.getElementById('scriptBody').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('스크립트가 클립보드에 복사되었습니다.');
+    });
+}
+
+// Download TXT
+function downloadScript() {
+    const text = document.getElementById('scriptBody').innerText;
+    const title = document.getElementById('outputTitle').textContent;
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${title}.txt`;
+    a.click();
+}
+
+// Download Markdown
+function downloadMarkdown() {
+    let html = document.getElementById('scriptBody').innerHTML;
+    let md = html
+        .replace(/<span class="section-mark">(.*?)<\/span>/g, '\n\n## $1\n')
+        .replace(/<span class="stage-direction">(.*?)<\/span>/g, '\n*$1*\n')
+        .replace(/<span class="key-term">(.*?)<\/span>/g, '**$1**')
+        .replace(/<span class="question">(.*?)<\/span>/g, '\n> $1\n')
+        .replace(/<span class="personal">(.*?)<\/span>/g, '\n_$1_\n')
+        .replace(/<span class="bridge">(.*?)<\/span>/g, '\n---\n$1\n---\n')
+        .replace(/<span class="ref-note">(.*?)<\/span>/g, '\n\n---\n$1\n')
+        .replace(/<br>/g, '\n')
+        .replace(/<[^>]*>/g, '');
+    
+    const title = document.getElementById('outputTitle').textContent;
+    const blob = new Blob([`# ${title}\n\n${md}`], {type:'text/markdown;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${title}.md`;
+    a.click();
+}
+</script>
+</body>
+</html>

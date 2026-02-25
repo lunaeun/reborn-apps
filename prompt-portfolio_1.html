@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Atelier — AI Prompt Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #faf7f5;
+  --bg-secondary: #f3ece8;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fdf9f7;
+  --text-primary: #2d2438;
+  --text-secondary: #6b5c7a;
+  --text-muted: #9b8ea8;
+  --accent-rose: #c4728f;
+  --accent-rose-light: #e8a4b8;
+  --accent-rose-pale: #f5dde5;
+  --accent-plum: #7b5ea7;
+  --accent-plum-light: #a88ec4;
+  --accent-plum-pale: #e8ddf2;
+  --accent-mauve: #9e7bb5;
+  --accent-ivory: #f9f3ee;
+  --accent-gold: #c9a96e;
+  --border-light: #e8dfe4;
+  --border-medium: #d4c6d0;
+  --shadow-soft: 0 2px 12px rgba(123, 94, 167, 0.08);
+  --shadow-medium: 0 4px 24px rgba(123, 94, 167, 0.12);
+  --shadow-strong: 0 8px 40px rgba(123, 94, 167, 0.16);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+
+  /* AI Colors */
+  --claude-color: #c4728f;
+  --gpt-color: #6ba89a;
+  --gemini-color: #7b8ec4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════
+   BACKGROUND TEXTURE
+   ═══════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(196, 114, 143, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(123, 94, 167, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 110, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════
+   HEADER / NAV
+   ═══════════════════════════════════════ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 247, 245, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 40px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-rose), var(--accent-plum));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  align-self: center;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.logo-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent-rose);
+  color: var(--accent-rose);
+  background: var(--accent-rose-pale);
+}
+
+.nav-btn.primary {
+  background: linear-gradient(135deg, var(--accent-rose), var(--accent-plum));
+  color: white;
+  border: none;
+}
+
+.nav-btn.primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.search-box {
+  position: relative;
+  width: 240px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 16px 10px 36px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+}
+
+.search-box input:focus {
+  border-color: var(--accent-mauve);
+  box-shadow: 0 0 0 3px rgba(158, 123, 181, 0.1);
+}
+
+.search-box input::placeholder { color: var(--text-muted); }
+
+.search-box .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ═══════════════════════════════════════
+   FILTER BAR
+   ═══════════════════════════════════════ */
+.filter-bar {
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: rgba(250, 247, 245, 0.5);
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.filter-chip {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: var(--accent-mauve);
+  color: var(--accent-plum);
+}
+
+.filter-chip.active {
+  background: var(--accent-plum);
+  color: white;
+  border-color: var(--accent-plum);
+}
+
+.filter-chip.claude.active { background: var(--claude-color); border-color: var(--claude-color); }
+.filter-chip.gpt.active { background: var(--gpt-color); border-color: var(--gpt-color); }
+.filter-chip.gemini.active { background: var(--gemini-color); border-color: var(--gemini-color); }
+
+.filter-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-light);
+  margin: 0 4px;
+}
+
+.item-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════
+   MAIN GRID — 6×5
+   ═══════════════════════════════════════ */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding: 28px 40px 60px;
+}
+
+.prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+}
+
+/* ═══════════════════════════════════════
+   PROMPT CARD
+   ═══════════════════════════════════════ */
+.prompt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.prompt-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-rose), var(--accent-plum));
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.prompt-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-strong);
+  border-color: var(--accent-rose-light);
+}
+
+.prompt-card:hover::before { opacity: 1; }
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ai-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ai-badge.claude { background: rgba(196, 114, 143, 0.12); color: var(--claude-color); }
+.ai-badge.gpt { background: rgba(107, 168, 154, 0.12); color: var(--gpt-color); }
+.ai-badge.gemini { background: rgba(123, 142, 196, 0.12); color: var(--gemini-color); }
+.ai-badge.webapp { background: rgba(201, 169, 110, 0.12); color: var(--accent-gold); }
+
+.card-menu-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.card-menu-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
+}
+
+.card-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.card-tag {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.card-date {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ADD NEW CARD */
+.prompt-card.add-new {
+  border: 2px dashed var(--border-medium);
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 180px;
+}
+
+.prompt-card.add-new:hover {
+  border-color: var(--accent-rose);
+  background: rgba(196, 114, 143, 0.04);
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+.prompt-card.add-new::before { display: none; }
+
+.add-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-rose-pale);
+  color: var(--accent-rose);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: var(--transition);
+}
+
+.prompt-card.add-new:hover .add-icon {
+  background: var(--accent-rose);
+  color: white;
+}
+
+.add-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════
+   MODAL — ADD/EDIT
+   ═══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 36, 56, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-strong);
+  position: relative;
+}
+
+.modal-header {
+  padding: 28px 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-rose);
+}
+
+.modal-body {
+  padding: 24px 32px 32px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--accent-mauve);
+  box-shadow: 0 0 0 3px rgba(158, 123, 181, 0.1);
+}
+
+.form-textarea {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 200px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  min-height: 44px;
+  align-items: center;
+  cursor: text;
+}
+
+.form-tags-input:focus-within {
+  border-color: var(--accent-mauve);
+  box-shadow: 0 0 0 3px rgba(158, 123, 181, 0.1);
+}
+
+.form-tags-input input {
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 80px;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--accent-plum-pale);
+  color: var(--accent-plum);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tag-item .remove-tag {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.tag-item .remove-tag:hover { opacity: 1; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.btn {
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover { background: var(--border-light); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-rose), var(--accent-plum));
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-danger {
+  background: #f5e0e0;
+  color: #b44;
+}
+
+.btn-danger:hover { background: #ecc; }
+
+/* ═══════════════════════════════════════
+   FILE UPLOAD AREA
+   ═══════════════════════════════════════ */
+.upload-zone {
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--bg-primary);
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--accent-rose);
+  background: rgba(196, 114, 143, 0.04);
+}
+
+.upload-zone-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.upload-zone-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.upload-zone-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════
+   SUB PAGE — DETAIL VIEW
+   ═══════════════════════════════════════ */
+.sub-page {
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+
+.sub-page.active { display: block; }
+.main-page.hidden { display: none; }
+
+.detail-header {
+  padding: 32px 40px 24px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  margin-bottom: 20px;
+}
+
+.back-btn:hover { color: var(--accent-rose); }
+
+.detail-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  padding: 32px 40px;
+}
+
+.prompt-content-area {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.prompt-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.prompt-content-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.copy-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.copy-btn:hover {
+  border-color: var(--accent-rose);
+  color: var(--accent-rose);
+}
+
+.prompt-content-body {
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* SIDEBAR */
+.detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.sidebar-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+}
+
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--text-muted); }
+.info-value { color: var(--text-primary); font-weight: 500; }
+
+/* AI CONVERT */
+.convert-section {
+  margin-top: 4px;
+}
+
+.convert-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.convert-btn {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-primary);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.convert-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.convert-btn.claude:hover { border-color: var(--claude-color); color: var(--claude-color); }
+.convert-btn.gpt:hover { border-color: var(--gpt-color); color: var(--gpt-color); }
+.convert-btn.gemini:hover { border-color: var(--gemini-color); color: var(--gemini-color); }
+
+.convert-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.convert-dot.claude { background: var(--claude-color); }
+.convert-dot.gpt { background: var(--gpt-color); }
+.convert-dot.gemini { background: var(--gemini-color); }
+
+/* CONVERT RESULT */
+.convert-result {
+  display: none;
+  margin-top: 12px;
+}
+
+.convert-result.active { display: block; }
+
+.convert-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.convert-result-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-plum);
+}
+
+.convert-result-body {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ═══════════════════════════════════════
+   UPLOAD MODAL
+   ═══════════════════════════════════════ */
+#uploadModal .modal { max-width: 520px; }
+
+/* ═══════════════════════════════════════
+   PREVIEW MODAL
+   ═══════════════════════════════════════ */
+#previewModal .modal {
+  max-width: 900px;
+  width: 95vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+#previewModal .modal-body {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.preview-url {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+.preview-open-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--accent-plum);
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.preview-open-btn:hover { opacity: 0.85; }
+
+/* ═══════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  padding: 14px 20px;
+  background: var(--text-primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-strong);
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-12px); } }
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════ */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1400px) {
+  .prompt-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+@media (max-width: 1100px) {
+  .prompt-grid { grid-template-columns: repeat(4, 1fr); }
+  .detail-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 800px) {
+  .prompt-grid { grid-template-columns: repeat(3, 1fr); }
+  .site-header { padding: 0 20px; }
+  .main-content { padding: 20px; }
+  .filter-bar { padding: 12px 20px; }
+  .search-box { width: 180px; }
+}
+
+@media (max-width: 600px) {
+  .prompt-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════
+   LOADING SPINNER
+   ═══════════════════════════════════════ */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--accent-rose);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════
+   CONTEXT MENU
+   ═══════════════════════════════════════ */
+.context-menu {
+  position: fixed;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-strong);
+  padding: 6px 0;
+  min-width: 160px;
+  z-index: 600;
+  display: none;
+}
+
+.context-menu.active { display: block; }
+
+.context-menu-item {
+  padding: 9px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.context-menu-item:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-plum);
+}
+
+.context-menu-item.danger { color: #b44; }
+.context-menu-item.danger:hover { background: #fef0f0; }
+
+.context-menu-divider {
+  height: 1px;
+  background: var(--border-light);
+  margin: 4px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════ -->
+<header class="site-header">
+  <div class="logo" onclick="showMainPage()">
+    <div class="logo-icon">✦</div>
+    <span class="logo-text">Prompt Atelier</span>
+    <span class="logo-sub">Portfolio</span>
+  </div>
+  <div class="nav-actions">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="프롬프트 검색..." oninput="filterPrompts()">
+    </div>
+    <button class="nav-btn" onclick="openUploadModal()">📤 가져오기</button>
+    <button class="nav-btn" onclick="exportAll()">📥 전체 내보내기</button>
+    <button class="nav-btn primary" onclick="openAddModal()">＋ 새 프롬프트</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     MAIN PAGE
+     ═══════════════════════════════════════ -->
+<div class="main-page" id="mainPage">
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">전체</button>
+    <div class="filter-divider"></div>
+    <button class="filter-chip claude" data-filter="claude" onclick="setFilter('claude', this)">Claude</button>
+    <button class="filter-chip gpt" data-filter="gpt" onclick="setFilter('gpt', this)">GPT</button>
+    <button class="filter-chip gemini" data-filter="gemini" onclick="setFilter('gemini', this)">Gemini</button>
+    <div class="filter-divider"></div>
+    <button class="filter-chip" data-filter="webapp" onclick="setFilter('webapp', this)">웹앱</button>
+    <button class="filter-chip" data-filter="system" onclick="setFilter('system', this)">시스템</button>
+    <button class="filter-chip" data-filter="coding" onclick="setFilter('coding', this)">코딩</button>
+    <button class="filter-chip" data-filter="writing" onclick="setFilter('writing', this)">글쓰기</button>
+    <button class="filter-chip" data-filter="analysis" onclick="setFilter('analysis', this)">분석</button>
+    <span class="item-count" id="itemCount"></span>
+  </div>
+
+  <!-- GRID -->
+  <div class="main-content">
+    <div class="prompt-grid" id="promptGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SUB PAGE — DETAIL VIEW
+     ═══════════════════════════════════════ -->
+<div class="sub-page" id="subPage">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showMainPage()">← 목록으로 돌아가기</button>
+    <div class="detail-title-row">
+      <div>
+        <div class="detail-title" id="detailTitle"></div>
+        <div class="detail-meta" id="detailMeta"></div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn-secondary" onclick="downloadCurrent()">📥 다운로드</button>
+        <button class="btn btn-secondary" onclick="editCurrent()">✏️ 편집</button>
+        <button class="btn btn-danger" onclick="deleteCurrent()">🗑️ 삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-body">
+    <div class="prompt-content-area">
+      <div class="prompt-content-header">
+        <span class="prompt-content-label">프롬프트 내용</span>
+        <button class="copy-btn" onclick="copyContent()">📋 복사</button>
+      </div>
+      <div class="prompt-content-body" id="detailContent"></div>
+    </div>
+
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">정보</div>
+        <div id="detailInfo"></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">AI 변환</div>
+        <div class="convert-section">
+          <div class="convert-btn-group" id="convertBtns"></div>
+          <div class="convert-result" id="convertResult">
+            <div class="convert-result-header">
+              <span class="convert-result-label" id="convertResultLabel"></span>
+              <button class="copy-btn" onclick="copyConverted()">📋 복사</button>
+            </div>
+            <div class="convert-result-body" id="convertResultBody"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">태그</div>
+        <div class="card-tags" id="detailTags" style="gap:6px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ADD/EDIT MODAL
+     ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">새 프롬프트</span>
+      <button class="modal-close" onclick="closeModals()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">제목</label>
+        <input class="form-input" id="formTitle" placeholder="프롬프트 이름">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">AI 모델</label>
+          <select class="form-select" id="formAI">
+            <option value="claude">Claude</option>
+            <option value="gpt">GPT</option>
+            <option value="gemini">Gemini</option>
+            <option value="webapp">웹앱</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">카테고리</label>
+          <select class="form-select" id="formCategory">
+            <option value="system">시스템</option>
+            <option value="coding">코딩</option>
+            <option value="writing">글쓰기</option>
+            <option value="analysis">분석</option>
+            <option value="webapp">웹앱</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <input class="form-input" id="formDesc" placeholder="간단한 설명">
+      </div>
+      <div class="form-group">
+        <label class="form-label">프롬프트 내용</label>
+        <textarea class="form-textarea" id="formContent" placeholder="프롬프트를 입력하세요..."></textarea>
+      </div>
+      <div class="form-group" id="previewUrlGroup" style="display:none;">
+        <label class="form-label">🔗 미리보기 URL (GitHub Pages 주소)</label>
+        <input class="form-input" id="formPreviewUrl" placeholder="https://username.github.io/reborn-apps/파일명.html">
+      </div>
+      <div class="form-group">
+        <label class="form-label">태그 (Enter로 추가)</label>
+        <div class="form-tags-input" id="tagsInput" onclick="document.getElementById('tagField').focus()">
+          <input type="text" id="tagField" placeholder="태그 입력..." onkeydown="handleTag(event)">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModals()">취소</button>
+        <button class="btn btn-primary" id="saveBtn" onclick="savePrompt()">💾 저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PREVIEW MODAL
+     ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal" style="max-width:900px;width:95vw;height:85vh;display:flex;flex-direction:column;padding:0;overflow:hidden;">
+    <div class="modal-header" style="padding:16px 20px;">
+      <span class="modal-title" id="previewModalTitle">웹앱 미리보기</span>
+      <button class="modal-close" onclick="closePreview()">✕</button>
+    </div>
+    <iframe id="previewIframe" src="" style="flex:1;border:none;" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--bg-secondary);border-top:1px solid var(--border-light);font-size:12px;">
+      <span id="previewUrlDisplay" style="font-family:monospace;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;"></span>
+      <a id="previewOpenLink" href="#" target="_blank" style="font-size:12px;padding:6px 14px;border-radius:8px;background:var(--accent-plum);color:white;border:none;cursor:pointer;text-decoration:none;">🔗 새 탭으로 열기</a>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════
+     UPLOAD MODAL
+     ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">프롬프트 가져오기</span>
+      <button class="modal-close" onclick="closeModals()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+           ondragover="event.preventDefault(); this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleFileDrop(event)">
+        <div class="upload-zone-icon">📂</div>
+        <div class="upload-zone-text">파일을 드래그하거나 클릭하여 업로드</div>
+        <div class="upload-zone-hint">.json / .txt / .md 지원</div>
+      </div>
+      <input type="file" id="fileInput" accept=".json,.txt,.md" multiple style="display:none" onchange="handleFileSelect(event)">
+      <div id="uploadPreview" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item" onclick="contextAction('edit')">✏️ 편집</div>
+  <div class="context-menu-item" onclick="contextAction('download')">📥 다운로드</div>
+  <div class="context-menu-item" onclick="contextAction('duplicate')">📄 복제</div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item danger" onclick="contextAction('delete')">🗑️ 삭제</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA STORE
+   ═══════════════════════════════════════ */
+const STORAGE_KEY = 'prompt_atelier_data';
+let prompts = [];
+let currentFilter = 'all';
+let currentSearch = '';
+let currentDetailId = null;
+let editingId = null;
+let formTags = [];
+let contextTargetId = null;
+
+// Load from localStorage
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      prompts = JSON.parse(saved);
+    } else {
+      prompts = getSampleData();
+      saveData();
+    }
+  } catch (e) {
+    prompts = getSampleData();
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts));
+  } catch (e) {
+    console.warn('Storage save failed');
+  }
+}
+
+function getSampleData() {
+  return [
+    {
+      id: genId(), title: '코드 리뷰어', ai: 'claude', category: 'coding',
+      desc: 'Claude XML 태그 기반 정밀 코드 리뷰 프롬프트',
+      content: '<role>\n당신은 시니어 소프트웨어 엔지니어이자 코드 리뷰 전문가입니다.\n</role>\n\n<context>\n제가 작성한 코드를 리뷰해주세요. 다음 기준으로 평가해주세요:\n- 코드 품질 (가독성, 유지보수성)\n- 성능 이슈\n- 보안 취약점\n- 베스트 프랙티스 준수 여부\n</context>\n\n<output_format>\n각 이슈를 심각도(상/중/하)로 분류하고,\n개선된 코드 예시를 함께 제공해주세요.\n</output_format>',
+      tags: ['코드리뷰', 'XML', '개발'], created: '2025-02-18'
+    },
+    {
+      id: genId(), title: 'SEO 블로그 작성기', ai: 'gpt', category: 'writing',
+      desc: 'GPT용 SEO 최적화 블로그 포스트 생성 프롬프트',
+      content: '# Role\nYou are an expert SEO content writer specializing in technology blogs.\n\n# Task\nWrite a comprehensive blog post about the given topic.\n\n# Requirements\n- Include H2, H3 headings for structure\n- Target keyword density: 1-2%\n- Include meta description (under 160 chars)\n- Add internal linking suggestions\n- Write in conversational but authoritative tone\n- Length: 1500-2000 words\n\n# Output\nProvide the complete blog post in markdown format.',
+      tags: ['SEO', '블로그', '마케팅'], created: '2025-02-15'
+    },
+    {
+      id: genId(), title: '데이터 분석 리포트', ai: 'gemini', category: 'analysis',
+      desc: 'Gemini용 데이터 분석 및 시각화 요청 프롬프트',
+      content: '다음 데이터를 분석해주세요.\n\n목표: 주요 트렌드 파악 및 인사이트 도출\n\n분석 요구사항:\n1. 기술 통계 요약\n2. 이상치 탐지\n3. 상관관계 분석\n4. 시계열 트렌드 (해당 시)\n5. 핵심 인사이트 3가지\n\n출력 형식:\n- 각 분석 단계별 결과\n- 시각화 추천 (차트 유형 제안)\n- 경영진 브리핑용 요약 (3줄)',
+      tags: ['데이터', '분석', '리포트'], created: '2025-02-12'
+    },
+    {
+      id: genId(), title: 'Thread 작성 봇', ai: 'webapp', category: 'webapp',
+      desc: '개발자 SNS 스레드 작성 튜토리얼 웹앱',
+      content: '5단계 구조화 튜토리얼 · TIL/문제→해결/A vs B 템플릿 · 실시간 미리보기 · AI 분석 점수 · 체크리스트',
+      previewUrl: '',
+      tags: ['웹앱', 'SNS', '스레드'], created: '2025-02-20'
+    },
+    {
+      id: genId(), title: '프롬프트 엔지니어링 노트', ai: 'webapp', category: 'webapp',
+      desc: 'Claude/GPT/Gemini 프롬프트 전략 비교 레퍼런스 가이드',
+      content: '3대 AI 모델 프롬프트 전략 비교 · CRAFT 분석기 · 비교표 · 실습 랩',
+      previewUrl: '',
+      tags: ['프롬프트', '가이드', '웹앱'], created: '2025-02-22'
+    },
+    {
+      id: genId(), title: 'Prompt Atelier', ai: 'webapp', category: 'webapp',
+      desc: 'AI 프롬프트 포트폴리오 관리 시스템',
+      content: 'Claude/GPT/Gemini 프롬프트 저장 · 카테고리 필터 · AI 변환 · 내보내기/가져오기 · localStorage 영구 저장',
+      previewUrl: '',
+      tags: ['프롬프트', '포트폴리오', '웹앱'], created: '2025-02-22'
+    },
+    {
+      id: genId(), title: '도슨트 강의 스크립트 생성기', ai: 'webapp', category: 'webapp',
+      desc: '미술관 도슨트 강의 스크립트 자동 생성 웹앱',
+      content: '작품 정보 입력 → AI 스크립트 자동 생성 · 미술 교육 특화 · 다양한 작품 유형 지원',
+      previewUrl: '',
+      tags: ['도슨트', '미술', '교육', '웹앱'], created: '2025-02-23'
+    },
+    {
+      id: genId(), title: '도슨트 마스터 v2.0', ai: 'webapp', category: 'webapp',
+      desc: '도슨트 강의 스크립트 생성기 업그레이드 버전',
+      content: 'Anthropic API 연동 · localStorage 저장 · 개선된 UX · v1 대비 기능 확장',
+      previewUrl: '',
+      tags: ['도슨트', '미술', 'Anthropic', '웹앱'], created: '2025-02-24'
+    },
+    {
+      id: genId(), title: '도슨트 양성 프로그램', ai: 'webapp', category: 'webapp',
+      desc: '300만원 프리미엄 도슨트 마스터 클래스 랜딩페이지',
+      content: '프리미엄 도슨트 교육 프로그램 · 커리큘럼 소개 · 수강 신청 · 강사 프로필',
+      previewUrl: '',
+      tags: ['도슨트', '랜딩페이지', '교육', '웹앱'], created: '2025-02-24'
+    },
+    {
+      id: genId(), title: '인스타 카드뉴스 메이커', ai: 'webapp', category: 'webapp',
+      desc: 'Canvas API 기반 인스타그램 카드뉴스 자동 생성기',
+      content: 'Canvas 1080×1080 렌더링 · Gemini API 소제목 생성 · 5가지 디자인 · PNG/ZIP 다운로드 · 텍스트 자동 폰트 축소',
+      previewUrl: '',
+      tags: ['인스타', '카드뉴스', 'Canvas', 'Gemini', '웹앱'], created: '2025-02-25'
+    },
+    {
+      id: genId(), title: '2026 만다라트 KPI 대시보드', ai: 'webapp', category: 'webapp',
+      desc: '2026년 목표 관리를 위한 만다라트 KPI 대시보드',
+      content: 'Chart.js 시각화 · localStorage 저장 · KPI 추적 · 만다라트 9x9 구조',
+      previewUrl: '',
+      tags: ['만다라트', 'KPI', '목표관리', '웹앱'], created: '2025-02-25'
+    },
+    {
+      id: genId(), title: 'API 문서 생성기', ai: 'claude', category: 'coding',
+      desc: 'REST API 자동 문서화 프롬프트',
+      content: '<role>당신은 기술 문서 작성 전문가입니다.</role>\n\n<task>\n제공된 API 엔드포인트 코드를 분석하여 다음 포맷의 문서를 생성하세요:\n\n1. 엔드포인트 개요\n2. 요청 파라미터 (표 형식)\n3. 응답 스키마 (JSON 예시)\n4. 에러 코드 목록\n5. 사용 예시 (curl)\n</task>\n\n<constraints>\n- OpenAPI 3.0 스펙 준수\n- 한국어로 작성\n- 코드 블록에 언어 명시\n</constraints>',
+      tags: ['API', '문서화', '자동화'], created: '2025-02-10'
+    },
+    {
+      id: genId(), title: '이메일 톤 변환기', ai: 'gpt', category: 'writing',
+      desc: '비즈니스 이메일 톤 조절 프롬프트',
+      content: '# Email Tone Converter\n\nConvert the given email draft to the specified tone:\n\nAvailable tones:\n- Professional formal\n- Friendly professional\n- Casual\n- Apologetic\n- Urgent\n\nRules:\n1. Preserve all key information\n2. Adjust vocabulary and sentence structure\n3. Keep the same length (±20%)\n4. Add appropriate greeting/closing\n5. Flag any potentially sensitive content\n\nOutput: Converted email + brief explanation of changes made.',
+      tags: ['이메일', '비즈니스', '톤'], created: '2025-02-08'
+    },
+    {
+      id: genId(), title: '학습 계획 설계자', ai: 'claude', category: 'system',
+      desc: 'ADHD 친화적 학습 일정 설계 시스템 프롬프트',
+      content: '<role>\n당신은 ADHD 사용자를 위한 학습 설계 전문가입니다.\n이름은 "루나"이며, 따뜻하고 구조적인 스타일로 소통합니다.\n</role>\n\n<principles>\n- 블록 단위: 25분 학습 + 5분 휴식\n- 하루 최대 2블록\n- 압축 인사이트: 최대 3개\n- 어려운 개념은 일상 비유로 설명\n- 불확실한 정보는 명확히 표시\n</principles>\n\n<output>\n📅 일정표 + 🔔 알림 설정 + ⚠️ 특이사항\n</output>',
+      tags: ['학습', 'ADHD', '시스템'], created: '2025-02-05'
+    },
+    {
+      id: genId(), title: 'SQL 쿼리 최적화', ai: 'gemini', category: 'coding',
+      desc: 'SQL 성능 분석 및 최적화 프롬프트',
+      content: '주어진 SQL 쿼리를 분석하고 최적화해주세요.\n\n분석 항목:\n1. 실행 계획 예측\n2. 인덱스 활용 여부\n3. N+1 쿼리 문제\n4. 불필요한 풀 테이블 스캔\n5. JOIN 최적화 기회\n\n출력:\n- 원본 vs 최적화 쿼리\n- 예상 성능 개선률\n- 인덱스 추가 제안\n- 주의사항',
+      tags: ['SQL', '최적화', 'DB'], created: '2025-02-01'
+    },
+    {
+      id: genId(), title: '사용자 페르소나 빌더', ai: 'gpt', category: 'analysis',
+      desc: 'UX 리서치용 페르소나 생성 프롬프트',
+      content: '# Persona Builder\n\nBased on the provided user research data, create a detailed persona:\n\n## Output Structure\n1. Name & Demographics\n2. Background & Context\n3. Goals (primary + secondary)\n4. Pain Points (ranked by severity)\n5. Behavior Patterns\n6. Tech Savviness (1-5 scale)\n7. Quote (representative statement)\n8. Scenario (a day in their life)\n\n## Rules\n- Make the persona feel like a real person\n- Include specific, concrete details\n- Avoid stereotypes\n- Base all details on provided data only',
+      tags: ['UX', '페르소나', '리서치'], created: '2025-01-28'
+    }
+  ];
+}
+
+/* ═══════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════ */
+function genId() {
+  return 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function toast(msg) {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function formatDate(str) {
+  if (!str) return '-';
+  const d = new Date(str);
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+/* ═══════════════════════════════════════
+   RENDERING
+   ═══════════════════════════════════════ */
+function renderGrid() {
+  const grid = document.getElementById('promptGrid');
+  let filtered = prompts;
+
+  // filter by AI or category
+  if (currentFilter !== 'all') {
+    filtered = filtered.filter(p =>
+      p.ai === currentFilter || p.category === currentFilter
+    );
+  }
+
+  // search
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+      p.content.toLowerCase().includes(q)
+    );
+  }
+
+  // Update count
+  document.getElementById('itemCount').textContent = `${filtered.length}개 항목`;
+
+  let html = '';
+
+  // ADD NEW card
+  html += `
+    <div class="prompt-card add-new" onclick="openAddModal()">
+      <div class="add-icon">＋</div>
+      <div class="add-label">새 프롬프트 추가</div>
+    </div>
+  `;
+
+  if (filtered.length === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="empty-icon">✦</div>
+        <div class="empty-title">프롬프트가 없습니다</div>
+        <div class="empty-desc">새 프롬프트를 추가하거나 필터를 변경해보세요</div>
+      </div>
+    `;
+  } else {
+    // Sort by created desc
+    filtered.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+    filtered.forEach(p => {
+      const tagsHtml = (p.tags || []).slice(0, 3).map(t =>
+        `<span class="card-tag">${t}</span>`
+      ).join('');
+
+      html += `
+        <div class="prompt-card" onclick="showDetail('${p.id}')" data-id="${p.id}">
+          <div class="card-header">
+            <span class="ai-badge ${p.ai}">${p.ai.toUpperCase()}</span>
+            <button class="card-menu-btn" onclick="event.stopPropagation(); showContextMenu(event, '${p.id}')">⋯</button>
+          </div>
+          <div class="card-title">${escHtml(p.title)}</div>
+          <div class="card-desc">${escHtml(p.desc)}</div>
+          <div class="card-footer">
+            <div class="card-tags">${tagsHtml}</div>
+            <span class="card-date">${formatDate(p.created)}</span>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  grid.innerHTML = html;
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+/* ═══════════════════════════════════════
+   FILTERS
+   ═══════════════════════════════════════ */
+function setFilter(val, el) {
+  currentFilter = val;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderGrid();
+}
+
+function filterPrompts() {
+  currentSearch = document.getElementById('searchInput').value.trim();
+  renderGrid();
+}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+function showMainPage() {
+  document.getElementById('mainPage').classList.remove('hidden');
+  document.getElementById('subPage').classList.remove('active');
+  currentDetailId = null;
+  renderGrid();
+}
+
+function showDetail(id) {
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+
+  currentDetailId = id;
+  document.getElementById('mainPage').classList.add('hidden');
+  document.getElementById('subPage').classList.add('active');
+
+  document.getElementById('detailTitle').textContent = p.title;
+  document.getElementById('detailContent').textContent = p.content;
+
+  // Meta
+  document.getElementById('detailMeta').innerHTML = `
+    <span class="ai-badge ${p.ai}">${p.ai.toUpperCase()}</span>
+    <span style="font-size:12px;color:var(--text-muted)">${p.category}</span>
+    <span style="font-size:12px;color:var(--text-muted)">${formatDate(p.created)}</span>
+  `;
+
+  // Info
+  document.getElementById('detailInfo').innerHTML = `
+    <div class="info-row"><span class="info-label">AI 모델</span><span class="info-value">${p.ai.toUpperCase()}</span></div>
+    <div class="info-row"><span class="info-label">카테고리</span><span class="info-value">${p.category}</span></div>
+    <div class="info-row"><span class="info-label">생성일</span><span class="info-value">${formatDate(p.created)}</span></div>
+    <div class="info-row"><span class="info-label">글자 수</span><span class="info-value">${p.content.length.toLocaleString()}자</span></div>
+  `;
+
+  // Tags
+  document.getElementById('detailTags').innerHTML = (p.tags || []).map(t =>
+    `<span class="card-tag" style="font-size:12px;padding:4px 12px;">${t}</span>`
+  ).join('');
+
+  // Convert buttons (only for non-webapp)
+  const targets = ['claude', 'gpt', 'gemini'].filter(x => x !== p.ai);
+  const convertBtns = document.getElementById('convertBtns');
+
+  if (p.ai === 'webapp') {
+    const previewBtn = p.previewUrl
+      ? `<button class="btn btn-secondary" onclick="openPreview('${p.id}')">🔍 미리보기</button>`
+      : `<button class="btn btn-secondary" style="opacity:0.4;cursor:default;" title="GitHub Pages URL을 등록하면 미리보기가 활성화돼요">🔍 미리보기 (URL 미등록)</button>`;
+    convertBtns.innerHTML = previewBtn + '<div style="font-size:12px;color:var(--text-muted);margin-top:8px;">웹앱은 AI 변환이 지원되지 않습니다.</div>';
+  } else {
+    convertBtns.innerHTML = targets.map(ai => `
+      <button class="convert-btn ${ai}" onclick="convertPrompt('${ai}')">
+        <span class="convert-dot ${ai}"></span>
+        ${ai.toUpperCase()}용으로 변환
+      </button>
+    `).join('');
+  }
+
+  // Reset convert result
+  document.getElementById('convertResult').classList.remove('active');
+  window.scrollTo({ top: 0 });
+}
+
+/* ═══════════════════════════════════════
+   ADD / EDIT
+   ═══════════════════════════════════════ */
+function togglePreviewUrlField() {
+  const ai = document.getElementById('formAI').value;
+  const grp = document.getElementById('previewUrlGroup');
+  if (grp) grp.style.display = ai === 'webapp' ? '' : 'none';
+}
+
+function openAddModal() {
+  editingId = null;
+  formTags = [];
+  document.getElementById('modalTitle').textContent = '새 프롬프트';
+  document.getElementById('saveBtn').textContent = '💾 저장';
+  document.getElementById('formTitle').value = '';
+  document.getElementById('formAI').value = 'claude';
+  document.getElementById('formCategory').value = 'system';
+  document.getElementById('formDesc').value = '';
+  document.getElementById('formContent').value = '';
+  document.getElementById('formPreviewUrl').value = '';
+  togglePreviewUrlField();
+  renderFormTags();
+  document.getElementById('addModal').classList.add('active');
+  document.getElementById('formAI').onchange = togglePreviewUrlField;
+}
+
+function editCurrent() {
+  const p = prompts.find(x => x.id === currentDetailId);
+  if (!p) return;
+  openEditModal(p.id);
+}
+
+function openEditModal(id) {
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+
+  editingId = id;
+  formTags = [...(p.tags || [])];
+  document.getElementById('modalTitle').textContent = '프롬프트 편집';
+  document.getElementById('saveBtn').textContent = '✅ 수정 완료';
+  document.getElementById('formTitle').value = p.title;
+  document.getElementById('formAI').value = p.ai;
+  document.getElementById('formCategory').value = p.category;
+  document.getElementById('formDesc').value = p.desc;
+  document.getElementById('formContent').value = p.content;
+  document.getElementById('formPreviewUrl').value = p.previewUrl || '';
+  togglePreviewUrlField();
+  document.getElementById('formAI').onchange = togglePreviewUrlField;
+  renderFormTags();
+  document.getElementById('addModal').classList.add('active');
+}
+
+function savePrompt() {
+  const title = document.getElementById('formTitle').value.trim();
+  const ai = document.getElementById('formAI').value;
+  const category = document.getElementById('formCategory').value;
+  const desc = document.getElementById('formDesc').value.trim();
+  const content = document.getElementById('formContent').value.trim();
+  const previewUrl = document.getElementById('formPreviewUrl').value.trim();
+
+  if (!title || !content) {
+    toast('⚠️ 제목과 내용을 입력해주세요');
+    return;
+  }
+
+  if (editingId) {
+    const idx = prompts.findIndex(x => x.id === editingId);
+    if (idx !== -1) {
+      prompts[idx] = { ...prompts[idx], title, ai, category, desc, content, previewUrl, tags: [...formTags] };
+      toast('✅ 프롬프트가 수정되었습니다');
+    }
+  } else {
+    prompts.push({
+      id: genId(), title, ai, category, desc, content, previewUrl,
+      tags: [...formTags],
+      created: new Date().toISOString().slice(0, 10)
+    });
+    toast('✅ 새 프롬프트가 추가되었습니다');
+  }
+
+  saveData();
+  closeModals();
+  if (currentDetailId && editingId === currentDetailId) {
+    showDetail(currentDetailId);
+  } else {
+    renderGrid();
+  }
+  editingId = null;
+}
+
+/* ═══════════════════════════════════════
+   TAGS
+   ═══════════════════════════════════════ */
+function handleTag(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if (val && !formTags.includes(val) && formTags.length < 10) {
+      formTags.push(val);
+      renderFormTags();
+    }
+    e.target.value = '';
+  }
+}
+
+function removeFormTag(idx) {
+  formTags.splice(idx, 1);
+  renderFormTags();
+}
+
+function renderFormTags() {
+  const container = document.getElementById('tagsInput');
+  const input = document.getElementById('tagField');
+  const tagEls = container.querySelectorAll('.tag-item');
+  tagEls.forEach(el => el.remove());
+
+  formTags.forEach((t, i) => {
+    const span = document.createElement('span');
+    span.className = 'tag-item';
+    span.innerHTML = `${escHtml(t)} <span class="remove-tag" onclick="event.stopPropagation(); removeFormTag(${i})">×</span>`;
+    container.insertBefore(span, input);
+  });
+}
+
+/* ═══════════════════════════════════════
+   DELETE
+   ═══════════════════════════════════════ */
+function deleteCurrent() {
+  if (!currentDetailId) return;
+  if (!confirm('이 프롬프트를 삭제할까요?')) return;
+  prompts = prompts.filter(x => x.id !== currentDetailId);
+  saveData();
+  toast('🗑️ 삭제되었습니다');
+  showMainPage();
+}
+
+/* ═══════════════════════════════════════
+   DOWNLOAD / EXPORT
+   ═══════════════════════════════════════ */
+function downloadCurrent() {
+  const p = prompts.find(x => x.id === currentDetailId);
+  if (!p) return;
+  downloadPrompt(p);
+}
+
+function downloadPrompt(p) {
+  const data = {
+    title: p.title,
+    ai: p.ai,
+    category: p.category,
+    description: p.desc,
+    content: p.content,
+    tags: p.tags,
+    created: p.created,
+    exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${p.title.replace(/[^a-zA-Z0-9가-힣]/g, '_')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 다운로드 완료');
+}
+
+function exportAll() {
+  if (prompts.length === 0) {
+    toast('⚠️ 내보낼 프롬프트가 없습니다');
+    return;
+  }
+  const data = {
+    version: '1.0',
+    exported: new Date().toISOString(),
+    count: prompts.length,
+    prompts: prompts
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prompt_atelier_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 ${prompts.length}개 프롬프트 전체 내보내기 완료`);
+}
+
+/* ═══════════════════════════════════════
+   UPLOAD / IMPORT
+   ═══════════════════════════════════════ */
+function openUploadModal() {
+  document.getElementById('uploadPreview').innerHTML = '';
+  document.getElementById('uploadModal').classList.add('active');
+}
+
+function handleFileDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFileSelect(e) {
+  handleFiles(e.target.files);
+  e.target.value = '';
+}
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        let imported = [];
+
+        if (file.name.endsWith('.json')) {
+          const json = JSON.parse(text);
+          if (json.prompts && Array.isArray(json.prompts)) {
+            imported = json.prompts;
+          } else if (json.title && json.content) {
+            imported = [json];
+          } else {
+            toast('⚠️ 지원하지 않는 JSON 형식입니다');
+            return;
+          }
+        } else {
+          // txt / md → single prompt
+          imported = [{
+            title: file.name.replace(/\.(txt|md)$/, ''),
+            content: text,
+            ai: 'claude',
+            category: 'system',
+            desc: `${file.name}에서 가져옴`,
+            tags: ['imported']
+          }];
+        }
+
+        imported.forEach(item => {
+          prompts.push({
+            id: genId(),
+            title: item.title || 'Untitled',
+            ai: item.ai || 'claude',
+            category: item.category || 'system',
+            desc: item.desc || item.description || '',
+            content: item.content || '',
+            tags: item.tags || [],
+            created: item.created || new Date().toISOString().slice(0, 10)
+          });
+        });
+
+        saveData();
+        toast(`✅ ${imported.length}개 프롬프트 가져오기 완료`);
+        closeModals();
+        renderGrid();
+      } catch (err) {
+        toast('⚠️ 파일 처리 중 오류가 발생했습니다');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+/* ═══════════════════════════════════════
+   COPY
+   ═══════════════════════════════════════ */
+function copyContent() {
+  const text = document.getElementById('detailContent').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('📋 복사되었습니다'));
+}
+
+function copyConverted() {
+  const text = document.getElementById('convertResultBody').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('📋 변환 결과가 복사되었습니다'));
+}
+
+/* ═══════════════════════════════════════
+   AI CONVERSION
+   ═══════════════════════════════════════ */
+function convertPrompt(targetAI) {
+  const p = prompts.find(x => x.id === currentDetailId);
+  if (!p) return;
+
+  const converted = doConvert(p.content, p.ai, targetAI);
+
+  document.getElementById('convertResultLabel').textContent = `${targetAI.toUpperCase()}용으로 변환됨`;
+  document.getElementById('convertResultBody').textContent = converted;
+  document.getElementById('convertResult').classList.add('active');
+  toast(`⚡ ${targetAI.toUpperCase()}용으로 변환 완료`);
+}
+
+function doConvert(content, fromAI, toAI) {
+  // Convert between AI prompt styles
+  let result = content;
+
+  if (toAI === 'claude') {
+    result = convertToClaude(result, fromAI);
+  } else if (toAI === 'gpt') {
+    result = convertToGPT(result, fromAI);
+  } else if (toAI === 'gemini') {
+    result = convertToGemini(result, fromAI);
+  }
+
+  return result;
+}
+
+function convertToClaude(content, from) {
+  let result = content;
+
+  // Remove markdown headers → XML tags
+  result = result.replace(/^# Role\n?/gm, '<role>\n');
+  result = result.replace(/^# Task\n?/gm, '<task>\n');
+  result = result.replace(/^# Requirements\n?/gm, '<requirements>\n');
+  result = result.replace(/^# Output\n?/gm, '<output_format>\n');
+  result = result.replace(/^# Rules\n?/gm, '<rules>\n');
+  result = result.replace(/^## (.+)$/gm, '<$1>');
+
+  // If no XML tags exist, wrap in Claude structure
+  if (!result.includes('<role>') && !result.includes('<task>')) {
+    const lines = result.split('\n');
+    let role = '';
+    let task = '';
+    let rest = [];
+    let section = 'task';
+
+    lines.forEach(line => {
+      if (line.match(/^(역할|Role|당신은)/i)) {
+        section = 'role';
+        role += line + '\n';
+      } else if (line.match(/^(과제|Task|작업|목표|Goal)/i)) {
+        section = 'task';
+        task += line + '\n';
+      } else if (section === 'role' && !line.match(/^(#|\n)/)) {
+        role += line + '\n';
+      } else {
+        rest.push(line);
+      }
+    });
+
+    if (role || task) {
+      result = '';
+      if (role) result += `<role>\n${role.trim()}\n</role>\n\n`;
+      if (task) result += `<task>\n${task.trim()}\n</task>\n\n`;
+      if (rest.length) result += `<context>\n${rest.join('\n').trim()}\n</context>`;
+    } else {
+      result = `<instructions>\n${content.trim()}\n</instructions>`;
+    }
+  }
+
+  // Add Claude-style formatting hint
+  if (!result.includes('<output_format>')) {
+    result += '\n\n<output_format>\n구조화된 형식으로 응답해주세요.\n</output_format>';
+  }
+
+  return result.trim();
+}
+
+function convertToGPT(content, from) {
+  let result = content;
+
+  // Remove XML tags → Markdown headers
+  result = result.replace(/<role>\n?/g, '# Role\n');
+  result = result.replace(/<\/role>\n?/g, '\n');
+  result = result.replace(/<task>\n?/g, '# Task\n');
+  result = result.replace(/<\/task>\n?/g, '\n');
+  result = result.replace(/<context>\n?/g, '# Context\n');
+  result = result.replace(/<\/context>\n?/g, '\n');
+  result = result.replace(/<instructions>\n?/g, '# Instructions\n');
+  result = result.replace(/<\/instructions>\n?/g, '\n');
+  result = result.replace(/<output_format>\n?/g, '# Output Format\n');
+  result = result.replace(/<\/output_format>\n?/g, '\n');
+  result = result.replace(/<requirements>\n?/g, '# Requirements\n');
+  result = result.replace(/<\/requirements>\n?/g, '\n');
+  result = result.replace(/<rules>\n?/g, '# Rules\n');
+  result = result.replace(/<\/rules>\n?/g, '\n');
+  result = result.replace(/<constraints>\n?/g, '# Constraints\n');
+  result = result.replace(/<\/constraints>\n?/g, '\n');
+  result = result.replace(/<principles>\n?/g, '# Principles\n');
+  result = result.replace(/<\/principles>\n?/g, '\n');
+  result = result.replace(/<[^>]+>\n?/g, '');
+
+  // Clean up multiple blank lines
+  result = result.replace(/\n{3,}/g, '\n\n');
+
+  // Add GPT-style system instruction hint
+  if (!result.includes('Think step by step') && !result.includes('step-by-step')) {
+    result += '\n\nThink carefully and provide a comprehensive response.';
+  }
+
+  return result.trim();
+}
+
+function convertToGemini(content, from) {
+  let result = content;
+
+  // Gemini prefers shorter, direct prompts
+  // Remove XML tags
+  result = result.replace(/<[^>]+>/g, '');
+
+  // Remove markdown headers → simpler format
+  result = result.replace(/^#+\s*/gm, '');
+
+  // Clean up
+  result = result.replace(/\n{3,}/g, '\n\n');
+
+  // Gemini style: direct and concise
+  const lines = result.trim().split('\n').filter(l => l.trim());
+  if (lines.length > 2) {
+    result = lines.join('\n');
+  }
+
+  // Add Gemini-style format hint
+  if (!result.includes('형식') && !result.includes('format') && !result.includes('Format')) {
+    result += '\n\n위 내용을 명확하고 구조적으로 응답해주세요.';
+  }
+
+  return result.trim();
+}
+
+/* ═══════════════════════════════════════
+   CONTEXT MENU
+   ═══════════════════════════════════════ */
+function showContextMenu(e, id) {
+  e.preventDefault();
+  contextTargetId = id;
+  const menu = document.getElementById('contextMenu');
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.classList.add('active');
+}
+
+function contextAction(action) {
+  closeContextMenu();
+  const p = prompts.find(x => x.id === contextTargetId);
+  if (!p) return;
+
+  switch (action) {
+    case 'edit':
+      openEditModal(p.id);
+      break;
+    case 'download':
+      downloadPrompt(p);
+      break;
+    case 'duplicate':
+      const dup = { ...p, id: genId(), title: p.title + ' (복사)', created: new Date().toISOString().slice(0, 10), tags: [...(p.tags || [])] };
+      prompts.push(dup);
+      saveData();
+      renderGrid();
+      toast('📄 복제되었습니다');
+      break;
+    case 'delete':
+      if (confirm('이 프롬프트를 삭제할까요?')) {
+        prompts = prompts.filter(x => x.id !== contextTargetId);
+        saveData();
+        renderGrid();
+        toast('🗑️ 삭제되었습니다');
+      }
+      break;
+  }
+}
+
+function closeContextMenu() {
+  document.getElementById('contextMenu').classList.remove('active');
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.context-menu') && !e.target.closest('.card-menu-btn')) {
+    closeContextMenu();
+  }
+});
+
+/* ═══════════════════════════════════════
+   MODALS
+   ═══════════════════════════════════════ */
+function closeModals() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
+
+function openPreview(id) {
+  const p = prompts.find(x => x.id === id);
+  if (!p || !p.previewUrl) { toast('⚠️ 미리보기 URL이 등록되지 않았습니다'); return; }
+  document.getElementById('previewModalTitle').textContent = '🔍 ' + p.title;
+  document.getElementById('previewIframe').src = p.previewUrl;
+  document.getElementById('previewUrlDisplay').textContent = p.previewUrl;
+  document.getElementById('previewOpenLink').href = p.previewUrl;
+  document.getElementById('previewModal').classList.add('active');
+}
+
+function closePreview() {
+  document.getElementById('previewModal').classList.remove('active');
+  document.getElementById('previewIframe').src = '';
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModals();
+  });
+});
+
+// ESC to close
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModals();
+    closeContextMenu();
+  }
+});
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+loadData();
+renderGrid();
+</script>
+</body>
+</html>

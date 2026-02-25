@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 만다라트 KPI 대시보드</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-card-hover: #1a2745;
+            --accent-blue: #4facfe;
+            --accent-purple: #a855f7;
+            --accent-pink: #f472b6;
+            --accent-green: #34d399;
+            --accent-yellow: #fbbf24;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-cyan: #22d3ee;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255,255,255,0.06);
+            --glass-bg: rgba(255,255,255,0.03);
+            --shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.03) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        .header .date-display {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 35px;
+            padding: 0 10px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .nav-tab:hover {
+            background: rgba(79, 172, 254, 0.1);
+            border-color: rgba(79, 172, 254, 0.3);
+            color: var(--accent-blue);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(168, 85, 247, 0.2));
+            border-color: var(--accent-blue);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Overview KPI Cards */
+        .kpi-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-card .kpi-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .kpi-card .kpi-progress-bar {
+            margin-top: 14px;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .kpi-card .kpi-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+
+        .kpi-card .kpi-percent {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* Color variants */
+        .kpi-blue::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .kpi-blue .kpi-value { color: var(--accent-blue); }
+        .kpi-blue .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+
+        .kpi-purple::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink)); }
+        .kpi-purple .kpi-value { color: var(--accent-purple); }
+        .kpi-purple .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink)); }
+
+        .kpi-green::before { background: linear-gradient(90deg, var(--accent-green), #6ee7b7); }
+        .kpi-green .kpi-value { color: var(--accent-green); }
+        .kpi-green .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-green), #6ee7b7); }
+
+        .kpi-yellow::before { background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange)); }
+        .kpi-yellow .kpi-value { color: var(--accent-yellow); }
+        .kpi-yellow .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange)); }
+
+        .kpi-pink::before { background: linear-gradient(90deg, var(--accent-pink), var(--accent-red)); }
+        .kpi-pink .kpi-value { color: var(--accent-pink); }
+        .kpi-pink .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-pink), var(--accent-red)); }
+
+        .kpi-orange::before { background: linear-gradient(90deg, var(--accent-orange), var(--accent-yellow)); }
+        .kpi-orange .kpi-value { color: var(--accent-orange); }
+        .kpi-orange .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-orange), var(--accent-yellow)); }
+
+        .kpi-cyan::before { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); }
+        .kpi-cyan .kpi-value { color: var(--accent-cyan); }
+        .kpi-cyan .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); }
+
+        .kpi-red::before { background: linear-gradient(90deg, var(--accent-red), var(--accent-orange)); }
+        .kpi-red .kpi-value { color: var(--accent-red); }
+        .kpi-red .kpi-progress-fill { background: linear-gradient(90deg, var(--accent-red), var(--accent-orange)); }
+
+        /* Section panels */
+        .section-panel {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        /* Mandarat Grid */
+        .mandarat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .mandarat-cell {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .mandarat-cell:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow);
+        }
+
+        .mandarat-cell.center {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(168, 85, 247, 0.2));
+            border-color: var(--accent-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .mandarat-cell .cell-sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* Detail Cards */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .detail-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-card:hover {
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .detail-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Checklist items */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item:hover {
+            padding-left: 6px;
+        }
+
+        .check-box {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--text-muted);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            font-size: 0.7rem;
+        }
+
+        .checklist-item.checked .check-box {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .checklist-item.checked .check-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .check-text {
+            flex: 1;
+            font-size: 0.88rem;
+        }
+
+        .check-tag {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tag-daily { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); }
+        .tag-weekly { background: rgba(79, 172, 254, 0.15); color: var(--accent-blue); }
+        .tag-monthly { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+        .tag-quarterly { background: rgba(251, 191, 36, 0.15); color: var(--accent-yellow); }
+        .tag-yearly { background: rgba(244, 114, 182, 0.15); color: var(--accent-pink); }
+        .tag-ongoing { background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-pink), var(--accent-green));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 26px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-blue);
+            background: var(--bg-primary);
+        }
+
+        .timeline-item .q-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item .q-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .timeline-tasks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .timeline-task {
+            padding: 6px 14px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .timeline-task:hover {
+            background: rgba(79, 172, 254, 0.1);
+            border-color: rgba(79, 172, 254, 0.3);
+        }
+
+        .timeline-task.done {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.3);
+            color: var(--accent-green);
+        }
+
+        /* Daily Routine */
+        .routine-list {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .routine-block {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            padding: 18px 22px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .routine-block:hover {
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .routine-time {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .routine-divider {
+            width: 3px;
+            height: 40px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .routine-content {
+            flex: 1;
+        }
+
+        .routine-content .routine-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .routine-content .routine-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Stats Summary */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .stat-mini {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px 16px;
+            text-align: center;
+        }
+
+        .stat-mini .stat-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .stat-mini .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Donut Chart */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .donut-wrapper {
+            text-align: center;
+        }
+
+        .donut-wrapper .donut-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .donut-wrapper .donut-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        svg.donut {
+            width: 120px;
+            height: 120px;
+            transform: rotate(-90deg);
+        }
+
+        .donut-ring {
+            fill: none;
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 8;
+        }
+
+        .donut-segment {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .donut-center-text {
+            transform: rotate(90deg);
+            font-size: 1.1rem;
+            font-weight: 800;
+            fill: var(--text-primary);
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        /* Editable input */
+        .kpi-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .kpi-input {
+            width: 70px;
+            padding: 6px 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(79, 172, 254, 0.05);
+        }
+
+        .kpi-input-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .btn-update {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .btn-update:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-reset {
+            padding: 6px 16px;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 8px;
+            color: var(--accent-red);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: rgba(248, 113, 113, 0.25);
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Overall Progress Ring */
+        .overall-progress {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .overall-progress svg {
+            width: 180px;
+            height: 180px;
+        }
+
+        .overall-label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .overall-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Bar chart */
+        .bar-chart {
+            margin: 30px 0;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .bar-label {
+            min-width: 100px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+            min-width: fit-content;
+        }
+
+        .bar-value {
+            min-width: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .kpi-overview { grid-template-columns: repeat(2, 1fr); }
+            .mandarat-grid { gap: 4px; }
+            .mandarat-cell { padding: 10px 6px; font-size: 0.7rem; min-height: 60px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .nav-tabs { gap: 6px; }
+            .nav-tab { padding: 8px 14px; font-size: 0.78rem; }
+            .routine-block { flex-direction: column; gap: 10px; text-align: center; }
+            .routine-divider { width: 40px; height: 3px; }
+            .bar-row { flex-direction: column; align-items: stretch; gap: 6px; }
+            .bar-label { text-align: left; min-width: auto; }
+            .chart-container { gap: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-overview { grid-template-columns: 1fr; }
+            .app-container { padding: 10px; }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tooltip */
+        .tooltip-wrapper {
+            position: relative;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d2d44;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .tooltip-wrapper:hover .tooltip {
+            display: block;
+        }
+
+        /* Category badge for mandarat */
+        .cat-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header fade-in">
+            <h1>2026 만다라트 대시보드</h1>
+            <p>실행과 결과로 만드는 나의 2026년</p>
+            <div class="date-display" id="currentDate"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs" id="navTabs">
+            <button class="nav-tab active" data-tab="overview">📊 종합 KPI</button>
+            <button class="nav-tab" data-tab="mandarat">🎯 만다라트</button>
+            <button class="nav-tab" data-tab="health">💪 건강</button>
+            <button class="nav-tab" data-tab="reading">📚 독서</button>
+            <button class="nav-tab" data-tab="career">💼 취업</button>
+            <button class="nav-tab" data-tab="income">💰 수익</button>
+            <button class="nav-tab" data-tab="study">📖 공부</button>
+            <button class="nav-tab" data-tab="habit">⚡ 습관</button>
+            <button class="nav-tab" data-tab="money">🏦 절약</button>
+            <button class="nav-tab" data-tab="relation">❤️ 인간관계</button>
+            <button class="nav-tab" data-tab="timeline">🗓️ 로드맵</button>
+            <button class="nav-tab" data-tab="routine">🌅 루틴</button>
+        </div>
+
+        <!-- ============ OVERVIEW ============ -->
+        <div class="section-panel active" id="panel-overview">
+            <div class="section-title">📊 종합 KPI 대시보드</div>
+            <div class="section-subtitle">각 수치를 클릭하여 현재 달성량을 입력하세요 — 데이터는 브라우저에 자동 저장됩니다</div>
+
+            <div class="controls-row">
+                <button class="btn-reset" onclick="resetAllData()">🔄 전체 초기화</button>
+            </div>
+
+            <!-- Overall Progress -->
+            <div class="overall-progress">
+                <svg viewBox="0 0 120 120">
+                    <circle class="donut-ring" cx="60" cy="60" r="50"></circle>
+                    <circle class="donut-segment" cx="60" cy="60" r="50" 
+                        stroke="url(#overallGrad)" 
+                        stroke-dasharray="0 314" id="overallRing"
+                        style="transform: rotate(-90deg); transform-origin: center;"></circle>
+                    <defs>
+                        <linearGradient id="overallGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#4facfe"/>
+                            <stop offset="100%" style="stop-color:#a855f7"/>
+                        </linearGradient>
+                    </defs>
+                    <text class="donut-center-text" x="60" y="60" id="overallPercent">0%</text>
+                </svg>
+                <div class="overall-label">전체 달성률</div>
+                <div class="overall-sub" id="overallSub">8개 핵심 KPI 종합</div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-overview" id="kpiCards">
+                <!-- Generated by JS -->
+            </div>
+
+            <!-- Bar Chart -->
+            <div style="margin-top: 40px;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 20px;">📈 영역별 달성률</h3>
+                <div class="bar-chart" id="barChart">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Donut Charts -->
+            <div style="margin-top: 40px;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 10px; text-align:center;">🎯 주요 목표 진행률</h3>
+                <div class="chart-container" id="donutCharts">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ MANDARAT ============ -->
+        <div class="section-panel" id="panel-mandarat">
+            <div class="section-title">🎯 만다라트 전체 구조</div>
+            <div class="section-subtitle">중심 목표와 8대 핵심 영역 — 각 셀을 클릭하면 해당 탭으로 이동합니다</div>
+
+            <div class="mandarat-grid" id="mandaratGrid">
+                <!-- Generated by JS -->
+            </div>
+
+            <!-- Sub grids -->
+            <div id="subGrids"></div>
+        </div>
+
+        <!-- ============ HEALTH ============ -->
+        <div class="section-panel" id="panel-health">
+            <div class="section-title">💪 건강한 삶</div>
+            <div class="section-subtitle">신체 건강 관리 — 검진, 운동, 체중 감량, 영양 관리</div>
+
+            <div class="stats-row">
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-green);" id="healthWeight">0</div><div class="stat-label">감량 KG</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-blue);" id="healthSteps">0</div><div class="stat-label">일 평균 걸음</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-purple);" id="healthCheckup">0</div><div class="stat-label">검진 완료</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-yellow);" id="healthDental">0</div><div class="stat-label">치아 관리 횟수</div></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>🏥 정기 검진</h3>
+                    <div class="checklist-item" data-key="health-1"><div class="check-box">✓</div><div class="check-text">종합 건강검진 (연 1회)</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="health-2"><div class="check-box">✓</div><div class="check-text">여성질환 검진 (3개월 1회)</div><span class="check-tag tag-quarterly">분기</span></div>
+                    <div class="checklist-item" data-key="health-3"><div class="check-box">✓</div><div class="check-text">간질환 검진 - 상반기</div><span class="check-tag tag-quarterly">상반기</span></div>
+                    <div class="checklist-item" data-key="health-4"><div class="check-box">✓</div><div class="check-text">간질환 검진 - 하반기</div><span class="check-tag tag-quarterly">하반기</span></div>
+                    <div class="checklist-item" data-key="health-5"><div class="check-box">✓</div><div class="check-text">치아 스케일링 + 검진 (3개월 주기)</div><span class="check-tag tag-quarterly">분기</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>🏃‍♀️ 운동 & 체중</h3>
+                    <div class="kpi-input-group" style="margin-bottom:16px;">
+                        <span class="kpi-input-label">현재 감량(KG):</span>
+                        <input type="number" class="kpi-input" id="inputWeight" min="0" max="20" step="0.1" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('weight')">저장</button>
+                    </div>
+                    <div class="checklist-item" data-key="health-6"><div class="check-box">✓</div><div class="check-text">1년 10KG 감량하기</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="health-7"><div class="check-box">✓</div><div class="check-text">하루 7,000보 걷기</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="health-8"><div class="check-box">✓</div><div class="check-text">허리운동 하루 20분</div><span class="check-tag tag-daily">매일</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>💊 영양 & 수면</h3>
+                    <div class="checklist-item" data-key="health-9"><div class="check-box">✓</div><div class="check-text">영양제 시간대별 섭취</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="health-10"><div class="check-box">✓</div><div class="check-text">ADHD약 정시 복용</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="health-11"><div class="check-box">✓</div><div class="check-text">수면 양압기 착용 관리</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="health-12"><div class="check-box">✓</div><div class="check-text">물 1L 마시기</div><span class="check-tag tag-daily">매일</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ READING ============ -->
+        <div class="section-panel" id="panel-reading">
+            <div class="section-title">📚 독서 100권</div>
+            <div class="section-subtitle">다양한 장르의 책 읽기 — 기록하고 나누기</div>
+
+            <div class="stats-row">
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-purple);" id="readBooks">0</div><div class="stat-label">읽은 책 / 100권</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-blue);" id="readLibrary">0</div><div class="stat-label">도서관 대출 / 50권</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-yellow);" id="readClassic">0</div><div class="stat-label">고전 / 10권</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-green);" id="readJournal">0</div><div class="stat-label">독서일지 작성</div></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>📖 독서 현황 입력</h3>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">읽은 책 수:</span>
+                        <input type="number" class="kpi-input" id="inputBooks" min="0" max="200" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('books')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">도서관 대출:</span>
+                        <input type="number" class="kpi-input" id="inputLibrary" min="0" max="100" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('library')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">고전 읽기:</span>
+                        <input type="number" class="kpi-input" id="inputClassic" min="0" max="20" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('classic')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">독서일지 수:</span>
+                        <input type="number" class="kpi-input" id="inputJournal" min="0" max="60" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('journal')">저장</button>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h3>✅ 실행 체크리스트</h3>
+                    <div class="checklist-item" data-key="read-1"><div class="check-box">✓</div><div class="check-text">하루 30페이지 읽기</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="read-2"><div class="check-box">✓</div><div class="check-text">독서일지 작성</div><span class="check-tag tag-weekly">주1회</span></div>
+                    <div class="checklist-item" data-key="read-3"><div class="check-box">✓</div><div class="check-text">독서모임 가입 (2~3월)</div><span class="check-tag tag-ongoing">진행</span></div>
+                    <div class="checklist-item" data-key="read-4"><div class="check-box">✓</div><div class="check-text">독서 편식 하지 않기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="read-5"><div class="check-box">✓</div><div class="check-text">안 읽는 책 팔거나 버리기</div><span class="check-tag tag-ongoing">수시</span></div>
+                    <div class="checklist-item" data-key="read-6"><div class="check-box">✓</div><div class="check-text">독서와 AI 활용해보기</div><span class="check-tag tag-ongoing">상시</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ CAREER ============ -->
+        <div class="section-panel" id="panel-career">
+            <div class="section-title">💼 취업 (상반기) — 연봉 5,000만원</div>
+            <div class="section-subtitle">상반기 집중 취업 활동 — CS 관리자 / AI 신입 이원화 전략</div>
+
+            <div class="stats-row">
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-orange);" id="careerApply">0</div><div class="stat-label">이력서 제출 / 100곳</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-blue);" id="careerInterview">0</div><div class="stat-label">면접 횟수</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-green);" id="careerOffer">0</div><div class="stat-label">합격 / 오퍼</div></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>📝 취업 현황 입력</h3>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">이력서 제출:</span>
+                        <input type="number" class="kpi-input" id="inputApply" min="0" max="500" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('apply')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">면접 횟수:</span>
+                        <input type="number" class="kpi-input" id="inputInterview" min="0" max="100" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('interview')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">합격/오퍼:</span>
+                        <input type="number" class="kpi-input" id="inputOffer" min="0" max="20" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('offer')">저장</button>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h3>✅ 취업 준비 체크리스트</h3>
+                    <div class="checklist-item" data-key="career-1"><div class="check-box">✓</div><div class="check-text">이력서/자기소개서 수시 업데이트</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="career-2"><div class="check-box">✓</div><div class="check-text">포트폴리오 성과 시각화 완성</div><span class="check-tag tag-quarterly">Q1</span></div>
+                    <div class="checklist-item" data-key="career-3"><div class="check-box">✓</div><div class="check-text">면접 준비 (감량, 헤어스타일)</div><span class="check-tag tag-ongoing">상반기</span></div>
+                    <div class="checklist-item" data-key="career-4"><div class="check-box">✓</div><div class="check-text">제출 회사 분석 해놓기</div><span class="check-tag tag-ongoing">제출 전</span></div>
+                    <div class="checklist-item" data-key="career-5"><div class="check-box">✓</div><div class="check-text">CS직군 → 관리자 지원</div><span class="check-tag tag-ongoing">전략</span></div>
+                    <div class="checklist-item" data-key="career-6"><div class="check-box">✓</div><div class="check-text">AI직군 → 신입 지원</div><span class="check-tag tag-ongoing">전략</span></div>
+                    <div class="checklist-item" data-key="career-7"><div class="check-box">✓</div><div class="check-text">AI 자격증 취득</div><span class="check-tag tag-quarterly">상반기</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ INCOME ============ -->
+        <div class="section-panel" id="panel-income">
+            <div class="section-title">💰 수익 창출</div>
+            <div class="section-subtitle">다양한 수익원 확보 — 투자, 콘텐츠, 디지털 자산</div>
+
+            <div class="stats-row">
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-yellow);" id="incomeCarrot">0</div><div class="stat-label">당근 수익 / 50만</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-red);" id="incomeYoutube">0</div><div class="stat-label">유튜브 월수익(원)</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-purple);" id="incomeEbook">0</div><div class="stat-label">전자책 출간 / 3권</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-green);" id="incomeSide">0</div><div class="stat-label">부수입 / 500만</div></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>💵 수익 현황 입력</h3>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">당근 수익(만원):</span>
+                        <input type="number" class="kpi-input" id="inputCarrot" min="0" max="100" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('carrot')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">유튜브 월수익(원):</span>
+                        <input type="number" class="kpi-input" id="inputYoutube" min="0" max="1000000" placeholder="0" style="width:90px;">
+                        <button class="btn-update" onclick="updateKPI('youtube')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">전자책 출간(권):</span>
+                        <input type="number" class="kpi-input" id="inputEbook" min="0" max="10" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('ebook')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">총 부수입(만원):</span>
+                        <input type="number" class="kpi-input" id="inputSide" min="0" max="1000" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('side')">저장</button>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h3>✅ 수익 체크리스트</h3>
+                    <div class="checklist-item" data-key="income-1"><div class="check-box">✓</div><div class="check-text">블로그 체험단 시작</div><span class="check-tag tag-ongoing">진행</span></div>
+                    <div class="checklist-item" data-key="income-2"><div class="check-box">✓</div><div class="check-text">유튜브/숏츠 채널 오픈</div><span class="check-tag tag-quarterly">Q1</span></div>
+                    <div class="checklist-item" data-key="income-3"><div class="check-box">✓</div><div class="check-text">당근마켓 50만원 만들기</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="income-4"><div class="check-box">✓</div><div class="check-text">주식/ETF 최소 2개 운영</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="income-5"><div class="check-box">✓</div><div class="check-text">공모주 주식 모으기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="income-6"><div class="check-box">✓</div><div class="check-text">적금 통장 3개 만들기</div><span class="check-tag tag-quarterly">Q1</span></div>
+                    <div class="checklist-item" data-key="income-7"><div class="check-box">✓</div><div class="check-text">구독형 앱 수익화</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="income-8"><div class="check-box">✓</div><div class="check-text">전자책 3권 출간/수익화</div><span class="check-tag tag-yearly">연간</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ STUDY ============ -->
+        <div class="section-panel" id="panel-study">
+            <div class="section-title">📖 자격증 취득 & 공부</div>
+            <div class="section-subtitle">기술, 법률, 금융, 교양 — 전방위 학습</div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>🎓 학습 분야</h3>
+                    <div class="checklist-item" data-key="study-1"><div class="check-box">✓</div><div class="check-text">바이브코딩 / AI기술 공부</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="study-2"><div class="check-box">✓</div><div class="check-text">지식재산권 STUDY → 자격증</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="study-3"><div class="check-box">✓</div><div class="check-text">근로자보호법 / 사업자관련법</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="study-4"><div class="check-box">✓</div><div class="check-text">부동산 / 금융 STUDY</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="study-5"><div class="check-box">✓</div><div class="check-text">미술사 주 2회 STUDY</div><span class="check-tag tag-weekly">주2회</span></div>
+                    <div class="checklist-item" data-key="study-6"><div class="check-box">✓</div><div class="check-text">경제 서적 주 1권씩</div><span class="check-tag tag-weekly">주1권</span></div>
+                    <div class="checklist-item" data-key="study-7"><div class="check-box">✓</div><div class="check-text">도서관 매주 이용</div><span class="check-tag tag-weekly">매주</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>📤 아웃풋</h3>
+                    <div class="checklist-item" data-key="study-8"><div class="check-box">✓</div><div class="check-text">각 공부내용 정리 → 전자책 만들기</div><span class="check-tag tag-yearly">연간</span></div>
+                    <div class="checklist-item" data-key="study-9"><div class="check-box">✓</div><div class="check-text">숏츠 제작 / 채널 오픈</div><span class="check-tag tag-quarterly">상반기</span></div>
+                    <div class="checklist-item" data-key="study-10"><div class="check-box">✓</div><div class="check-text">AI 자격증 취득</div><span class="check-tag tag-yearly">연간</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ HABIT ============ -->
+        <div class="section-panel" id="panel-habit">
+            <div class="section-title">⚡ 습관 만들기</div>
+            <div class="section-subtitle">매일의 작은 습관이 1년의 큰 변화를 만듭니다</div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>🌅 아침 습관</h3>
+                    <div class="checklist-item" data-key="habit-1"><div class="check-box">✓</div><div class="check-text">아침식사 06:00 (두유, 과일)</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-2"><div class="check-box">✓</div><div class="check-text">영양제 / ADHD약 시간대별 섭취</div><span class="check-tag tag-daily">매일</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>☀️ 낮 습관</h3>
+                    <div class="checklist-item" data-key="habit-3"><div class="check-box">✓</div><div class="check-text">물 1L 마시기</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-4"><div class="check-box">✓</div><div class="check-text">항상 메모하기 (녹음어플 활용)</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-5"><div class="check-box">✓</div><div class="check-text">안 쓰는 물건 수시로 버리기</div><span class="check-tag tag-ongoing">수시</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>🌙 저녁 습관</h3>
+                    <div class="checklist-item" data-key="habit-6"><div class="check-box">✓</div><div class="check-text">허리운동 하루 20분</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-7"><div class="check-box">✓</div><div class="check-text">청소 매일 10분</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-8"><div class="check-box">✓</div><div class="check-text">전날 저녁 9시 다음날 준비 (옷, 필요품)</div><span class="check-tag tag-daily">매일</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>😴 수면 습관</h3>
+                    <div class="checklist-item" data-key="habit-9"><div class="check-box">✓</div><div class="check-text">수면 제외 눕는 습관 고치기</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="habit-10"><div class="check-box">✓</div><div class="check-text">양압기 착용 후 취침</div><span class="check-tag tag-daily">매일</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ MONEY ============ -->
+        <div class="section-panel" id="panel-money">
+            <div class="section-title">🏦 목돈 만들기 & 절약</div>
+            <div class="section-subtitle">부채 청산, 절약 시스템, 자산 축적</div>
+
+            <div class="stats-row">
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-red);" id="moneyDebt">0</div><div class="stat-label">대출 상환(만원) / 700</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-green);" id="moneySaving">0</div><div class="stat-label">적금 운영 / 3개</div></div>
+                <div class="stat-mini"><div class="stat-num" style="color:var(--accent-yellow);" id="moneyDelivery">0</div><div class="stat-label">배달음식 이번달 / 2회</div></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>💳 부채 & 저축 입력</h3>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">대출 상환(만원):</span>
+                        <input type="number" class="kpi-input" id="inputDebt" min="0" max="700" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('debt')">저장</button>
+                    </div>
+                    <div class="kpi-input-group">
+                        <span class="kpi-input-label">적금 운영(개):</span>
+                        <input type="number" class="kpi-input" id="inputSaving" min="0" max="10" placeholder="0">
+                        <button class="btn-update" onclick="updateKPI('saving')">저장</button>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h3>✅ 절약 체크리스트</h3>
+                    <div class="checklist-item" data-key="money-1"><div class="check-box">✓</div><div class="check-text">카드값 완납</div><span class="check-tag tag-yearly">연내</span></div>
+                    <div class="checklist-item" data-key="money-2"><div class="check-box">✓</div><div class="check-text">대출 700만원 상환</div><span class="check-tag tag-yearly">연내</span></div>
+                    <div class="checklist-item" data-key="money-3"><div class="check-box">✓</div><div class="check-text">가계부 작성</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="money-4"><div class="check-box">✓</div><div class="check-text">대중교통 이용 (K-패스)</div><span class="check-tag tag-daily">매일</span></div>
+                    <div class="checklist-item" data-key="money-5"><div class="check-box">✓</div><div class="check-text">배달음식 월 2번 이하</div><span class="check-tag tag-monthly">월간</span></div>
+                    <div class="checklist-item" data-key="money-6"><div class="check-box">✓</div><div class="check-text">중고상품 이용</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="money-7"><div class="check-box">✓</div><div class="check-text">부수입 연 500만원</div><span class="check-tag tag-yearly">연간</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ RELATION ============ -->
+        <div class="section-panel" id="panel-relation">
+            <div class="section-title">❤️ 인간관계</div>
+            <div class="section-subtitle">소중한 사람들과의 관계 — 보호, 정리, 확장</div>
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h3>💕 소중한 사람</h3>
+                    <div class="checklist-item" data-key="rel-1"><div class="check-box">✓</div><div class="check-text">남자친구와 좋은 추억 쌓기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="rel-2"><div class="check-box">✓</div><div class="check-text">외가 식구 경조사 챙기기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="rel-3"><div class="check-box">✓</div><div class="check-text">지인들 생일 챙기기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="rel-4"><div class="check-box">✓</div><div class="check-text">어른 공경하기</div><span class="check-tag tag-ongoing">상시</span></div>
+                </div>
+                <div class="detail-card">
+                    <h3>🛡️ 자기보호 & 성장</h3>
+                    <div class="checklist-item" data-key="rel-5"><div class="check-box">✓</div><div class="check-text">사적 정보 공유 금지</div><span class="check-tag tag-ongoing">원칙</span></div>
+                    <div class="checklist-item" data-key="rel-6"><div class="check-box">✓</div><div class="check-text">불필요한 사람 정리하기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="rel-7"><div class="check-box">✓</div><div class="check-text">리더십 기르기</div><span class="check-tag tag-ongoing">상시</span></div>
+                    <div class="checklist-item" data-key="rel-8"><div class="check-box">✓</div><div class="check-text">새로운 인맥 (AI, 미술사 관련)</div><span class="check-tag tag-yearly">연간</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ TIMELINE ============ -->
+        <div class="section-panel" id="panel-timeline">
+            <div class="section-title">🗓️ 분기별 로드맵</div>
+            <div class="section-subtitle">클릭하여 완료 표시 — 분기별 핵심 마일스톤</div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="q-label" style="color:var(--accent-blue);">Q1 — 1월~3월</div>
+                    <div class="q-title">기반 다지기 — 습관 안착 & 취업 준비</div>
+                    <div class="timeline-tasks">
+                        <span class="timeline-task" data-key="tl-1">독서모임 가입</span>
+                        <span class="timeline-task" data-key="tl-2">적금 3개 개설</span>
+                        <span class="timeline-task" data-key="tl-3">건강검진 1회</span>
+                        <span class="timeline-task" data-key="tl-4">유튜브/숏츠 채널 오픈</span>
+                        <span class="timeline-task" data-key="tl-5">습관 시스템 안착</span>
+                        <span class="timeline-task" data-key="tl-6">포트폴리오 완성</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="q-label" style="color:var(--accent-purple);">Q2 — 4월~6월</div>
+                    <div class="q-title">집중 실행 — 취업 확정 & 중간 점검</div>
+                    <div class="timeline-tasks">
+                        <span class="timeline-task" data-key="tl-7">이력서 100곳 제출 완료</span>
+                        <span class="timeline-task" data-key="tl-8">취업 확정</span>
+                        <span class="timeline-task" data-key="tl-9">독서 50권 달성</span>
+                        <span class="timeline-task" data-key="tl-10">AI 자격증 취득</span>
+                        <span class="timeline-task" data-key="tl-11">전자책 1권 출간</span>
+                        <span class="timeline-task" data-key="tl-12">체중 -5KG 중간점검</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="q-label" style="color:var(--accent-pink);">Q3 — 7월~9월</div>
+                    <div class="q-title">성장 가속 — 수익화 & 부채 청산</div>
+                    <div class="timeline-tasks">
+                        <span class="timeline-task" data-key="tl-13">대출 700만원 상환 중</span>
+                        <span class="timeline-task" data-key="tl-14">부수입 300만원 달성</span>
+                        <span class="timeline-task" data-key="tl-15">전자책 2권 출간</span>
+                        <span class="timeline-task" data-key="tl-16">독서 75권 달성</span>
+                        <span class="timeline-task" data-key="tl-17">카드값 완납</span>
+                        <span class="timeline-task" data-key="tl-18">간질환 검진 2차</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="q-label" style="color:var(--accent-green);">Q4 — 10월~12월</div>
+                    <div class="q-title">완성 & 회고 — 모든 목표 달성</div>
+                    <div class="timeline-tasks">
+                        <span class="timeline-task" data-key="tl-19">독서 100권 달성</span>
+                        <span class="timeline-task" data-key="tl-20">체중 -10KG 달성</span>
+                        <span class="timeline-task" data-key="tl-21">부수입 500만원 달성</span>
+                        <span class="timeline-task" data-key="tl-22">대출 상환 완료</span>
+                        <span class="timeline-task" data-key="tl-23">전자책 3권 출간 완료</span>
+                        <span class="timeline-task" data-key="tl-24">연간 회고 및 2027 계획</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ ROUTINE ============ -->
+        <div class="section-panel" id="panel-routine">
+            <div class="section-title">🌅 일일 루틴 타임라인</div>
+            <div class="section-subtitle">매일 반복하는 루틴 — 작은 실천이 큰 변화를 만듭니다</div>
+
+            <div class="routine-list">
+                <div class="routine-block">
+                    <div class="routine-time">06:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-yellow), var(--accent-orange));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">☀️ 기상 → 아침식사</div>
+                        <div class="routine-desc">두유, 과일 / 영양제·ADHD약 섭취</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">07:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-orange), var(--accent-blue));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">📖 독서 30페이지</div>
+                        <div class="routine-desc">다양한 장르 / 고전 포함</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">09:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-blue), var(--accent-cyan));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">💼 취업준비 / 업무</div>
+                        <div class="routine-desc">이력서 제출, 회사분석, 면접준비 / 메모·녹음 습관</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">12:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-green));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">💧 물 1L 섭취 체크</div>
+                        <div class="routine-desc">틈틈이 걷기 (7,000보 목표)</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">14:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-green), var(--accent-purple));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">📚 공부 시간</div>
+                        <div class="routine-desc">AI / 미술사 / 법률 / 금융 / 경제서적</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">18:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">🏋️ 허리운동 20분 + 청소 10분</div>
+                        <div class="routine-desc">몸도 공간도 깨끗하게</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">21:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-pink), var(--accent-red));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">👔 다음날 준비</div>
+                        <div class="routine-desc">옷, 필요품 준비 / 가계부 작성 / 독서일지(주1회)</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">22:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-red), #6366f1);"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">😴 양압기 착용 → 취침</div>
+                        <div class="routine-desc">수면 외 눕는 습관 금지 / 충분한 수면</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            2026 만다라트 KPI 대시보드 — 데이터는 브라우저 로컬스토리지에 저장됩니다<br>
+            실행과 결과로 만드는 나의 2026년
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA STORE ==========
+        const STORAGE_KEY = 'mandarat2026';
+
+        const defaultData = {
+            kpis: {
+                weight: 0,
+                books: 0,
+                library: 0,
+                classic: 0,
+                journal: 0,
+                apply: 0,
+                interview: 0,
+                offer: 0,
+                carrot: 0,
+                youtube: 0,
+                ebook: 0,
+                side: 0,
+                debt: 0,
+                saving: 0,
+                delivery: 0
+            },
+            checks: {}
+        };
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    return { ...defaultData, ...parsed, kpis: { ...defaultData.kpis, ...parsed.kpis } };
+                }
+            } catch(e) {}
+            return JSON.parse(JSON.stringify(defaultData));
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        let appData = loadData();
+
+        // ========== KPI DEFINITIONS ==========
+        const kpiDefs = [
+            { key: 'books', label: '독서', icon: '📚', target: 100, unit: '권', color: 'purple', inputId: 'inputBooks' },
+            { key: 'weight', label: '체중 감량', icon: '💪', target: 10, unit: 'KG', color: 'green', inputId: 'inputWeight' },
+            { key: 'apply', label: '이력서 제출', icon: '💼', target: 100, unit: '곳', color: 'orange', inputId: 'inputApply' },
+            { key: 'debt', label: '대출 상환', icon: '💳', target: 700, unit: '만원', color: 'red', inputId: 'inputDebt' },
+            { key: 'side', label: '부수입', icon: '💵', target: 500, unit: '만원', color: 'yellow', inputId: 'inputSide' },
+            { key: 'ebook', label: '전자책 출간', icon: '📖', target: 3, unit: '권', color: 'cyan', inputId: 'inputEbook' },
+            { key: 'library', label: '도서관 대출', icon: '🏛️', target: 50, unit: '권', color: 'blue', inputId: 'inputLibrary' },
+            { key: 'saving', label: '적금 운영', icon: '🏦', target: 3, unit: '개', color: 'pink', inputId: 'inputSaving' },
+        ];
+
+        // ========== NAVIGATION ==========
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ========== RENDER KPI CARDS ==========
+        function renderKPICards() {
+            const container = document.getElementById('kpiCards');
+            container.innerHTML = '';
+            kpiDefs.forEach(kpi => {
+                const current = appData.kpis[kpi.key] || 0;
+                const pct = Math.min(Math.round((current / kpi.target) * 100), 100);
+                const card = document.createElement('div');
+                card.className = `kpi-card kpi-${kpi.color}`;
+                card.innerHTML = `
+                    <div class="kpi-icon">${kpi.icon}</div>
+                    <div class="kpi-label">${kpi.label}</div>
+                    <div class="kpi-value">${current}<span style="font-size:0.9rem;font-weight:400;color:var(--text-muted);"> / ${kpi.target}${kpi.unit}</span></div>
+                    <div class="kpi-progress-bar"><div class="kpi-progress-fill" data-width="${pct}"></div></div>
+                    <div class="kpi-percent">${pct}% 달성</div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Animate progress bars
+            setTimeout(() => {
+                document.querySelectorAll('.kpi-progress-fill').forEach(bar => {
+                    bar.style.width = bar.dataset.width + '%';
+                });
+            }, 100);
+        }
+
+        // ========== RENDER BAR CHART ==========
+        function renderBarChart() {
+            const container = document.getElementById('barChart');
+            container.innerHTML = '';
+
+            const colors = {
+                purple: 'linear-gradient(90deg, #a855f7, #f472b6)',
+                green: 'linear-gradient(90deg, #34d399, #6ee7b7)',
+                orange: 'linear-gradient(90deg, #fb923c, #fbbf24)',
+                red: 'linear-gradient(90deg, #f87171, #fb923c)',
+                yellow: 'linear-gradient(90deg, #fbbf24, #fb923c)',
+                cyan: 'linear-gradient(90deg, #22d3ee, #4facfe)',
+                blue: 'linear-gradient(90deg, #4facfe, #22d3ee)',
+                pink: 'linear-gradient(90deg, #f472b6, #a855f7)',
+            };
+
+            kpiDefs.forEach(kpi => {
+                const current = appData.kpis[kpi.key] || 0;
+                const pct = Math.min(Math.round((current / kpi.target) * 100), 100);
+                const row = document.createElement('div');
+                row.className = 'bar-row';
+                row.innerHTML = `
+                    <div class="bar-label">${kpi.icon} ${kpi.label}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="background:${colors[kpi.color]};width:0%;" data-width="${Math.max(pct, 2)}">${pct > 10 ? pct + '%' : ''}</div>
+                    </div>
+                    <div class="bar-value" style="color:var(--accent-${kpi.color});">${current}/${kpi.target}</div>
+                `;
+                container.appendChild(row);
+            });
+
+            setTimeout(() => {
+                container.querySelectorAll('.bar-fill').forEach(bar => {
+                    bar.style.width = bar.dataset.width + '%';
+                });
+            }, 200);
+        }
+
+        // ========== RENDER DONUT CHARTS ==========
+        function renderDonutCharts() {
+            const container = document.getElementById('donutCharts');
+            container.innerHTML = '';
+
+            const donutItems = [
+                { key: 'books', label: '독서', target: 100, unit: '권', color: '#a855f7' },
+                { key: 'weight', label: '감량', target: 10, unit: 'KG', color: '#34d399' },
+                { key: 'apply', label: '이력서', target: 100, unit: '곳', color: '#fb923c' },
+                { key: 'debt', label: '대출상환', target: 700, unit: '만', color: '#f87171' },
+                { key: 'side', label: '부수입', target: 500, unit: '만', color: '#fbbf24' },
+                { key: 'ebook', label: '전자책', target: 3, unit: '권', color: '#22d3ee' },
+            ];
+
+            donutItems.forEach(item => {
+                const current = appData.kpis[item.key] || 0;
+                const pct = Math.min(Math.round((current / item.target) * 100), 100);
+                const circumference = 2 * Math.PI * 45;
+                const dashArray = (pct / 100) * circumference;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'donut-wrapper';
+                wrapper.innerHTML = `
+                    <svg class="donut" viewBox="0 0 120 120">
+                        <circle class="donut-ring" cx="60" cy="60" r="45"></circle>
+                        <circle class="donut-segment" cx="60" cy="60" r="45"
+                            stroke="${item.color}"
+                            stroke-dasharray="0 ${circumference}"
+                            data-target="${dashArray} ${circumference}"></circle>
+                        <text class="donut-center-text" x="60" y="60">${pct}%</text>
+                    </svg>
+                    <div class="donut-label">${item.label}</div>
+                    <div class="donut-sub">${current} / ${item.target}${item.unit}</div>
+                `;
+                container.appendChild(wrapper);
+            });
+
+            setTimeout(() => {
+                container.querySelectorAll('.donut-segment').forEach(seg => {
+                    seg.setAttribute('stroke-dasharray', seg.dataset.target);
+                });
+            }, 300);
+        }
+
+        // ========== OVERALL PROGRESS ==========
+        function updateOverallProgress() {
+            let totalPct = 0;
+            kpiDefs.forEach(kpi => {
+                const current = appData.kpis[kpi.key] || 0;
+                totalPct += Math.min((current / kpi.target) * 100, 100);
+            });
+            const avg = Math.round(totalPct / kpiDefs.length);
+            const circumference = 2 * Math.PI * 50;
+            const dashArray = (avg / 100) * circumference;
+
+            const ring = document.getElementById('overallRing');
+            ring.setAttribute('stroke-dasharray', `${dashArray} ${circumference}`);
+            document.getElementById('overallPercent').textContent = avg + '%';
+
+            const completed = kpiDefs.filter(kpi => {
+                const current = appData.kpis[kpi.key] || 0;
+                return current >= kpi.target;
+            }).length;
+            document.getElementById('overallSub').textContent = `${kpiDefs.length}개 핵심 KPI 중 ${completed}개 달성 완료`;
+        }
+
+        // ========== UPDATE KPI ==========
+        function updateKPI(key) {
+            const inputMap = {
+                weight: 'inputWeight', books: 'inputBooks', library: 'inputLibrary',
+                classic: 'inputClassic', journal: 'inputJournal', apply: 'inputApply',
+                interview: 'inputInterview', offer: 'inputOffer', carrot: 'inputCarrot',
+                youtube: 'inputYoutube', ebook: 'inputEbook', side: 'inputSide',
+                debt: 'inputDebt', saving: 'inputSaving'
+            };
+
+            const input = document.getElementById(inputMap[key]);
+            if (input) {
+                const val = parseFloat(input.value) || 0;
+                appData.kpis[key] = val;
+                saveData(appData);
+                refreshAll();
+            }
+        }
+
+        // ========== CHECKLISTS ==========
+        function setupChecklists() {
+            document.querySelectorAll('.checklist-item[data-key]').forEach(item => {
+                const key = item.dataset.key;
+                if (appData.checks[key]) {
+                    item.classList.add('checked');
+                }
+                item.addEventListener('click', () => {
+                    item.classList.toggle('checked');
+                    appData.checks[key] = item.classList.contains('checked');
+                    saveData(appData);
+                });
+            });
+
+            // Timeline tasks
+            document.querySelectorAll('.timeline-task[data-key]').forEach(task => {
+                const key = task.dataset.key;
+                if (appData.checks[key]) {
+                    task.classList.add('done');
+                }
+                task.addEventListener('click', () => {
+                    task.classList.toggle('done');
+                    appData.checks[key] = task.classList.contains('done');
+                    saveData(appData);
+                });
+            });
+        }
+
+        // ========== MANDARAT GRID ==========
+        function renderMandaratGrid() {
+            const cells = [
+                { label: '건강한 삶', sub: '검진·운동·감량', tab: 'health', color: 'var(--accent-green)' },
+                { label: '독서 100권', sub: '하루 30페이지', tab: 'reading', color: 'var(--accent-purple)' },
+                { label: '취업 상반기', sub: '연봉 5000만원', tab: 'career', color: 'var(--accent-orange)' },
+                { label: '수익 창출', sub: '투자·콘텐츠', tab: 'income', color: 'var(--accent-yellow)' },
+                { label: '실행과 결과', sub: '2026', tab: 'overview', center: true, color: '' },
+                { label: '자격증·공부', sub: 'AI·법률·금융', tab: 'study', color: 'var(--accent-cyan)' },
+                { label: '습관 만들기', sub: '매일의 실천', tab: 'habit', color: 'var(--accent-blue)' },
+                { label: '목돈·절약', sub: '부채청산·저축', tab: 'money', color: 'var(--accent-red)' },
+                { label: '인간관계', sub: '보호·정리·확장', tab: 'relation', color: 'var(--accent-pink)' },
+            ];
+
+            const grid = document.getElementById('mandaratGrid');
+            grid.innerHTML = '';
+            cells.forEach(cell => {
+                const div = document.createElement('div');
+                div.className = 'mandarat-cell' + (cell.center ? ' center' : '');
+                div.style.borderColor = cell.center ? '' : cell.color;
+                div.innerHTML = `
+                    <div style="color:${cell.color || '#fff'};font-weight:700;">${cell.label}</div>
+                    <div class="cell-sub">${cell.sub}</div>
+                `;
+                div.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => {
+                        t.classList.remove('active');
+                        if (t.dataset.tab === cell.tab) t.classList.add('active');
+                    });
+                    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('panel-' + cell.tab).classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                grid.appendChild(div);
+            });
+
+            // Sub-grids
+            renderSubGrids();
+        }
+
+        function renderSubGrids() {
+            const subGridData = [
+                {
+                    title: '💪 건강한 삶',
+                    color: 'var(--accent-green)',
+                    cells: ['건강검진받기\n2026년 1회', '여성질환검진\n3개월 1회', '간질환 검진\n상하반기 2번',
+                            '치아 관리\n3개월 주기', '건강한 삶', '1년 10KG\n감량하기',
+                            '하루 7000보', '영양제/ADHD약\n시간대별 섭취', '수면-양압기\n착용관리']
+                },
+                {
+                    title: '📚 독서 100권',
+                    color: 'var(--accent-purple)',
+                    cells: ['독서편식\n하지 않기', '도서관 대출\n50권 목표', '독서일지작성\n주1회 필수',
+                            '하루 30페이지', '독서 100권', '독서모임\n2~3월 가입',
+                            '안 읽는 책\n팔거나 버리기', '고전 10권\n읽기', '독서와\nAI활용해보기']
+                },
+                {
+                    title: '💼 취업 (상반기)',
+                    color: 'var(--accent-orange)',
+                    cells: ['이력서\n자기소개서', '면접준비\n감량/헤어', '포트폴리오\n성과시각화',
+                            '연봉 5000만원', '취업 상반기', '회사분석\n해놓기',
+                            'AI자격증 취득', '최소 100곳\n이력서 넣기', 'CS→관리자\nAI→신입']
+                },
+                {
+                    title: '💰 수익 창출',
+                    color: 'var(--accent-yellow)',
+                    cells: ['블로그 체험단', '유튜브\n5만원 수익', '당근활용\n50만원',
+                            '주식/ETF\n최소2개', '수익 창출', '공모주\n주식모으기',
+                            '적금통장\n3개', '구독형앱\n수익화', '전자책3권\n수익화']
+                },
+                {
+                    title: '📖 공부 & 자격증',
+                    color: 'var(--accent-cyan)',
+                    cells: ['지식재산권', '바이브코딩\nAI기술공부', '근로자보호법\n사업자관련법',
+                            '부동산/금융', '공부', '도서관\n매주이용',
+                            '경제서적\n주1권', '공부내용정리\n전자책만들기', '미술사\n주2회']
+                },
+                {
+                    title: '⚡ 습관 만들기',
+                    color: 'var(--accent-blue)',
+                    cells: ['안쓰는 물건\n수시 버리기', '아침식사\n06:00', '수면제외\n눕는습관고치기',
+                            '청소 매일\n10분', '습관', '전날 저녁9시\n다음날 준비',
+                            '허리운동\n하루 20분', '항상 메모하기\n녹음어플활용', '물 1L\n마시기']
+                },
+                {
+                    title: '🏦 절약 & 목돈',
+                    color: 'var(--accent-red)',
+                    cells: ['카드값 완납', '2026년\n대출700상환', '연봉5000만원\n이직',
+                            '가계부 작성', '절약 시스템', '대중교통\nK-패스',
+                            '배달음식\n한달2번', '중고상품이용', '부수입\n500만원']
+                },
+                {
+                    title: '❤️ 인간관계',
+                    color: 'var(--accent-pink)',
+                    cells: ['남자친구랑\n좋은추억쌓기', '외가식구\n경조사챙기기', '지인들\n생일챙기기',
+                            '사적정보\n공유금지', '인간관계', '새로운인맥\nAI/미술사',
+                            '어른 공경하기', '불필요한사람\n정리하기', '리더십\n기르기']
+                },
+            ];
+
+            const container = document.getElementById('subGrids');
+            container.innerHTML = '<h3 style="text-align:center;margin:40px 0 30px;font-size:1.2rem;color:var(--text-secondary);">📋 각 영역 상세 만다라트</h3>';
+
+            const gridWrapper = document.createElement('div');
+            gridWrapper.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;';
+
+            subGridData.forEach(sg => {
+                const card = document.createElement('div');
+                card.className = 'detail-card';
+                card.style.padding = '20px';
+
+                let gridHTML = `<h3 style="font-size:0.95rem;margin-bottom:14px;">${sg.title}</h3>`;
+                gridHTML += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">`;
+
+                sg.cells.forEach((cell, i) => {
+                    const isCenter = i === 4;
+                    const lines = cell.split('\n');
+                    gridHTML += `<div style="
+                        background: ${isCenter ? `linear-gradient(135deg, ${sg.color}33, ${sg.color}11)` : 'rgba(255,255,255,0.02)'};
+                        border: 1px solid ${isCenter ? sg.color : 'var(--border-color)'};
+                        border-radius: 8px;
+                        padding: 10px 6px;
+                        text-align: center;
+                        font-size: 0.68rem;
+                        font-weight: ${isCenter ? '700' : '400'};
+                        color: ${isCenter ? sg.color : 'var(--text-secondary)'};
+                        min-height: 55px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        line-height: 1.4;
+                    ">${lines.join('<br>')}</div>`;
+                });
+
+                gridHTML += '</div>';
+                card.innerHTML = gridHTML;
+                gridWrapper.appendChild(card);
+            });
+
+            container.appendChild(gridWrapper);
+        }
+
+        // ========== SYNC STAT DISPLAYS ==========
+        function syncStatDisplays() {
+            // Health
+            const w = appData.kpis.weight || 0;
+            document.getElementById('healthWeight').textContent = w;
+            document.getElementById('healthSteps').textContent = '7,000';
+            const checkups = ['health-1','health-3','health-4'].filter(k => appData.checks[k]).length;
+            document.getElementById('healthCheckup').textContent = checkups;
+            const dental = ['health-5'].filter(k => appData.checks[k]).length;
+            document.getElementById('healthDental').textContent = dental;
+
+            // Reading
+            document.getElementById('readBooks').textContent = appData.kpis.books || 0;
+            document.getElementById('readLibrary').textContent = appData.kpis.library || 0;
+            document.getElementById('readClassic').textContent = appData.kpis.classic || 0;
+            document.getElementById('readJournal').textContent = appData.kpis.journal || 0;
+
+            // Career
+            document.getElementById('careerApply').textContent = appData.kpis.apply || 0;
+            document.getElementById('careerInterview').textContent = appData.kpis.interview || 0;
+            document.getElementById('careerOffer').textContent = appData.kpis.offer || 0;
+
+            // Income
+            document.getElementById('incomeCarrot').textContent = (appData.kpis.carrot || 0) + '만';
+            document.getElementById('incomeYoutube').textContent = (appData.kpis.youtube || 0).toLocaleString();
+            document.getElementById('incomeEbook').textContent = appData.kpis.ebook || 0;
+            document.getElementById('incomeSide').textContent = (appData.kpis.side || 0) + '만';
+
+            // Money
+            document.getElementById('moneyDebt').textContent = (appData.kpis.debt || 0) + '만';
+            document.getElementById('moneySaving').textContent = appData.kpis.saving || 0;
+            document.getElementById('moneyDelivery').textContent = appData.kpis.delivery || 0;
+
+            // Sync input values
+            Object.keys(appData.kpis).forEach(key => {
+                const inputMap = {
+                    weight: 'inputWeight', books: 'inputBooks', library: 'inputLibrary',
+                    classic: 'inputClassic', journal: 'inputJournal', apply: 'inputApply',
+                    interview: 'inputInterview', offer: 'inputOffer', carrot: 'inputCarrot',
+                    youtube: 'inputYoutube', ebook: 'inputEbook', side: 'inputSide',
+                    debt: 'inputDebt', saving: 'inputSaving'
+                };
+                const el = document.getElementById(inputMap[key]);
+                if (el && appData.kpis[key]) {
+                    el.value = appData.kpis[key];
+                }
+            });
+        }
+
+        // ========== RESET ==========
+        function resetAllData() {
+            if (confirm('모든 데이터를 초기화하시겠습니까?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                appData = JSON.parse(JSON.stringify(defaultData));
+                // Clear all inputs
+                document.querySelectorAll('.kpi-input').forEach(i => i.value = '');
+                document.querySelectorAll('.checklist-item').forEach(i => i.classList.remove('checked'));
+                document.querySelectorAll('.timeline-task').forEach(t => t.classList.remove('done'));
+                refreshAll();
+            }
+        }
+
+        // ========== REFRESH ALL ==========
+        function refreshAll() {
+            renderKPICards();
+            renderBarChart();
+            renderDonutCharts();
+            updateOverallProgress();
+            syncStatDisplays();
+        }
+
+        // ========== DATE DISPLAY ==========
+        function setDate() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const day = days[now.getDay()];
+            document.getElementById('currentDate').textContent = `${y}년 ${m}월 ${d}일 (${day})`;
+        }
+
+        // ========== INIT ==========
+        function init() {
+            setDate();
+            renderMandaratGrid();
+            renderKPICards();
+            renderBarChart();
+            renderDonutCharts();
+            updateOverallProgress();
+            setupChecklists();
+            syncStatDisplays();
+        }
+
+        init();
+    </script>
+</body>
+</html>

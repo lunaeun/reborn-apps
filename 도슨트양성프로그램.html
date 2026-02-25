@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도슨트 마스터 클래스 — 300만원 프리미엄 양성 프로그램</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@400;600;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0c0c14;
+            --bg2: #12121e;
+            --bg3: #1a1a2e;
+            --card: #161628;
+            --card-hover: #1e1e38;
+            --gold: #d4a853;
+            --gold-light: #f0d78c;
+            --gold-dark: #a8842f;
+            --text: #e8e6e3;
+            --text2: #a09e9b;
+            --text3: #6b6966;
+            --accent: #c9a96e;
+            --border: rgba(212,168,83,0.12);
+            --border2: rgba(255,255,255,0.06);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 20% 0%, rgba(212,168,83,0.04) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 100%, rgba(169,137,82,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 20px;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--gold-light);
+            line-height: 1.3;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text2);
+            letter-spacing: 2px;
+            margin-top: 10px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .hero-desc {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: var(--text2);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 36px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .num {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .hero-stat .label {
+            font-size: 0.75rem;
+            color: var(--text3);
+            letter-spacing: 1px;
+        }
+
+        /* ===== NAV ===== */
+        .main-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(12,12,20,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            overflow-x: auto;
+            gap: 0;
+            scrollbar-width: none;
+        }
+
+        .nav-inner::-webkit-scrollbar { display: none; }
+
+        .nav-btn {
+            flex-shrink: 0;
+            padding: 16px 22px;
+            background: none;
+            border: none;
+            color: var(--text3);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Noto Sans KR', sans-serif;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover { color: var(--gold-light); }
+
+        .nav-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+            padding: 50px 0;
+            animation: fadeUp 0.5s ease;
+        }
+
+        .section.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 40px;
+        }
+
+        .section-header .sec-num {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.8rem;
+            color: var(--gold-dark);
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .section-header h2 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--gold-light);
+            margin: 8px 0;
+        }
+
+        .section-header p {
+            color: var(--text2);
+            font-size: 0.9rem;
+        }
+
+        /* ===== MODULE CARD ===== */
+        .module-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .module-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(212,168,83,0.25);
+        }
+
+        .module-card h3 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-card .module-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .meta-tag {
+            font-size: 0.7rem;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .tag-hours { background: rgba(212,168,83,0.12); color: var(--gold); }
+        .tag-type { background: rgba(100,200,150,0.1); color: #6ec89a; }
+        .tag-week { background: rgba(100,150,255,0.1); color: #7aacf0; }
+
+        .module-card .desc {
+            color: var(--text2);
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .module-card .topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-chip {
+            font-size: 0.75rem;
+            padding: 5px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            color: var(--text2);
+        }
+
+        /* ===== TIMELINE ===== */
+        .era-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .era-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gold), var(--gold-dark), rgba(212,168,83,0.1));
+        }
+
+        .era-item {
+            position: relative;
+            margin-bottom: 28px;
+            padding: 24px 28px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+
+        .era-item:hover {
+            background: var(--card-hover);
+            border-color: rgba(212,168,83,0.2);
+        }
+
+        .era-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 30px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--bg);
+        }
+
+        .era-item .era-period {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .era-item .era-title {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 8px;
+        }
+
+        .era-item .era-desc {
+            font-size: 0.85rem;
+            color: var(--text2);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .era-item .era-works {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .work-tag {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            background: rgba(212,168,83,0.08);
+            border: 1px solid rgba(212,168,83,0.15);
+            border-radius: 6px;
+            color: var(--accent);
+        }
+
+        /* ===== REFERENCE BOX ===== */
+        .ref-box {
+            background: rgba(212,168,83,0.04);
+            border: 1px solid rgba(212,168,83,0.15);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            font-size: 0.82rem;
+            color: var(--text2);
+        }
+
+        .ref-box .ref-title {
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+        }
+
+        /* ===== SCRIPT SECTION ===== */
+        .script-example {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            margin: 20px 0;
+            font-size: 0.88rem;
+            line-height: 2;
+            color: var(--text2);
+            position: relative;
+        }
+
+        .script-example::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 3rem;
+            color: var(--gold-dark);
+            opacity: 0.4;
+        }
+
+        .script-example .script-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        /* ===== CONTRACT TEMPLATE ===== */
+        .contract-box {
+            background: #0f0f1c;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px;
+            margin: 20px 0;
+            font-size: 0.85rem;
+            line-height: 2;
+        }
+
+        .contract-box h4 {
+            text-align: center;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .contract-article {
+            margin-bottom: 16px;
+        }
+
+        .contract-article .art-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .contract-article .art-content {
+            color: var(--text2);
+            padding-left: 16px;
+        }
+
+        /* ===== STEP PROCESS ===== */
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .step-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+
+        .step-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(212,168,83,0.25);
+        }
+
+        .step-num {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold-dark);
+            opacity: 0.5;
+        }
+
+        .step-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin: 8px 0;
+        }
+
+        .step-card p {
+            font-size: 0.85rem;
+            color: var(--text2);
+            line-height: 1.8;
+        }
+
+        /* ===== CURRICULUM TABLE ===== */
+        .cur-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.82rem;
+        }
+
+        .cur-table th {
+            background: rgba(212,168,83,0.08);
+            color: var(--gold);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .cur-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border2);
+            color: var(--text2);
+            vertical-align: top;
+        }
+
+        .cur-table tr:hover td {
+            background: rgba(212,168,83,0.03);
+        }
+
+        .cur-table .week-num {
+            font-weight: 700;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        /* ===== QA SECTION ===== */
+        .qa-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .qa-q {
+            padding: 20px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--gold-light);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .qa-q:hover { background: var(--card-hover); }
+
+        .qa-q .arrow {
+            font-size: 1.2rem;
+            color: var(--gold);
+            transition: transform 0.3s;
+        }
+
+        .qa-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 24px;
+            color: var(--text2);
+            font-size: 0.88rem;
+            line-height: 1.9;
+        }
+
+        .qa-item.open .qa-a {
+            max-height: 800px;
+            padding: 0 24px 24px;
+        }
+
+        .qa-item.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* ===== TWO COLUMN ===== */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        .footer p { color: var(--text3); font-size: 0.75rem; }
+
+        .footer .sources {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer .sources h4 {
+            color: var(--gold-dark);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .footer .sources p {
+            font-size: 0.7rem;
+            line-height: 1.8;
+            color: var(--text3);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .two-col { grid-template-columns: 1fr; }
+            .hero-stats { gap: 20px; }
+            .module-card { padding: 22px; }
+            .contract-box { padding: 20px; }
+            .step-grid { grid-template-columns: 1fr; }
+            .nav-btn { padding: 14px 16px; font-size: 0.75rem; }
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 40px 0;
+        }
+
+        /* Warning/Tip box */
+        .tip-box {
+            background: rgba(110, 200, 154, 0.05);
+            border-left: 3px solid #6ec89a;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 16px 0;
+            font-size: 0.85rem;
+            color: var(--text2);
+        }
+
+        .tip-box .tip-title {
+            color: #6ec89a;
+            font-weight: 700;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+        }
+
+        .warn-box {
+            background: rgba(248,113,113,0.05);
+            border-left: 3px solid #f87171;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 16px 0;
+            font-size: 0.85rem;
+            color: var(--text2);
+        }
+
+        .warn-box .warn-title {
+            color: #f87171;
+            font-weight: 700;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+        }
+
+        .indent { padding-left: 20px; }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="container">
+        <div class="hero-badge">PREMIUM DOCENT MASTER CLASS</div>
+        <h1>도슨트 마스터 클래스
+            <span>25년 경력 큐레이터가 설계한 프리미엄 양성 프로그램</span>
+        </h1>
+        <p class="hero-desc">
+            서양·동양미술사의 체계적 학습, 전시기획 실무, 계약서 작성, 
+            스크립트 완성까지 — 독립 큐레이터·전문 도슨트로 활동하기 위한 모든 것을 담았습니다.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="num">24주</div><div class="label">총 교육기간</div></div>
+            <div class="hero-stat"><div class="num">192h</div><div class="label">총 수업시간</div></div>
+            <div class="hero-stat"><div class="num">8개</div><div class="label">핵심 모듈</div></div>
+            <div class="hero-stat"><div class="num">300만</div><div class="label">프로그램 가치</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- NAV -->
+<nav class="main-nav">
+    <div class="container">
+        <div class="nav-inner">
+            <button class="nav-btn active" data-tab="overview">프로그램 개요</button>
+            <button class="nav-btn" data-tab="western">서양미술사</button>
+            <button class="nav-btn" data-tab="eastern">동양미술사</button>
+            <button class="nav-btn" data-tab="curation">전시기획 실무</button>
+            <button class="nav-btn" data-tab="contract">계약서·서류</button>
+            <button class="nav-btn" data-tab="script">스크립트 작성법</button>
+            <button class="nav-btn" data-tab="practice">현장실습·평가</button>
+            <button class="nav-btn" data-tab="review">프로그램 검토</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+<!-- ========== 1. OVERVIEW ========== -->
+<div class="section active" id="sec-overview">
+    <div class="section-header">
+        <div class="sec-num">MODULE OVERVIEW</div>
+        <h2>전체 커리큘럼 구조</h2>
+        <p>24주(6개월), 주 2회(회당 4시간), 총 192시간 — 이론 + 실무 + 현장실습 삼위일체 구조</p>
+    </div>
+
+    <table class="cur-table">
+        <thead>
+            <tr>
+                <th>단계</th>
+                <th>모듈</th>
+                <th>주차</th>
+                <th>시수</th>
+                <th>핵심 내용</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="week-num" rowspan="2">PART 1<br>기초</td>
+                <td>M1. 서양미술사</td>
+                <td>1–6주</td>
+                <td>48h</td>
+                <td>선사시대→고대→중세→르네상스→바로크→신고전주의→인상주의→모더니즘→동시대미술</td>
+            </tr>
+            <tr>
+                <td>M2. 동양미술사</td>
+                <td>7–11주</td>
+                <td>40h</td>
+                <td>인도·중국·한국·일본 미술 / 불교미술·서화·도자·근현대미술</td>
+            </tr>
+            <tr>
+                <td class="week-num" rowspan="2">PART 2<br>실무</td>
+                <td>M3. 전시기획 실무</td>
+                <td>12–15주</td>
+                <td>32h</td>
+                <td>전시 콘셉트 개발 → 공간설계 → 작품선정 → 예산편성 → 홍보 → 오프닝</td>
+            </tr>
+            <tr>
+                <td>M4. 계약서·서류 작성</td>
+                <td>16–17주</td>
+                <td>16h</td>
+                <td>문체부 표준계약서 12종 / 독립큐레이터 계약 / 작품대여·보험</td>
+            </tr>
+            <tr>
+                <td class="week-num" rowspan="2">PART 3<br>도슨트</td>
+                <td>M5. 스크립트 작성법</td>
+                <td>18–20주</td>
+                <td>24h</td>
+                <td>리서치→구조설계→스크립트 집필→리허설→피드백 수정</td>
+            </tr>
+            <tr>
+                <td>M6. 스피치·퍼포먼스</td>
+                <td>21주</td>
+                <td>8h</td>
+                <td>발성·발음·호흡 / 관객 소통법 / Q&A 대응 / 위기관리</td>
+            </tr>
+            <tr>
+                <td class="week-num" rowspan="2">PART 4<br>실전</td>
+                <td>M7. 현장실습</td>
+                <td>22–23주</td>
+                <td>16h</td>
+                <td>미술관 현장 해설 실습 / 멘토 피드백 / 크로스 리뷰</td>
+            </tr>
+            <tr>
+                <td>M8. 포트폴리오·수료</td>
+                <td>24주</td>
+                <td>8h</td>
+                <td>개인 포트폴리오 발표 / 전문가 심사 / 수료식</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="tip-box">
+        <div class="tip-title">💡 프로그램 설계 철학</div>
+        본 프로그램은 단순 지식 전달이 아닌 "보고(See) → 읽고(Read) → 쓰고(Write) → 말하는(Speak)" 4단계 학습 사이클을 매 모듈에 적용합니다. 미술사 지식이 스크립트로 전환되고, 그것이 관객 앞에서 살아있는 해설이 되는 전 과정을 체험합니다.
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+        <h2>300만원 가치의 근거</h2>
+    </div>
+
+    <div class="step-grid">
+        <div class="step-card">
+            <div class="step-num">01</div>
+            <h4>192시간 밀도 있는 수업</h4>
+            <p>국립현대미술관 도슨트 양성 과정(약 30~40시간)의 4~6배 분량. 미술사 통사를 2회 반복 학습하여 체화시킵니다.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">02</div>
+            <h4>현직 큐레이터 직강</h4>
+            <p>25년 현장 경험의 큐레이터가 직접 강의합니다. 교과서에 없는 전시 현장의 리얼한 노하우를 전수합니다.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">03</div>
+            <h4>실전 계약서·서류 키트</h4>
+            <p>문체부 고시 표준계약서 12종 해설 + 독립큐레이터 실무 템플릿 + 전시기획서 양식을 모두 제공합니다.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">04</div>
+            <h4>1:1 스크립트 멘토링</h4>
+            <p>수강생 각자의 스크립트를 개별적으로 첨삭하고, 실제 전시장에서 리허설 피드백을 제공합니다.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 2. WESTERN ART ========== -->
+<div class="section" id="sec-western">
+    <div class="section-header">
+        <div class="sec-num">MODULE 01 · 48 HOURS</div>
+        <h2>서양미술사 — 선사시대부터 동시대미술까지</h2>
+        <p>E.H. 곰브리치 『서양미술사』, H.W. 잰슨 『미술의 역사』, 노르베르트 볼프, 에른스트 곰브리치의 체계를 기반으로 시대별 맥락을 구성합니다.</p>
+    </div>
+
+    <div class="era-timeline">
+
+        <div class="era-item">
+            <div class="era-period">1주차 · 선사시대 & 고대 근동 (BC 30,000 ~ BC 332)</div>
+            <div class="era-title">인류 최초의 시각 표현 — 동굴에서 신전으로</div>
+            <div class="era-desc">라스코·알타미라 동굴벽화의 주술적 기능, 이집트 미술의 정면성 법칙(Frontality)과 카논(Canon), 메소포타미아 지구라트와 부조의 서사 구조를 학습합니다. 미술이 '기록'과 '주술'에서 출발했다는 근본적 질문을 던집니다.</div>
+            <div class="era-works">
+                <span class="work-tag">라스코 동굴벽화 (BC 17,000)</span>
+                <span class="work-tag">네페르티티 흉상</span>
+                <span class="work-tag">함무라비 법전 석비</span>
+                <span class="work-tag">투탕카멘 황금마스크</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                E.H. Gombrich, 『The Story of Art』 (1950), Ch.1–2 / H.W. Janson, 『History of Art』, Ch. Ancient Near East & Egypt / 진중권, 『서양미술사: 고전예술편』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">2주차 · 그리스 & 로마 미술 (BC 800 ~ AD 476)</div>
+            <div class="era-title">아름다움의 기준을 세우다 — 이상적 인체와 건축</div>
+            <div class="era-desc">그리스 미술의 아르카이크→클래식→헬레니즘 전개를 폴리클레이토스의 '카논(인체비례론)'과 콘트라포스토를 중심으로 이해합니다. 로마의 실용적 건축(판테온, 콜로세움)과 초상 조각의 사실주의를 비교합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">미론 〈원반던지는 사람〉</span>
+                <span class="work-tag">파르테논 신전</span>
+                <span class="work-tag">〈라오콘 군상〉</span>
+                <span class="work-tag">〈밀로의 비너스〉</span>
+                <span class="work-tag">판테온</span>
+                <span class="work-tag">폼페이 프레스코</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                J.J. Winckelmann, 『그리스 미술 모방론』(1755) / Gombrich, Ch.3–5 / 노르베르트 볼프, 『서양미술사』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">3주차 · 중세 미술 (5C ~ 14C)</div>
+            <div class="era-title">신의 세계를 그리다 — 비잔틴, 로마네스크, 고딕</div>
+            <div class="era-desc">초기 기독교 미술의 카타콤 벽화에서 비잔틴의 모자이크(산비탈레 성당), 로마네스크의 묵직한 구조, 고딕의 수직적 상승감과 스테인드글라스까지. 중세는 '암흑기'가 아닌 '영적 시각의 시대'였음을 재조명합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">산비탈레 성당 모자이크</span>
+                <span class="work-tag">샤르트르 대성당</span>
+                <span class="work-tag">생세르냉 성당</span>
+                <span class="work-tag">〈린디스판 복음서〉</span>
+                <span class="work-tag">치마부에·조토</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                Umberto Eco, 『중세의 미와 예술』 / Gombrich Ch.6–9 / Janson, Medieval Art 파트 / 미셸 파스투로, 『중세 상징의 역사』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">4주차 · 르네상스 & 매너리즘 (14C ~ 16C)</div>
+            <div class="era-title">인간의 재발견 — 원근법, 해부학, 개인의 탄생</div>
+            <div class="era-desc">초기 르네상스(브루넬레스키, 마사초, 보티첼리)에서 전성기 르네상스(레오나르도, 미켈란젤로, 라파엘로), 북유럽 르네상스(반 에이크, 뒤러)까지. 선원근법의 발명, 유화 기법의 탄생, 예술가의 사회적 지위 변화를 다룹니다. 매너리즘의 의도적 왜곡(파르미자니노, 폰토르모)까지 확장합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">보티첼리 〈비너스의 탄생〉</span>
+                <span class="work-tag">레오나르도 〈최후의 만찬〉〈모나리자〉</span>
+                <span class="work-tag">미켈란젤로 〈천지창조〉〈다비드〉</span>
+                <span class="work-tag">라파엘로 〈아테네 학당〉</span>
+                <span class="work-tag">반 에이크 〈아르놀피니 부부의 초상〉</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                Giorgio Vasari, 『미술가 열전』(1550/1568) — 미술사 서술의 원형 / Leon Battista Alberti, 『회화론』(1435) / Gombrich Ch.12–18 / 하인리히 뵐플린, 『르네상스와 바로크』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">5주차 · 바로크, 로코코, 신고전주의, 낭만주의 (17C ~ 19C 초)</div>
+            <div class="era-title">빛과 감정의 드라마 — 절대왕정에서 혁명의 시대까지</div>
+            <div class="era-desc">카라바조의 키아로스쿠로, 렘브란트의 내면 탐구, 벨라스케스의 시선 구조, 베르사유 궁전의 로코코적 화려함, 다비드와 앵그르의 신고전주의적 이성, 들라크루아와 프리드리히의 낭만주의적 감정 폭발. 미술이 궁정→부르주아→대중으로 확장되는 과정을 추적합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">카라바조 〈성 마태의 소명〉</span>
+                <span class="work-tag">렘브란트 〈야경〉</span>
+                <span class="work-tag">벨라스케스 〈시녀들〉</span>
+                <span class="work-tag">다비드 〈마라의 죽음〉</span>
+                <span class="work-tag">들라크루아 〈민중을 이끄는 자유의 여신〉</span>
+                <span class="work-tag">고야 〈1808년 5월 3일〉</span>
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">6주차 전반 · 사실주의, 인상주의, 후기인상주의 (19C 중반 ~ 20C 초)</div>
+            <div class="era-title">눈에 보이는 것을 넘어서 — 빛의 혁명과 주관의 탄생</div>
+            <div class="era-desc">쿠르베의 "보이는 것만 그린다"는 선언에서 모네의 빛의 해체, 세잔의 "자연을 원통, 구, 원추로 다루라"는 유언까지. 고흐의 감정, 고갱의 원시, 쇠라의 과학이 20세기 미술 혁명의 씨앗이 되는 과정을 집중합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">쿠르베 〈돌 깨는 사람들〉</span>
+                <span class="work-tag">모네 〈인상, 해돋이〉</span>
+                <span class="work-tag">르누아르 〈물랭 드 라 갈레트〉</span>
+                <span class="work-tag">세잔 〈생빅투아르 산〉</span>
+                <span class="work-tag">고흐 〈별이 빛나는 밤〉</span>
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">6주차 후반 · 20세기 모더니즘 & 동시대미술 (20C ~ 현재)</div>
+            <div class="era-title">미술의 경계를 허물다 — 추상, 개념, 디지털</div>
+            <div class="era-desc">야수파(마티스)→입체파(피카소)→추상(칸딘스키, 몬드리안)→다다(뒤샹)→초현실주의(달리, 마그리트)→추상표현주의(폴록, 로스코)→팝아트(워홀)→미니멀리즘→개념미술→포스트모더니즘→설치·미디어·NFT 아트까지. 뒤샹의 레디메이드가 바꾼 '미술이란 무엇인가'라는 근본 질문을 관통합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">피카소 〈아비뇽의 처녀들〉</span>
+                <span class="work-tag">뒤샹 〈샘〉</span>
+                <span class="work-tag">몬드리안 〈구성〉</span>
+                <span class="work-tag">폴록 〈No.5, 1948〉</span>
+                <span class="work-tag">워홀 〈마릴린 먼로〉</span>
+                <span class="work-tag">백남준 〈다다익선〉</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========== 3. EASTERN ART ========== -->
+<div class="section" id="sec-eastern">
+    <div class="section-header">
+        <div class="sec-num">MODULE 02 · 40 HOURS</div>
+        <h2>동양미술사 — 인도, 중국, 한국, 일본</h2>
+        <p>홍익대학교 동양미술사 커리큘럼, KOCW 고려대 강좌, 안휘준 『한국 회화사』, 마이클 설리반 『중국미술사』 체계를 참조하여 구성합니다.</p>
+    </div>
+
+    <div class="era-timeline">
+        <div class="era-item">
+            <div class="era-period">7주차 · 인도 미술 & 불교미술의 동전(東傳)</div>
+            <div class="era-title">스투파에서 석굴로 — 불교미술의 탄생과 확산</div>
+            <div class="era-desc">산치 대탑의 '불상 없는 불교미술'에서 간다라·마투라의 불상 탄생, 아잔타 석굴의 벽화까지. 불교미술이 실크로드를 통해 중앙아시아→중국→한국→일본으로 전파되는 대서사를 개관합니다. 사의전신(寫意傳神)의 동양적 미의식을 함께 다룹니다.</div>
+            <div class="era-works">
+                <span class="work-tag">산치 대탑</span>
+                <span class="work-tag">간다라 불상</span>
+                <span class="work-tag">아잔타 석굴</span>
+                <span class="work-tag">돈황 막고굴</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                Benjamin Rowland, 『The Art and Architecture of India』 / 강우방, 『인도미술사』 / Sherman E. Lee, 『A History of Far Eastern Art』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">8주차 · 중국 미술사 (상주~청·근현대)</div>
+            <div class="era-title">기운생동(氣韻生動) — 서화의 전통과 문인화의 정신</div>
+            <div class="era-desc">상(商)·주(周)의 청동기 미술, 한대 화상석, 위진남북조의 사혁(謝赫) '화(畵)의 6법', 당대 산수화의 태동(이사훈·왕유), 송대 산수화의 절정(범관·곽희·마원), 원대 문인화(조맹부·예찬), 명·청대 사왕(四王)과 개성파(팔대산인, 석도)까지. 기운생동과 사의(寫意) 전통의 핵심을 관통합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">고개지 〈여사잠도〉</span>
+                <span class="work-tag">범관 〈계산행려도〉</span>
+                <span class="work-tag">곽희 〈조춘도〉</span>
+                <span class="work-tag">예찬 〈용슬재도〉</span>
+                <span class="work-tag">송·원 도자기(청자·백자)</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                Michael Sullivan, 『The Arts of China』 / 사혁, 『고화품록(古畵品錄)』(6C) / James Cahill, 『Chinese Painting』 / 정형민 편, 『동양미술사』 (시공사)
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">9–10주차 · 한국 미술사 (선사~근현대)</div>
+            <div class="era-title">우리 미술의 흐름 — 선사 암각화에서 단색화까지</div>
+            <div class="era-desc">반구대 암각화, 고구려 고분벽화(무용총·강서대묘 사신도), 백제의 서산 마애불, 통일신라의 석굴암·불국사, 고려 불화와 청자, 조선 초·중기 안견-정선-김홍도의 흐름, 조선 후기 진경산수와 풍속화, 일제강점기의 서양화 도입, 현대의 김환기·이우환·박서보·하종현의 단색화 운동까지. 한국 도슨트에게 가장 중요한 모듈입니다.</div>
+            <div class="era-works">
+                <span class="work-tag">반구대 암각화</span>
+                <span class="work-tag">고구려 무용총</span>
+                <span class="work-tag">석굴암 본존불</span>
+                <span class="work-tag">고려청자 상감운학문 매병</span>
+                <span class="work-tag">안견 〈몽유도원도〉</span>
+                <span class="work-tag">정선 〈인왕제색도〉</span>
+                <span class="work-tag">김홍도 〈씨름〉</span>
+                <span class="work-tag">신윤복 〈월하정인〉</span>
+                <span class="work-tag">김환기 〈어디서 무엇이 되어 다시 만나랴〉</span>
+            </div>
+            <div class="ref-box">
+                <div class="ref-title">📚 핵심 참고문헌</div>
+                안휘준, 『한국 회화사』 / 유홍준, 『나의 문화유산답사기』 시리즈 / 국립중앙박물관 도록 / 최열, 『한국 근현대미술사학』 / 오광수, 『한국현대미술사』
+            </div>
+        </div>
+
+        <div class="era-item">
+            <div class="era-period">11주차 · 일본 미술사 & 동양미술 비교론</div>
+            <div class="era-title">화(和)의 미학 — 우키요에에서 무라카미까지</div>
+            <div class="era-desc">헤이안 시대 야마토에, 가마쿠라의 수묵화 수용, 모모야마의 린파(琳派)와 병풍화, 에도 시대 우키요에(가쓰시카 호쿠사이, 우타가와 히로시게)가 인상파에 미친 '자포니즘' 영향, 현대의 구사마 야요이·무라카미 다카시까지. 한·중·일 비교론으로 동양미술의 공통 미학과 차이를 총정리합니다.</div>
+            <div class="era-works">
+                <span class="work-tag">호쿠사이 〈가나가와 앞바다의 큰 파도〉</span>
+                <span class="work-tag">센노 리큐 다도 미학</span>
+                <span class="work-tag">구사마 야요이 〈무한의 그물〉</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 4. CURATION ========== -->
+<div class="section" id="sec-curation">
+    <div class="section-header">
+        <div class="sec-num">MODULE 03 · 32 HOURS</div>
+        <h2>전시기획 실무 — 콘셉트에서 오프닝까지</h2>
+        <p>독립 큐레이터로 활동하기 위한 전시기획의 전 과정을 단계별로 실습합니다.</p>
+    </div>
+
+    <div class="step-grid">
+        <div class="step-card">
+            <div class="step-num">01</div>
+            <h4>전시 콘셉트 개발</h4>
+            <p>시대적 맥락·사회적 이슈·작가 연구에서 출발하여 전시 주제를 도출합니다. 전시는 '질문'이어야 하며, 그 질문이 관객에게 유효한지를 검증하는 과정을 거칩니다.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">02</div>
+            <h4>작가 선정 & 작품 리서치</h4>
+            <p>주제에 부합하는 작가 리스트업, 작가 스튜디오 방문, 작품 선정 기준(주제 적합성, 공간 적합성, 예산) 수립. 작가와의 커뮤니케이션 방법론.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">03</div>
+            <h4>전시기획서 작성</h4>
+            <p>전시명, 개요, 주제문, 참여 작가·작품 목록, 공간 배치도(Floor Plan), 일정, 예산안, 홍보 계획을 포함한 공식 기획서를 작성합니다. (실제 양식 제공)</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">04</div>
+            <h4>공간 설계 & 디스플레이</h4>
+            <p>작품 동선 설계, 조명(Lux 기준: 유화 150~200lux, 종이 50lux 이하), 벽면 색상, 좌대·진열장 선정, 명제표(캡션) 규격 등 공간 연출 실무.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">05</div>
+            <h4>예산 편성 & 펀딩</h4>
+            <p>한국문화예술위원회(ARKO) 시각예술창작산실, 서울문화재단, 지자체 공모 지원금 신청 방법. 예산서 항목(인건비, 작품운송비, 보험료, 홍보비, 도록 제작비 등) 작성 실습.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">06</div>
+            <h4>도록·홍보물 제작</h4>
+            <p>전시 도록의 구성(서문, 작가론, 작품 도판, 작가 약력), 포스터·리플렛·보도자료 작성법. 소셜미디어 홍보 전략 수립.</p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tip-box">
+        <div class="tip-title">💡 25년 차 큐레이터의 실전 조언</div>
+        전시기획서는 "설득의 문서"입니다. 기관 심사위원이든 작가든, 읽는 사람이 '이 전시가 왜 지금 필요한가'를 3분 안에 파악할 수 있어야 합니다. 주제문(Statement)은 200자 이내, 전체 기획서는 A4 10장 이내로 작성하는 연습을 반복하세요.
+    </div>
+</div>
+
+<!-- ========== 5. CONTRACT ========== -->
+<div class="section" id="sec-contract">
+    <div class="section-header">
+        <div class="sec-num">MODULE 04 · 16 HOURS</div>
+        <h2>계약서·서류 작성 — 독립 큐레이터의 실무 문서</h2>
+        <p>문화체육관광부 고시 「미술 분야 표준계약서」(제2022-06호, 12종)를 기반으로, 독립 큐레이터가 실전에서 사용하는 계약 문서를 학습합니다.</p>
+    </div>
+
+    <div class="module-card">
+        <h3>📋 문체부 표준계약서 12종 해설</h3>
+        <div class="desc">2022년 2월 문화체육관광부가 고시한 미술 분야 표준계약서 12종의 구조와 핵심 조항을 해설합니다. 한국예술인복지재단(kawf.kr) 배포 「알기 쉬운 미술 분야 표준계약서」를 교재로 활용합니다.</div>
+        <div class="topics">
+            <span class="topic-chip">① 전시 및 판매위탁계약서</span>
+            <span class="topic-chip">② 전속계약서(매니지먼트)</span>
+            <span class="topic-chip">③ 판매위탁계약서(작가-화랑)</span>
+            <span class="topic-chip">④ 판매위탁계약서(소장자-화랑)</span>
+            <span class="topic-chip">⑤ 매매계약서(매수인-화랑)</span>
+            <span class="topic-chip">⑥ 매매계약서(매수인-작가)</span>
+            <span class="topic-chip">⑦ 전시계약서(작가-미술관)</span>
+            <span class="topic-chip">⑧ 전시기획계약서(독립기획자-미술관)</span>
+            <span class="topic-chip">⑨ 대관계약서</span>
+            <span class="topic-chip">⑩ 모델계약서</span>
+            <span class="topic-chip">⑪ 건축물 미술작품 제작계약서</span>
+            <span class="topic-chip">⑫ 공동창작계약서</span>
+            <span class="topic-chip">부속: 온라인 전시 합의서</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-family:'Noto Serif KR',serif;color:var(--gold-light);margin-bottom:20px;">독립 큐레이터 전시기획계약서 — 핵심 조항 해설</h3>
+
+    <div class="contract-box">
+        <h4>전시기획계약서 (독립 전시기획자 ↔ 미술관)</h4>
+
+        <div class="contract-article">
+            <div class="art-title">제1조 (목적)</div>
+            <div class="art-content">본 계약은 독립 전시기획자(이하 '기획자')가 미술관(이하 '기관')의 전시를 기획함에 있어 필요한 제반 사항과 당사자의 권리·의무를 규율하여 상호 이익과 발전을 도모함에 그 목적이 있다.</div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제2조 (전시 개요)</div>
+            <div class="art-content">
+                ① 전시명: (국문) __________ / (영문) __________<br>
+                ② 전시기간: 20__.__.__. ~ 20__.__.__.<br>
+                ③ 전시장소: __________<br>
+                ④ 참여 작가: __________<br>
+                ⑤ 기획자는 전시 콘셉트, 작가 선정, 작품 선정, 공간 구성, 도록 글 집필 등 전시기획 전반을 수행한다.
+            </div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제3조 (기획료 및 대가 지급)</div>
+            <div class="art-content">
+                ① 기관은 기획자에게 전시기획 대가로 금 ________원(부가세 별도)을 지급한다.<br>
+                ② 지급 시기: 계약 체결 시 __%, 전시 개막 시 __%, 전시 종료 후 __%로 분할 지급한다.<br>
+                ③ 미술창작대가 기준(문체부 고시)을 참고하여 산정한다.
+            </div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제4조 (비용 부담)</div>
+            <div class="art-content">작품 운송비, 설치비, 보험료, 도록 제작비, 홍보비 등 전시 운영에 필요한 비용은 기관이 부담한다. 단, 별도 협의 사항은 부속합의서로 정한다.</div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제5조 (저작권 및 크레딧)</div>
+            <div class="art-content">
+                ① 기획자가 작성한 전시 서문, 작가론 등 글의 저작권은 기획자에게 귀속된다.<br>
+                ② 기관은 모든 홍보물·도록에 기획자의 성명을 표시하여야 한다.
+            </div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제6조 (작품 안전 및 보험)</div>
+            <div class="art-content">기관은 전시 기간 중 작품에 대한 적절한 미술품 종합보험에 가입하여야 하며, 작품의 안전 관리에 최선을 다하여야 한다.</div>
+        </div>
+
+        <div class="contract-article">
+            <div class="art-title">제7조 (계약 해지 및 분쟁 해결)</div>
+            <div class="art-content">
+                ① 일방이 본 계약을 위반한 경우, 상대방은 서면 통지 후 14일 이내에 시정되지 않으면 계약을 해지할 수 있다.<br>
+                ② 본 계약과 관련한 분쟁은 한국저작권위원회 조정 또는 ________지방법원을 관할로 한다.
+            </div>
+        </div>
+    </div>
+
+    <div class="ref-box">
+        <div class="ref-title">📎 출처 및 참고자료</div>
+        • 문화체육관광부 고시 제2022-06호 「미술 분야 표준계약서」 (2022.2.18.)<br>
+        • 한국예술인복지재단, 『알기 쉬운 미술 분야 표준계약서』 (2022.5.)<br>
+        • 박경린, 「독립 큐레이터의 노하우: 전시에 필요한 계약서의 종류와 작성법」, THE ARTRO (2015.10.2.)<br>
+        • 예술경영지원센터(KAMS), 전시해설 활성화 지원사업 가이드라인
+    </div>
+
+    <div class="warn-box">
+        <div class="warn-title">⚠️ 실무 주의사항</div>
+        계약서는 분쟁 대비가 아니라 <strong>분쟁 예방</strong>을 위한 것입니다. 박경린 큐레이터의 말처럼 "계약서를 쓴다는 것은 곧 그 일의 기준을 세우는 일"이며, "궁극적으로 감정을 다루는 일"입니다. 미술계는 좁으므로, 계약서를 통해 상호 역할과 책임을 명확히 하되 존중과 배려의 톤을 유지하세요.
+    </div>
+</div>
+
+<!-- ========== 6. SCRIPT ========== -->
+<div class="section" id="sec-script">
+    <div class="section-header">
+        <div class="sec-num">MODULE 05 · 24 HOURS</div>
+        <h2>도슨트 스크립트 작성법</h2>
+        <p>국립현대미술관 도슨트 실무자의 방법론(김인아 『미술관 도슨트가 알려주는 전시 스크립트 쓰기』, 현직 도슨트 오조디 블로그 참조)을 기반으로 체계화했습니다.</p>
+    </div>
+
+    <h3 style="font-family:'Noto Serif KR',serif;color:var(--gold-light);margin-bottom:24px;">STEP 1 — 전시 리서치 (스크립트 이전의 준비)</h3>
+
+    <div class="module-card">
+        <h3>1-1. 학예사 교육 수강 & 전시 자료 분석</h3>
+        <div class="desc">
+            국립현대미술관의 경우 전시 배정 후 3차에 걸친 교육을 진행합니다. 1차는 전시 학예사의 전시 전반 설명, 2차는 학예사와 함께 전시장을 돌며 실제 작품을 보고 설명을 듣는 투어, 3차는 리허설입니다. 이 단계에서 도슨트는 전시 도록, 작가 인터뷰, 보도자료, 평론, 학예사 노트를 최대한 수집하여 읽어야 합니다.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>1-2. 작품 위치 파악 (공간 매핑)</h3>
+        <div class="desc">
+            전시장 평면도에 모든 작품의 위치를 직접 그려넣습니다. 오디오 가이드가 있는 작품, 명제표가 있는 작품을 별도 표기합니다. 이 지도가 작품 선정과 동선 설계의 기초 자료가 됩니다. 실제 도슨트 오조디 님은 "무식하게 그냥 다 써버렸다"고 표현할 정도로, 이 과정은 꼼꼼할수록 좋습니다.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>1-3. 작품 선정 기준</h3>
+        <div class="desc">
+            해설 시간(보통 40~50분)에 맞게 작품 수를 결정합니다. 선정 기준은 다음과 같습니다. 전시의 핵심 주제를 대표하는 작품, 오디오 가이드나 명제표만으로는 설명이 부족한 작품, 도슨트 본인이 진심으로 흥미로운 작품, 관객의 시선을 자연스럽게 끌 수 있는 작품. 시대별·섹션별로 균형 있게 배분하되, 본인의 열정이 담긴 작품에 비중을 두는 것이 해설의 생동감을 높입니다.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>1-4. 동선 설계</h3>
+        <div class="desc">
+            관객이 많을 때와 적을 때의 동선을 나누어 계획합니다. 가벽 위치, 통로 폭, 작품 앞 공간의 넓이를 고려합니다. 원형 전시관이라면 바깥 원과 안쪽 원을 분리해 생각해야 합니다. 해설 직전에는 반드시 전시장을 돌아보아야 합니다 — 작품 위치는 개막 직전까지 바뀔 수 있습니다.
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-family:'Noto Serif KR',serif;color:var(--gold-light);margin-bottom:24px;">STEP 2 — 스크립트 집필</h3>
+
+    <div class="module-card">
+        <h3>2-1. 스크립트 구조 설계 (5단 구조)</h3>
+        <div class="module-meta">
+            <span class="meta-tag tag-type">핵심 프레임워크</span>
+        </div>
+        <div class="desc">
+            <strong style="color:var(--gold-light);">① 오프닝 (2~3분)</strong> — 인사, 전시 개요 소개, 오늘 해설의 흐름 예고. "이 전시는 __라는 질문에서 출발합니다"처럼 질문형으로 시작하면 관객의 주의를 끌 수 있습니다.<br><br>
+            <strong style="color:var(--gold-light);">② 맥락 설정 (3~5분)</strong> — 전시의 시대적·미술사적 배경. 작가가 속한 사조, 시대의 분위기, 이 전시가 '왜 지금' 열리는지를 연결합니다.<br><br>
+            <strong style="color:var(--gold-light);">③ 핵심 작품 해설 (25~35분)</strong> — 선정한 작품을 동선 순서대로 해설합니다. 각 작품당 3~5분. "관찰 유도 → 정보 제공 → 해석 제시 → 질문 던지기"의 4단계를 반복합니다.<br><br>
+            <strong style="color:var(--gold-light);">④ 작품 간 연결 (브릿지)</strong> — 작품에서 작품으로 이동할 때 자연스러운 내러티브 연결. "방금 보신 작품이 __를 보여주었다면, 지금 보실 작품은 __를 시도합니다".<br><br>
+            <strong style="color:var(--gold-light);">⑤ 클로징 (2~3분)</strong> — 전시의 핵심 메시지 요약, 관객에게 던지는 마지막 질문, 질의응답 안내, 감사 인사.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>2-2. 작품 해설의 4단계 화법</h3>
+        <div class="desc">
+            각 작품 앞에서의 해설은 다음 4단계를 따릅니다.
+        </div>
+        <div class="script-example">
+            <div class="script-label">예시: 모네 〈인상, 해돋이〉 해설</div>
+            <strong style="color:#6ec89a;">【관찰 유도】</strong> "먼저 이 작품을 한 발짝 물러서서 바라봐 주세요. 무엇이 가장 먼저 눈에 들어오시나요?"<br><br>
+            <strong style="color:#7aacf0;">【정보 제공】</strong> "1872년 모네가 르아브르 항구의 일출을 그린 이 작품은, 1874년 '화가, 조각가, 판화가 등의 무명 예술가 협회전'에 출품되었습니다. 비평가 루이 르루아가 이 작품의 제목을 비꼬아 '인상주의자들의 전시'라고 조롱한 것이 역설적으로 인상주의라는 이름의 탄생이 됩니다."<br><br>
+            <strong style="color:#d4a853;">【해석 제시】</strong> "모네는 대상의 '형태'가 아니라 '빛이 만들어내는 순간의 인상'을 포착하려 했습니다. 가까이 가서 보시면 붓터치 하나하나가 선명하게 보이지만, 물러서서 보면 항구의 안개 낀 아침이 눈앞에 펼쳐집니다."<br><br>
+            <strong style="color:#f472b6;">【질문 던지기】</strong> "만약 여러분이 오늘 아침에 본 하늘을 그린다면, 어떤 색을 가장 먼저 쓰시겠습니까?"
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>2-3. 스크립트 작성 실전 규칙</h3>
+        <div class="desc">
+            <strong style="color:var(--gold-light);">구어체로 쓰세요.</strong> 스크립트는 '읽힐 글'이 아니라 '말해질 글'입니다. "~하였다"보다 "~했어요"가 자연스럽습니다. 단, 지나친 반말은 피하고 존댓말 구어체를 유지합니다.<br><br>
+            <strong style="color:var(--gold-light);">1작품 = A4 반 페이지.</strong> 약 300~400자가 3~5분 분량입니다. 너무 길면 관객이 지치고, 너무 짧으면 깊이가 없습니다.<br><br>
+            <strong style="color:var(--gold-light);">숫자와 고유명사를 최소화하세요.</strong> "1874년 4월 15일"보다 "인상파 1회전이 열린 해"가 기억에 남습니다.<br><br>
+            <strong style="color:var(--gold-light);">관객의 시선을 유도하세요.</strong> "왼쪽 하단을 보시면", "저 뒤쪽의 배경에 주목해주세요"처럼 시선을 구체적으로 안내합니다.<br><br>
+            <strong style="color:var(--gold-light);">개인적 감상을 한 문장 넣으세요.</strong> "저는 이 작품 앞에 서면 항상 __한 기분이 듭니다"는 도슨트만의 고유한 목소리를 만듭니다.
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-family:'Noto Serif KR',serif;color:var(--gold-light);margin-bottom:24px;">STEP 3 — 리허설 & 수정</h3>
+
+    <div class="module-card">
+        <h3>3-1. 타이머 리허설</h3>
+        <div class="desc">작성한 스크립트를 소리 내어 읽으며 시간을 측정합니다. 목표 시간을 초과하면 작품 수를 줄이거나 설명을 압축합니다. 최소 3회 이상 반복합니다.</div>
+    </div>
+
+    <div class="module-card">
+        <h3>3-2. 전시장 리허설</h3>
+        <div class="desc">실제 전시장에서 작품 앞에 서서 리허설합니다. 스크립트를 보지 않고 핵심 키워드만 메모한 인덱스 카드를 활용합니다. 작품과의 거리감, 목소리 볼륨, 관객 예상 위치를 점검합니다.</div>
+    </div>
+
+    <div class="module-card">
+        <h3>3-3. 피드백 후 수정</h3>
+        <div class="desc">동료 도슨트나 멘토에게 피드백을 받습니다. 스크립트는 "전시가 끝나야 완성"됩니다. 첫 해설 후 관객 반응을 보고, 반응이 좋았던 부분을 강화하고 지루했던 부분을 줄이는 반복 수정이 핵심입니다.</div>
+    </div>
+
+    <div class="tip-box">
+        <div class="tip-title">💡 핵심 마인드셋</div>
+        도슨트는 지식을 '전달'하는 사람이 아니라 관객과 작품 사이에 '다리'를 놓는 사람입니다. 완벽한 정보 전달보다 "이 작품 앞에서 무엇을 느끼게 할 것인가"를 먼저 고민하세요. 가장 좋은 해설은 관객이 해설이 끝난 후 다시 돌아가서 작품을 한 번 더 보고 싶게 만드는 해설입니다.
+    </div>
+</div>
+
+<!-- ========== 7. PRACTICE ========== -->
+<div class="section" id="sec-practice">
+    <div class="section-header">
+        <div class="sec-num">MODULE 06–08 · 32 HOURS</div>
+        <h2>현장실습 & 포트폴리오</h2>
+        <p>이론에서 실전으로 — 실제 미술관 현장에서 해설 실습을 진행하고, 개인 포트폴리오를 완성합니다.</p>
+    </div>
+
+    <div class="module-card">
+        <h3>M6. 스피치 & 퍼포먼스 (21주차, 8h)</h3>
+        <div class="desc">
+            전문 스피치 트레이너와 함께 발성·발음·호흡 훈련을 진행합니다. 마이크 없는 공간에서의 목소리 투사법, 30명 이상 그룹 대응법, 예상치 못한 질문에 대한 "모르겠습니다. 확인 후 안내드리겠습니다"의 정중한 대응법, 어린이·외국인 관객 대응 화법을 실습합니다.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>M7. 현장실습 (22–23주차, 16h)</h3>
+        <div class="desc">
+            협력 미술관/갤러리에서 실제 관객을 대상으로 전시 해설을 2회 이상 수행합니다. 멘토 큐레이터가 현장에서 참관하며 즉시 피드백을 제공합니다. 동기 수강생 간 크로스 리뷰(상호 평가)를 통해 객관적 시각을 키웁니다.
+        </div>
+    </div>
+
+    <div class="module-card">
+        <h3>M8. 포트폴리오 & 수료 (24주차, 8h)</h3>
+        <div class="desc">
+            수료 포트폴리오에는 다음이 포함됩니다. 자기소개 및 도슨트 활동 비전, 미술사 에세이 1편(2,000자), 가상 또는 실제 전시기획서 1건, 스크립트 전문(Full Script) 1건, 현장실습 영상 및 자기 평가서. 전문가 심사위원 앞에서 10분 프레젠테이션을 진행하고, 피드백과 함께 수료증을 수여합니다.
+        </div>
+    </div>
+</div>
+
+<!-- ========== 8. REVIEW ========== -->
+<div class="section" id="sec-review">
+    <div class="section-header">
+        <div class="sec-num">PROGRAM REVIEW</div>
+        <h2>25년차 큐레이터의 프로그램 검토 의견</h2>
+        <p>프로그램을 설계하면서 스스로에게 던진 질문과, 그에 대한 객관적 검토 결과입니다.</p>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q1. 미술사 비전공자가 6주 만에 서양미술사를 소화할 수 있는가?<span class="arrow">▼</span></div>
+        <div class="qa-a">솔직히 어렵습니다. 그래서 이 프로그램에서는 '통사적 암기'가 아니라 '맥락적 이해'에 집중합니다. 각 시대의 핵심 질문("왜 이 시대에 이런 미술이 탄생했는가?")을 중심으로 3~5개 대표 작품을 깊이 있게 다루고, 나머지는 추천 도서 목록과 온라인 강좌(KOCW, YouTube)로 자기 학습을 유도합니다. 48시간은 '전체 지도를 그리는 시간'이며, 이후 도슨트 활동을 하면서 평생 채워가는 것이 현실적입니다.</div>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q2. 동양미술사와 서양미술사의 비중은 적절한가?<span class="arrow">▼</span></div>
+        <div class="qa-a">서양 48시간, 동양 40시간으로 비교적 균형을 맞추었습니다. 국내 미술관 전시의 상당수가 한국·동양미술이므로 동양미술사의 비중이 높아야 합니다. 특히 한국미술사에 2주(16시간)를 배정한 것은, 국공립미술관 도슨트라면 한국미술에 대한 깊이 있는 이해가 필수적이기 때문입니다. 다만 수강생의 관심과 활동 예정 기관에 따라 서양/동양 심화 선택 과정을 추가로 제공하는 것을 권장합니다.</div>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q3. 계약서 모듈이 도슨트에게 정말 필요한가?<span class="arrow">▼</span></div>
+        <div class="qa-a">"도슨트에게 계약서가 왜?"라고 생각할 수 있지만, 이 프로그램의 목표가 단순 도슨트가 아니라 '독립 큐레이터로도 활동 가능한 전문 도슨트'를 양성하는 것이기에 필수입니다. 프리랜서 도슨트로 활동할 경우에도 전시기관과의 출강 계약서, 저작권(스크립트 저작권 포함) 문제를 다뤄야 합니다. 문체부 표준계약서를 읽을 수 있는 능력은 자기 보호의 첫걸음입니다.</div>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q4. 스크립트 작성법에서 가장 흔한 초보 실수는?<span class="arrow">▼</span></div>
+        <div class="qa-a">세 가지를 꼽겠습니다. 첫째, 정보 과잉입니다. 작가의 생몰년, 출생지, 수상 경력 등 위키피디아식 정보를 나열하면 관객은 3분 안에 이탈합니다. 둘째, 일방적 독백입니다. 관객에게 질문을 던지지 않고 혼자 40분을 말하면 관객은 수동적 청취자가 됩니다. 셋째, 스크립트의 '암기'입니다. 외운 것을 읊는 도슨트와 '이해한 것을 전달하는' 도슨트는 관객이 바로 구분합니다. 키워드 중심으로 내면화하세요.</div>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q5. 300만원이라는 가격이 정당화될 수 있는가?<span class="arrow">▼</span></div>
+        <div class="qa-a">객관적으로 검토합니다. 국립현대미술관·서울시립미술관 등 공공 도슨트 양성 과정은 무료~수만원이지만 30~40시간 단기 과정입니다. 중앙대·홍익대 등 대학 부설 과정은 80~150만원대(40~60시간). 본 프로그램은 192시간에 미술사 통사+전시기획+계약서+스크립트+현장실습을 모두 포함하므로, 시간당 약 15,600원 수준입니다. 다만 초보자에게는 부담이 될 수 있으므로 분할납부(3회) 또는 조기등록 할인(10~15%)을 제공하는 것이 바람직합니다.</div>
+    </div>
+
+    <div class="qa-item">
+        <div class="qa-q">Q6. 프로그램에서 보완이 필요한 부분은?<span class="arrow">▼</span></div>
+        <div class="qa-a">네 가지를 제안합니다.<br><br>
+        <strong>① 디지털 리터러시 모듈 추가:</strong> 온라인 전시, VR/AR 미술관 투어, AI 기반 해설 도구 활용법이 점점 중요해지고 있습니다. 최소 4시간의 디지털 도슨트 모듈을 추가할 것을 권장합니다.<br><br>
+        <strong>② 접근성 해설 교육:</strong> 시각장애인 대상 촉각 해설, 청각장애인 대상 수어 연계 해설, 어린이 전용 해설법 등 '보편적 접근성(Universal Access)' 교육이 필요합니다.<br><br>
+        <strong>③ 외국어 해설 옵션:</strong> 영어 해설 스크립트 작성 워크숍을 선택 모듈로 제공하면 활동 반경이 넓어집니다.<br><br>
+        <strong>④ 수료 후 커뮤니티:</strong> 동문 네트워크, 분기별 리프레시 특강, 현직 큐레이터와의 멘토링 매칭 등 수료 후에도 지속적 성장을 지원하는 시스템이 프로그램의 장기 가치를 높입니다.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+        <h2>추천 도서 & 자료 목록</h2>
+    </div>
+
+    <div class="two-col">
+        <div class="module-card">
+            <h3>📚 서양미술사 필독서</h3>
+            <div class="desc">
+                E.H. Gombrich, 『서양미술사(The Story of Art)』<br>
+                H.W. Janson, 『미술의 역사(History of Art)』<br>
+                진중권, 『서양미술사: 고전예술편 / 모더니즘편 / 후기모더니즘편』<br>
+                하인리히 뵐플린, 『미술사의 기초개념』<br>
+                로잘린드 크라우스, 『현대 조각의 흐름』<br>
+                할 포스터 외, 『1900년 이후의 미술사』
+            </div>
+        </div>
+        <div class="module-card">
+            <h3>📚 동양·한국미술사 필독서</h3>
+            <div class="desc">
+                안휘준, 『한국 회화사』<br>
+                유홍준, 『나의 문화유산답사기』 시리즈<br>
+                오광수, 『한국현대미술사』<br>
+                Michael Sullivan, 『The Arts of China(중국미술사)』<br>
+                Sherman E. Lee, 『A History of Far Eastern Art』<br>
+                정형민 편, 『동양미술사』 (시공사)
+            </div>
+        </div>
+        <div class="module-card">
+            <h3>📚 도슨트·전시기획 실무서</h3>
+            <div class="desc">
+                김인아, 『미술관 도슨트가 알려주는 전시 스크립트 쓰기』<br>
+                한국예술인복지재단, 『알기 쉬운 미술 분야 표준계약서』<br>
+                예술경영지원센터(KAMS) 각종 가이드라인<br>
+                Canton Museum of Art, 『Docent Handbook』<br>
+                Buffalo AKG Art Museum, 『The Docent Handbook』
+            </div>
+        </div>
+        <div class="module-card">
+            <h3>🎓 온라인 무료 강좌</h3>
+            <div class="desc">
+                KOCW 고려대 「동양미술사」 공개강의<br>
+                유튜브 「한번에 끝내는 서양미술사」 시리즈<br>
+                유튜브 진중권 「서양미술사」 강의<br>
+                국립현대미술관 유튜브 채널 전시 해설 영상<br>
+                Khan Academy Art History (영문)
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- container -->
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="container">
+        <p style="color:var(--gold-dark);font-size:0.8rem;margin-bottom:16px;">DOCENT MASTER CLASS — PREMIUM TRAINING PROGRAM</p>
+        <div class="sources">
+            <h4>📎 프로그램 설계 출처</h4>
+            <p>
+                • E.H. Gombrich, 『The Story of Art』 (1950) — 서양미술사 시대 구분 체계<br>
+                • H.W. Janson, 『History of Art』 — 통사적 미술사 프레임<br>
+                • 안휘준, 『한국 회화사』 — 한국미술사 시대별 구성<br>
+                • Michael Sullivan, 『The Arts of China』 — 중국미술사 체계<br>
+                • 문화체육관광부 고시 제2022-06호 「미술 분야 표준계약서」 (2022.2.18.) — 계약서 모듈<br>
+                • 한국예술인복지재단, 『알기 쉬운 미술 분야 표준계약서』 (2022.5.) — 계약서 해설<br>
+                • 박경린, 「독립 큐레이터의 노하우: 계약서의 종류와 작성법」 THE ARTRO (2015.10.2.)<br>
+                • 김인아, 『미술관 도슨트가 알려주는 전시 스크립트 쓰기』 (2024) — 스크립트 방법론<br>
+                • 국립현대미술관 도슨트 양성프로그램 교육과정 — 양성 과정 구조 참조<br>
+                • 서울시립미술관(SeMA) 도슨트 양성 교육 운영 체계 — 교육 단계 참조<br>
+                • 수원시립미술관 2025 SUMA 도슨트 양성 프로그램 — 커리큘럼 참조<br>
+                • 오조디(국립현대미술관 도슨트), 「도슨트 스크립트 쓰는 방법」 블로그 (2024.4.25.)
+            </p>
+        </div>
+        <p style="margin-top:20px;">© 2026 도슨트 마스터 클래스 · 본 프로그램은 교육용으로 설계되었습니다</p>
+    </div>
+</div>
+
+<script>
+    // Navigation
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
+            window.scrollTo({ top: document.querySelector('.main-nav').offsetTop, behavior: 'smooth' });
+        });
+    });
+
+    // QA Accordion
+    document.querySelectorAll('.qa-q').forEach(q => {
+        q.addEventListener('click', () => {
+            q.parentElement.classList.toggle('open');
+        });
+    });
+</script>
+</body>
+</html>
