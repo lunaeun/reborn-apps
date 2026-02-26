@@ -870,6 +870,274 @@
             font-weight: 600;
             margin-top: 4px;
         }
+
+        /* ===== EXPORT BTN ===== */
+        .btn-export {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border: none; padding: 8px 16px;
+            border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+            font-weight: 600; transition: all 0.2s;
+        }
+        .btn-export:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 1000; display: flex; align-items: center;
+            justify-content: center; padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-box {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; width: 100%; max-width: 700px;
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+            font-size: 1.05rem; font-weight: 700; color: var(--text-primary);
+        }
+        .modal-body { padding: 20px 24px; }
+        .modal-footer {
+            display: flex; gap: 8px; padding: 16px 24px;
+            border-top: 1px solid var(--border-color); flex-wrap: wrap;
+        }
+        .modal-close {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.2rem; cursor: pointer; padding: 4px 8px;
+        }
+        .modal-close:hover { color: var(--text-primary); }
+
+        /* ===== QUARTERLY REPORT ===== */
+        .q-report-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px; margin-bottom: 20px;
+        }
+        .q-report-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 16px;
+        }
+        .q-report-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .q-report-val { font-size: 1.4rem; font-weight: 800; }
+        .q-bar-wrap { margin-top: 6px; background: rgba(255,255,255,0.05); border-radius: 99px; height: 6px; }
+        .q-bar-fill { height: 6px; border-radius: 99px; transition: width 0.5s; }
+        .q-quarter-title {
+            font-size: 1rem; font-weight: 700; color: var(--text-primary);
+            margin: 20px 0 10px; padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .q-task-list { display: flex; flex-wrap: wrap; gap: 6px; }
+        .q-task-badge {
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 99px;
+            border: 1px solid var(--border-color); color: var(--text-secondary);
+        }
+        .q-task-badge.done { background: rgba(52, 211, 153, 0.15); border-color: #34d399; color: #34d399; }
+
+        /* ===== 매일체크함 ===== */
+        .dc-top-bar {
+            display: flex; align-items: center; gap: 12px;
+            flex-wrap: wrap; margin-bottom: 20px;
+        }
+        .dc-date-nav {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .dc-date-nav button {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-color);
+            color: var(--text-primary); width: 30px; height: 30px; border-radius: 8px;
+            cursor: pointer; font-size: 0.95rem; transition: all 0.15s;
+        }
+        .dc-date-nav button:hover { background: rgba(255,255,255,0.12); }
+        .dc-date-display {
+            font-size: 0.95rem; font-weight: 700; color: var(--text-primary);
+            min-width: 120px; text-align: center;
+        }
+        .dc-today-btn {
+            background: linear-gradient(135deg,#34d399,#22d3ee);
+            border: none; color: #0f172a; padding: 5px 12px;
+            border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 700;
+        }
+        .dc-progress-wrap {
+            margin-left: auto; display: flex; align-items: center; gap: 10px;
+        }
+        .dc-progress-track {
+            width: 120px; height: 8px; background: rgba(255,255,255,0.08);
+            border-radius: 99px; overflow: hidden;
+        }
+        .dc-progress-fill {
+            height: 100%; border-radius: 99px;
+            background: linear-gradient(90deg,#34d399,#22d3ee);
+            transition: width 0.4s ease;
+        }
+        .dc-progress-label {
+            font-size: 0.8rem; font-weight: 700; color: var(--accent-green); min-width: 36px;
+        }
+        .dc-streak {
+            font-size: 0.78rem; color: var(--text-muted);
+        }
+
+        /* 탭 */
+        .dc-view-tabs {
+            display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .dc-view-tab {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-secondary); padding: 6px 14px; border-radius: 99px;
+            cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;
+        }
+        .dc-view-tab.active {
+            background: var(--accent-purple); color: #fff; border-color: var(--accent-purple);
+        }
+
+        /* 뷰 패널 */
+        .dc-view { display: none; }
+        .dc-view.active { display: block; }
+
+        /* 카테고리 섹션 */
+        .dc-section {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid var(--border-color);
+            border-radius: 14px; margin-bottom: 14px; overflow: hidden;
+        }
+        .dc-section-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            user-select: none;
+        }
+        .dc-section-header:hover { background: rgba(255,255,255,0.03); }
+        .dc-section-icon { font-size: 1.1rem; }
+        .dc-section-title { font-size: 0.92rem; font-weight: 700; color: var(--text-primary); flex: 1; }
+        .dc-section-count {
+            font-size: 0.75rem; color: var(--text-muted);
+            background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 99px;
+        }
+        .dc-section-count.complete { background: rgba(52,211,153,0.15); color: var(--accent-green); }
+        .dc-section-arrow {
+            font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s;
+        }
+        .dc-section.collapsed .dc-section-arrow { transform: rotate(-90deg); }
+        .dc-section.collapsed .dc-items { display: none; }
+
+        .dc-items { padding: 8px 12px 12px; }
+
+        /* 체크 아이템 */
+        .dc-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 10px; border-radius: 10px;
+            cursor: pointer; transition: all 0.15s; margin-bottom: 4px;
+            border: 1px solid transparent;
+        }
+        .dc-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border-color); }
+        .dc-item.checked { opacity: 0.55; }
+        .dc-item.checked .dc-item-text { text-decoration: line-through; color: var(--text-muted); }
+        .dc-checkbox {
+            width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+            border: 2px solid var(--border-color); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 0.75rem; transition: all 0.15s;
+        }
+        .dc-item.checked .dc-checkbox {
+            background: var(--accent-green); border-color: var(--accent-green); color: #fff;
+        }
+        .dc-item-text { flex: 1; font-size: 0.87rem; color: var(--text-primary); line-height: 1.4; }
+        .dc-item-badge {
+            font-size: 0.68rem; padding: 2px 7px; border-radius: 99px;
+            background: rgba(255,255,255,0.06); color: var(--text-muted); flex-shrink: 0;
+        }
+        .dc-item-del {
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 0.8rem; padding: 2px 5px;
+            border-radius: 4px; opacity: 0; transition: all 0.15s; flex-shrink: 0;
+        }
+        .dc-item:hover .dc-item-del { opacity: 1; }
+        .dc-item-del:hover { background: rgba(248,113,113,0.18); color: #f87171; }
+
+        /* 항목 추가 */
+        .dc-add-row {
+            display: flex; gap: 8px; margin-top: 10px; padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .dc-add-input {
+            flex: 1; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color); color: var(--text-primary);
+            border-radius: 8px; padding: 7px 11px; font-size: 0.83rem;
+        }
+        .dc-add-input:focus { outline: none; border-color: var(--accent-purple); }
+        .dc-add-btn {
+            background: var(--accent-purple); border: none; color: #fff;
+            padding: 7px 14px; border-radius: 8px; cursor: pointer;
+            font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+        }
+        .dc-add-btn:hover { opacity: 0.85; }
+
+        /* 히스토리 뷰 */
+        .dc-history-filter {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
+        }
+        .dc-hist-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-secondary); padding: 5px 12px; border-radius: 99px;
+            cursor: pointer; font-size: 0.78rem; transition: all 0.2s;
+        }
+        .dc-hist-btn.active { background: var(--accent-purple); color:#fff; border-color:var(--accent-purple); }
+        .dc-hist-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px; margin-bottom: 6px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid var(--border-color); border-radius: 10px;
+            transition: all 0.15s; cursor: pointer;
+        }
+        .dc-hist-row:hover { border-color: rgba(255,255,255,0.15); }
+        .dc-hist-date { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); min-width: 100px; }
+        .dc-hist-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.07); border-radius: 99px; overflow:hidden; }
+        .dc-hist-bar { height: 6px; border-radius: 99px; background: linear-gradient(90deg,#34d399,#22d3ee); transition: width 0.4s; }
+        .dc-hist-pct { font-size: 0.78rem; font-weight: 700; min-width: 40px; text-align: right; }
+        .dc-hist-count { font-size: 0.75rem; color: var(--text-muted); min-width: 60px; text-align: right; }
+        .dc-hist-detail {
+            display: none; padding: 10px 14px 14px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap; gap: 6px;
+        }
+        .dc-hist-row.open .dc-hist-detail { display: flex; }
+        .dc-hist-chip {
+            font-size: 0.75rem; padding: 3px 10px; border-radius: 99px;
+            border: 1px solid var(--border-color); color: var(--text-secondary);
+        }
+        .dc-hist-chip.done { background: rgba(52,211,153,0.12); border-color: #34d399; color: #34d399; }
+        .dc-hist-row-wrap { display: flex; flex-direction: column; background: rgba(255,255,255,0.025); border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 6px; overflow: hidden; }
+        .dc-empty { text-align: center; color: var(--text-muted); padding: 40px 20px; font-size: 0.9rem; }
+
+        /* 메일 CSS — 하위 호환 (roadmap modal input 재사용) */
+        .mail-text-input {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-primary); border-radius: 8px; padding: 8px 12px; font-size: 0.85rem;
+        }
+
+        /* ===== ROADMAP EDIT BTNS ===== */
+        .timeline-task-wrap {
+            position: relative; display: inline-flex;
+            align-items: center; gap: 4px;
+        }
+        .tl-edit-btn, .tl-del-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 0.65rem; padding: 1px 4px; border-radius: 4px;
+            opacity: 0; transition: opacity 0.2s; color: var(--text-muted);
+        }
+        .timeline-task-wrap:hover .tl-edit-btn,
+        .timeline-task-wrap:hover .tl-del-btn { opacity: 1; }
+        .tl-edit-btn:hover { background: rgba(99,102,241,0.2); color: #818cf8; }
+        .tl-del-btn:hover { background: rgba(248,113,113,0.2); color: #f87171; }
+        .tl-add-btn {
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
+            background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color);
+            color: var(--text-muted); cursor: pointer; transition: all 0.2s; margin-top: 6px;
+        }
+        .tl-add-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media print {
+            .nav-tabs, .controls-row, .modal-overlay { display: none !important; }
+            .section-panel { display: block !important; }
+        }
     </style>
 </head>
 <body>
@@ -895,6 +1163,7 @@
             <button class="nav-tab" data-tab="relation">❤️ 인간관계</button>
             <button class="nav-tab" data-tab="timeline">🗓️ 로드맵</button>
             <button class="nav-tab" data-tab="routine">🌅 루틴</button>
+            <button class="nav-tab" data-tab="mail">✅ 매일체크함</button>
         </div>
 
         <!-- ============ OVERVIEW ============ -->
@@ -904,6 +1173,8 @@
 
             <div class="controls-row">
                 <button class="btn-reset" onclick="resetAllData()">🔄 전체 초기화</button>
+                <button class="btn-export" onclick="showQuarterlyReport()">📊 분기별 리포트</button>
+                <button class="btn-export" onclick="exportQuarterlyJSON()">💾 데이터 내보내기</button>
             </div>
 
             <!-- Overall Progress -->
@@ -1264,64 +1535,14 @@
         <!-- ============ TIMELINE ============ -->
         <div class="section-panel" id="panel-timeline">
             <div class="section-title">🗓️ 분기별 로드맵</div>
-            <div class="section-subtitle">클릭하여 완료 표시 — 분기별 핵심 마일스톤</div>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="q-label" style="color:var(--accent-blue);">Q1 — 1월~3월</div>
-                    <div class="q-title">기반 다지기 — 습관 안착 & 취업 준비</div>
-                    <div class="timeline-tasks">
-                        <span class="timeline-task" data-key="tl-1">독서모임 가입</span>
-                        <span class="timeline-task" data-key="tl-2">적금 3개 개설</span>
-                        <span class="timeline-task" data-key="tl-3">건강검진 1회</span>
-                        <span class="timeline-task" data-key="tl-4">유튜브/숏츠 채널 오픈</span>
-                        <span class="timeline-task" data-key="tl-5">습관 시스템 안착</span>
-                        <span class="timeline-task" data-key="tl-6">포트폴리오 완성</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="q-label" style="color:var(--accent-purple);">Q2 — 4월~6월</div>
-                    <div class="q-title">집중 실행 — 취업 확정 & 중간 점검</div>
-                    <div class="timeline-tasks">
-                        <span class="timeline-task" data-key="tl-7">이력서 100곳 제출 완료</span>
-                        <span class="timeline-task" data-key="tl-8">취업 확정</span>
-                        <span class="timeline-task" data-key="tl-9">독서 50권 달성</span>
-                        <span class="timeline-task" data-key="tl-10">AI 자격증 취득</span>
-                        <span class="timeline-task" data-key="tl-11">전자책 1권 출간</span>
-                        <span class="timeline-task" data-key="tl-12">체중 -5KG 중간점검</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="q-label" style="color:var(--accent-pink);">Q3 — 7월~9월</div>
-                    <div class="q-title">성장 가속 — 수익화 & 부채 청산</div>
-                    <div class="timeline-tasks">
-                        <span class="timeline-task" data-key="tl-13">대출 700만원 상환 중</span>
-                        <span class="timeline-task" data-key="tl-14">부수입 300만원 달성</span>
-                        <span class="timeline-task" data-key="tl-15">전자책 2권 출간</span>
-                        <span class="timeline-task" data-key="tl-16">독서 75권 달성</span>
-                        <span class="timeline-task" data-key="tl-17">카드값 완납</span>
-                        <span class="timeline-task" data-key="tl-18">간질환 검진 2차</span>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="q-label" style="color:var(--accent-green);">Q4 — 10월~12월</div>
-                    <div class="q-title">완성 & 회고 — 모든 목표 달성</div>
-                    <div class="timeline-tasks">
-                        <span class="timeline-task" data-key="tl-19">독서 100권 달성</span>
-                        <span class="timeline-task" data-key="tl-20">체중 -10KG 달성</span>
-                        <span class="timeline-task" data-key="tl-21">부수입 500만원 달성</span>
-                        <span class="timeline-task" data-key="tl-22">대출 상환 완료</span>
-                        <span class="timeline-task" data-key="tl-23">전자책 3권 출간 완료</span>
-                        <span class="timeline-task" data-key="tl-24">연간 회고 및 2027 계획</span>
-                    </div>
-                </div>
-            </div>
+            <div class="section-subtitle">클릭 → 완료 표시 | ✏️ 편집 | 🗑️ 삭제 | 항목 추가 가능</div>
+            <div id="timelineContainer"></div>
         </div>
 
         <!-- ============ ROUTINE ============ -->
         <div class="section-panel" id="panel-routine">
             <div class="section-title">🌅 일일 루틴 타임라인</div>
-            <div class="section-subtitle">매일 반복하는 루틴 — 작은 실천이 큰 변화를 만듭니다</div>
+            <div class="section-subtitle">오전 9시 ~ 오후 7시 근무 기준 — 퇴근 후 저녁 루틴이 핵심입니다</div>
 
             <div class="routine-list">
                 <div class="routine-block">
@@ -1337,60 +1558,154 @@
                     <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-orange), var(--accent-blue));"></div>
                     <div class="routine-content">
                         <div class="routine-title">📖 독서 30페이지</div>
-                        <div class="routine-desc">다양한 장르 / 고전 포함</div>
+                        <div class="routine-desc">다양한 장르 / 고전 포함 — 출근 전 집중 독서</div>
                     </div>
                 </div>
                 <div class="routine-block">
-                    <div class="routine-time">09:00</div>
-                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-blue), var(--accent-cyan));"></div>
+                    <div class="routine-time">08:30</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-blue), #6366f1);"></div>
                     <div class="routine-content">
-                        <div class="routine-title">💼 취업준비 / 업무</div>
-                        <div class="routine-desc">이력서 제출, 회사분석, 면접준비 / 메모·녹음 습관</div>
+                        <div class="routine-title">🚌 출근 준비 → 이동</div>
+                        <div class="routine-desc">K-패스 대중교통 / 이동 중 AI 뉴스·메모 습관</div>
+                    </div>
+                </div>
+                <div class="routine-block" style="border-left: 3px solid var(--accent-cyan); padding-left: 8px;">
+                    <div class="routine-time" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">09:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, #6366f1, var(--accent-cyan));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">💼 근무 시작 (09:00 ~ 19:00)</div>
+                        <div class="routine-desc">업무 집중 / 점심시간 7,000보 걷기 목표 / 틈틈이 물 1L 섭취 / 메모·녹음 습관</div>
                     </div>
                 </div>
                 <div class="routine-block">
-                    <div class="routine-time">12:00</div>
+                    <div class="routine-time">19:00</div>
                     <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-green));"></div>
                     <div class="routine-content">
-                        <div class="routine-title">💧 물 1L 섭취 체크</div>
-                        <div class="routine-desc">틈틈이 걷기 (7,000보 목표)</div>
+                        <div class="routine-title">🏠 퇴근 → 저녁식사</div>
+                        <div class="routine-desc">가볍게 저녁 / 무리한 야식 금지 / 귀가 후 30분 휴식</div>
                     </div>
                 </div>
                 <div class="routine-block">
-                    <div class="routine-time">14:00</div>
+                    <div class="routine-time">20:00</div>
                     <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-green), var(--accent-purple));"></div>
                     <div class="routine-content">
-                        <div class="routine-title">📚 공부 시간</div>
-                        <div class="routine-desc">AI / 미술사 / 법률 / 금융 / 경제서적</div>
+                        <div class="routine-title">🏋️ 허리운동 20분 + 청소 10분</div>
+                        <div class="routine-desc">퇴근 후 몸 풀기 / 공간 정리로 내일 준비</div>
                     </div>
                 </div>
                 <div class="routine-block">
-                    <div class="routine-time">18:00</div>
+                    <div class="routine-time">20:30</div>
                     <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink));"></div>
                     <div class="routine-content">
-                        <div class="routine-title">🏋️ 허리운동 20분 + 청소 10분</div>
-                        <div class="routine-desc">몸도 공간도 깨끗하게</div>
-                    </div>
-                </div>
-                <div class="routine-block">
-                    <div class="routine-time">21:00</div>
-                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-pink), var(--accent-red));"></div>
-                    <div class="routine-content">
-                        <div class="routine-title">👔 다음날 준비</div>
-                        <div class="routine-desc">옷, 필요품 준비 / 가계부 작성 / 독서일지(주1회)</div>
+                        <div class="routine-title">📚 저녁 공부 시간</div>
+                        <div class="routine-desc">AI / 미술사(주2회) / 법률·금융 / 경제서적 / 자격증 준비</div>
                     </div>
                 </div>
                 <div class="routine-block">
                     <div class="routine-time">22:00</div>
+                    <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-pink), var(--accent-red));"></div>
+                    <div class="routine-content">
+                        <div class="routine-title">👔 다음날 준비</div>
+                        <div class="routine-desc">옷·필요품 준비 / 가계부 작성 / 독서일지(주1회) / 내일 일정 확인</div>
+                    </div>
+                </div>
+                <div class="routine-block">
+                    <div class="routine-time">23:00</div>
                     <div class="routine-divider" style="background: linear-gradient(to bottom, var(--accent-red), #6366f1);"></div>
                     <div class="routine-content">
                         <div class="routine-title">😴 양압기 착용 → 취침</div>
-                        <div class="routine-desc">수면 외 눕는 습관 금지 / 충분한 수면</div>
+                        <div class="routine-desc">수면 외 눕는 습관 금지 / 충분한 수면 확보</div>
                     </div>
                 </div>
             </div>
         </div>
 
+
+        <!-- ============ 매일체크함 ============ -->
+        <div class="section-panel" id="panel-mail">
+            <div class="section-title">✅ 매일체크함</div>
+            <div class="section-subtitle">만다라트 습관·루틴 기반 — 날짜별로 체크 기록이 쌓입니다</div>
+
+            <!-- 상단 날짜 네비 + 진행바 -->
+            <div class="dc-top-bar">
+                <div class="dc-date-nav">
+                    <button onclick="dcChangeDate(-1)">‹</button>
+                    <div class="dc-date-display" id="dcDateDisplay"></div>
+                    <button onclick="dcChangeDate(1)">›</button>
+                </div>
+                <button class="dc-today-btn" onclick="dcGoToday()">오늘</button>
+                <div class="dc-progress-wrap">
+                    <span class="dc-streak" id="dcStreakLabel"></span>
+                    <div class="dc-progress-track">
+                        <div class="dc-progress-fill" id="dcProgressFill" style="width:0%"></div>
+                    </div>
+                    <span class="dc-progress-label" id="dcProgressLabel">0%</span>
+                </div>
+            </div>
+
+            <!-- 뷰 탭 -->
+            <div class="dc-view-tabs">
+                <button class="dc-view-tab active" onclick="dcSwitchView('today', this)">📋 오늘 체크</button>
+                <button class="dc-view-tab" onclick="dcSwitchView('history', this)">📅 날짜별 히스토리</button>
+                <button class="dc-view-tab" onclick="dcSwitchView('manage', this)">⚙️ 항목 관리</button>
+            </div>
+
+            <!-- 오늘 체크 뷰 -->
+            <div class="dc-view active" id="dc-view-today">
+                <div id="dcTodaySections"></div>
+            </div>
+
+            <!-- 히스토리 뷰 -->
+            <div class="dc-view" id="dc-view-history">
+                <div class="dc-history-filter">
+                    <button class="dc-hist-btn active" onclick="dcHistFilter('전체',this)">전체</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('건강',this)">💪 건강</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('습관',this)">⚡ 습관</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('독서',this)">📚 독서</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('업무',this)">📋 업무</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('금융',this)">💰 금융</button>
+                    <button class="dc-hist-btn" onclick="dcHistFilter('기타',this)">📌 기타</button>
+                </div>
+                <div id="dcHistoryList"></div>
+            </div>
+
+            <!-- 항목 관리 뷰 -->
+            <div class="dc-view" id="dc-view-manage">
+                <div style="margin-bottom:12px;font-size:0.85rem;color:var(--text-muted);">
+                    항목을 추가하거나 삭제하세요. 변경사항은 모든 날짜 체크에 반영됩니다.
+                </div>
+                <div id="dcManageSections"></div>
+            </div>
+        </div>
+
+        <!-- QUARTERLY MODAL -->
+        <div class="modal-overlay" id="quarterlyModal" style="display:none;" onclick="if(event.target===this)closeQModal()">
+            <div class="modal-box">
+                <div class="modal-header"><span>📊 분기별 KPI 리포트</span><button class="modal-close" onclick="closeQModal()">✕</button></div>
+                <div class="modal-body" id="quarterlyContent"></div>
+                <div class="modal-footer">
+                    <button class="btn-export" onclick="printQuarterly()">🖨️ 인쇄/PDF</button>
+                    <button class="btn-export" onclick="exportQuarterlyJSON()">💾 JSON 내보내기</button>
+                    <button class="btn-reset" onclick="closeQModal()">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROADMAP EDIT MODAL -->
+        <div class="modal-overlay" id="roadmapModal" style="display:none;" onclick="if(event.target===this)closeRModal()">
+            <div class="modal-box" style="max-width:460px;">
+                <div class="modal-header"><span id="roadmapModalTitle">📝 로드맵 편집</span><button class="modal-close" onclick="closeRModal()">✕</button></div>
+                <div class="modal-body">
+                    <input type="text" id="roadmapEditInput" class="mail-text-input" style="width:100%;margin-bottom:12px;" placeholder="항목 내용...">
+                    <input type="hidden" id="roadmapEditKey">
+                    <input type="hidden" id="roadmapEditQuarter">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-export" onclick="saveRoadmapEdit()">✅ 저장</button>
+                    <button class="btn-reset" onclick="closeRModal()">취소</button>
+                </div>
+            </div>
+        </div>
         <!-- Footer -->
         <div class="footer">
             2026 만다라트 KPI 대시보드 — 데이터는 브라우저 로컬스토리지에 저장됩니다<br>
@@ -1875,6 +2190,508 @@
             updateOverallProgress();
             setupChecklists();
             syncStatDisplays();
+        }
+
+        // ========== ROADMAP DATA ==========
+        const defaultRoadmap = {
+            Q1: {
+                label: 'Q1 — 1월~3월', color: 'var(--accent-blue)',
+                title: '기반 다지기 — 습관 안착 & 취업 준비',
+                tasks: ['독서모임 가입','적금 3개 개설','건강검진 1회','유튜브/숏츠 채널 오픈','습관 시스템 안착','포트폴리오 완성']
+            },
+            Q2: {
+                label: 'Q2 — 4월~6월', color: 'var(--accent-purple)',
+                title: '집중 실행 — 취업 확정 & 중간 점검',
+                tasks: ['이력서 100곳 제출 완료','취업 확정','독서 50권 달성','AI 자격증 취득','전자책 1권 출간','체중 -5KG 중간점검']
+            },
+            Q3: {
+                label: 'Q3 — 7월~9월', color: 'var(--accent-pink)',
+                title: '성장 가속 — 수익화 & 부채 청산',
+                tasks: ['대출 700만원 상환 중','부수입 300만원 달성','전자책 2권 출간','독서 75권 달성','카드값 완납','간질환 검진 2차']
+            },
+            Q4: {
+                label: 'Q4 — 10월~12월', color: 'var(--accent-green)',
+                title: '완성 & 회고 — 모든 목표 달성',
+                tasks: ['독서 100권 달성','체중 -10KG 달성','부수입 500만원 달성','대출 상환 완료','전자책 3권 출간 완료','연간 회고 및 2027 계획']
+            }
+        };
+
+        function loadRoadmap() {
+            const raw = localStorage.getItem('mandarat2026_roadmap');
+            if (raw) return JSON.parse(raw);
+            return JSON.parse(JSON.stringify(defaultRoadmap));
+        }
+        function saveRoadmap(data) {
+            localStorage.setItem('mandarat2026_roadmap', JSON.stringify(data));
+        }
+        let roadmapData = loadRoadmap();
+
+        function renderTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+            const div = document.createElement('div');
+            div.className = 'timeline';
+
+            Object.entries(roadmapData).forEach(([qKey, q]) => {
+                const item = document.createElement('div');
+                item.className = 'timeline-item';
+                item.innerHTML = `
+                    <div class="q-label" style="color:${q.color}">${q.label}</div>
+                    <div class="q-title">${q.title}</div>
+                    <div class="timeline-tasks" id="tasks-${qKey}"></div>
+                    <button class="tl-add-btn" onclick="addRoadmapTask('${qKey}')">+ 항목 추가</button>
+                `;
+                div.appendChild(item);
+                const tasksEl = item.querySelector('#tasks-' + qKey);
+
+                q.tasks.forEach((task, idx) => {
+                    const key = `tl-${qKey}-${idx}`;
+                    const wrap = document.createElement('span');
+                    wrap.className = 'timeline-task-wrap';
+
+                    const span = document.createElement('span');
+                    span.className = 'timeline-task' + (appData.checks[key] ? ' done' : '');
+                    span.textContent = task;
+                    span.onclick = () => {
+                        span.classList.toggle('done');
+                        appData.checks[key] = span.classList.contains('done');
+                        saveData(appData);
+                    };
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'tl-edit-btn';
+                    editBtn.textContent = '✏️';
+                    editBtn.title = '편집';
+                    editBtn.onclick = (e) => { e.stopPropagation(); openRoadmapEdit(qKey, idx, task); };
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'tl-del-btn';
+                    delBtn.textContent = '🗑';
+                    delBtn.title = '삭제';
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`"${task}" 항목을 삭제할까요?`)) {
+                            roadmapData[qKey].tasks.splice(idx, 1);
+                            saveRoadmap(roadmapData);
+                            renderTimeline();
+                        }
+                    };
+
+                    wrap.appendChild(span);
+                    wrap.appendChild(editBtn);
+                    wrap.appendChild(delBtn);
+                    tasksEl.appendChild(wrap);
+                });
+            });
+            container.appendChild(div);
+        }
+
+        function openRoadmapEdit(qKey, idx, current) {
+            document.getElementById('roadmapEditInput').value = current;
+            document.getElementById('roadmapEditKey').value = idx;
+            document.getElementById('roadmapEditQuarter').value = qKey;
+            document.getElementById('roadmapModal').style.display = 'flex';
+        }
+        function saveRoadmapEdit() {
+            const val = document.getElementById('roadmapEditInput').value.trim();
+            const idx = parseInt(document.getElementById('roadmapEditKey').value);
+            const qKey = document.getElementById('roadmapEditQuarter').value;
+            if (!val) return;
+            roadmapData[qKey].tasks[idx] = val;
+            saveRoadmap(roadmapData);
+            closeRModal();
+            renderTimeline();
+        }
+        function addRoadmapTask(qKey) {
+            const text = prompt('새 항목을 입력하세요:');
+            if (text && text.trim()) {
+                roadmapData[qKey].tasks.push(text.trim());
+                saveRoadmap(roadmapData);
+                renderTimeline();
+            }
+        }
+        function closeRModal() {
+            document.getElementById('roadmapModal').style.display = 'none';
+        }
+
+        // ========== QUARTERLY REPORT ==========
+        function showQuarterlyReport() {
+            const now = new Date();
+            const currentQ = Math.ceil((now.getMonth() + 1) / 3);
+            const content = document.getElementById('quarterlyContent');
+
+            const quarters = [
+                { q: 'Q1', months: '1~3월', start: 0, end: 2 },
+                { q: 'Q2', months: '4~6월', start: 3, end: 5 },
+                { q: 'Q3', months: '7~9월', start: 6, end: 8 },
+                { q: 'Q4', months: '10~12월', start: 9, end: 11 },
+            ];
+
+            let html = `<div style="margin-bottom:16px;font-size:0.85rem;color:var(--text-muted);">
+                생성일: ${now.toLocaleDateString('ko-KR')} | 현재: Q${currentQ}
+            </div>`;
+
+            html += '<div class="q-report-grid">';
+            kpiDefs.forEach(kpi => {
+                const current = appData.kpis[kpi.key] || 0;
+                const pct = Math.min(Math.round((current / kpi.target) * 100), 100);
+                const color = {
+                    purple:'#a855f7', green:'#34d399', orange:'#fb923c', red:'#f87171',
+                    yellow:'#fbbf24', cyan:'#22d3ee', blue:'#4facfe', pink:'#f472b6'
+                }[kpi.color] || '#fff';
+                html += `
+                    <div class="q-report-card">
+                        <div class="q-report-label">${kpi.icon} ${kpi.label}</div>
+                        <div class="q-report-val" style="color:${color}">${current}<span style="font-size:0.8rem;font-weight:400;"> / ${kpi.target}${kpi.unit}</span></div>
+                        <div class="q-bar-wrap"><div class="q-bar-fill" style="background:${color};width:${pct}%;"></div></div>
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">${pct}% 달성</div>
+                    </div>`;
+            });
+            html += '</div>';
+
+            quarters.forEach(qInfo => {
+                const qData = roadmapData[qInfo.q];
+                if (!qData) return;
+                const doneCount = qData.tasks.filter((_, i) => appData.checks[`tl-${qInfo.q}-${i}`]).length;
+                const isCurrent = `Q${currentQ}` === qInfo.q;
+                html += `<div class="q-quarter-title" style="${isCurrent ? 'color:var(--accent-cyan)' : ''}">
+                    ${isCurrent ? '▶ ' : ''}${qData.label} — ${qData.title}
+                    <span style="font-size:0.75rem;font-weight:400;margin-left:8px;">${doneCount}/${qData.tasks.length} 완료</span>
+                </div>
+                <div class="q-task-list">`;
+                qData.tasks.forEach((task, i) => {
+                    const done = appData.checks[`tl-${qInfo.q}-${i}`];
+                    html += `<span class="q-task-badge ${done ? 'done' : ''}">${done ? '✓ ' : ''}${task}</span>`;
+                });
+                html += '</div>';
+            });
+
+            content.innerHTML = html;
+            document.getElementById('quarterlyModal').style.display = 'flex';
+        }
+        function closeQModal() {
+            document.getElementById('quarterlyModal').style.display = 'none';
+        }
+        function printQuarterly() {
+            window.print();
+        }
+        function exportQuarterlyJSON() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                kpis: appData.kpis,
+                roadmap: roadmapData,
+                checks: appData.checks,
+                dailyCheckItems: loadDcItems(),
+                dailyCheckLogs: loadDcLogs()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `만다라트2026_데이터_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        // ========== 매일체크함 ==========
+        const DC_ITEMS_KEY  = 'mandarat2026_dcItems';
+        const DC_LOGS_KEY   = 'mandarat2026_dcLogs';
+
+        // 카테고리 정의
+        const DC_CATS = [
+            { key: '건강', icon: '💪', color: '#34d399' },
+            { key: '습관', icon: '⚡', color: '#818cf8' },
+            { key: '독서', icon: '📚', color: '#a855f7' },
+            { key: '업무', icon: '📋', color: '#fb923c' },
+            { key: '금융', icon: '💰', color: '#fbbf24' },
+            { key: '기타', icon: '📌', color: '#94a3b8' },
+        ];
+
+        // 기본 항목 — 만다라트 구성요소에서 추출
+        const DC_DEFAULT_ITEMS = [
+            // 건강
+            { id: 'd01', text: '영양제 시간대별 섭취', cat: '건강', preset: true },
+            { id: 'd02', text: 'ADHD약 정시 복용', cat: '건강', preset: true },
+            { id: 'd03', text: '물 1L 마시기', cat: '건강', preset: true },
+            { id: 'd04', text: '하루 7,000보 걷기', cat: '건강', preset: true },
+            { id: 'd05', text: '허리운동 20분', cat: '건강', preset: true },
+            { id: 'd06', text: '수면 양압기 착용 후 취침', cat: '건강', preset: true },
+            // 습관
+            { id: 'd07', text: '아침식사 (두유, 과일)', cat: '습관', preset: true },
+            { id: 'd08', text: '청소 10분', cat: '습관', preset: true },
+            { id: 'd09', text: '전날 저녁 다음날 준비 (옷, 필요품)', cat: '습관', preset: true },
+            { id: 'd10', text: '메모하기 / 녹음어플 활용', cat: '습관', preset: true },
+            { id: 'd11', text: '수면 제외 눕는 습관 금지', cat: '습관', preset: true },
+            // 독서
+            { id: 'd12', text: '하루 30페이지 읽기', cat: '독서', preset: true },
+            // 업무
+            { id: 'd13', text: '이력서/자기소개서 업데이트 확인', cat: '업무', preset: true },
+            { id: 'd14', text: '면접 준비 체크', cat: '업무', preset: true },
+            // 금융
+            { id: 'd15', text: '가계부 작성', cat: '금융', preset: true },
+            { id: 'd16', text: '대중교통 이용 (K-패스)', cat: '금융', preset: true },
+        ];
+
+        function loadDcItems() {
+            const raw = localStorage.getItem(DC_ITEMS_KEY);
+            if (raw) return JSON.parse(raw);
+            const copy = JSON.parse(JSON.stringify(DC_DEFAULT_ITEMS));
+            localStorage.setItem(DC_ITEMS_KEY, JSON.stringify(copy));
+            return copy;
+        }
+        function saveDcItems(items) { localStorage.setItem(DC_ITEMS_KEY, JSON.stringify(items)); }
+
+        function loadDcLogs() {
+            const raw = localStorage.getItem(DC_LOGS_KEY);
+            return raw ? JSON.parse(raw) : {};
+        }
+        function saveDcLogs(logs) { localStorage.setItem(DC_LOGS_KEY, JSON.stringify(logs)); }
+
+        // 날짜 상태
+        let dcCurrentDate = new Date().toISOString().slice(0, 10);
+        let dcHistCat = '전체';
+        let dcCurrentView = 'today';
+
+        function dcDateLabel(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            const today = new Date().toISOString().slice(0,10);
+            const days = ['일','월','화','수','목','금','토'];
+            const base = `${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+            if (dateStr === today) return base + ' — 오늘';
+            return base;
+        }
+
+        function dcChangeDate(delta) {
+            const d = new Date(dcCurrentDate + 'T00:00:00');
+            d.setDate(d.getDate() + delta);
+            dcCurrentDate = d.toISOString().slice(0,10);
+            renderDcAll();
+        }
+        function dcGoToday() {
+            dcCurrentDate = new Date().toISOString().slice(0,10);
+            renderDcAll();
+        }
+
+        function dcSwitchView(view, btn) {
+            dcCurrentView = view;
+            document.querySelectorAll('.dc-view-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.dc-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('dc-view-' + view).classList.add('active');
+            if (view === 'history') renderDcHistory();
+            if (view === 'manage') renderDcManage();
+        }
+
+        // ── 오늘 체크 뷰 ──
+        function renderDcToday() {
+            const items = loadDcItems();
+            const logs  = loadDcLogs();
+            const dayLog = logs[dcCurrentDate] || {};
+
+            // 진행률
+            const total = items.length;
+            const done  = items.filter(it => dayLog[it.id]).length;
+            const pct   = total ? Math.round((done/total)*100) : 0;
+            document.getElementById('dcDateDisplay').textContent = dcDateLabel(dcCurrentDate);
+            document.getElementById('dcProgressFill').style.width = pct + '%';
+            document.getElementById('dcProgressLabel').textContent = pct + '%';
+
+            // 연속 달성 스트릭 계산
+            const allLogs = loadDcLogs();
+            let streak = 0;
+            const today = new Date();
+            for (let i = 0; i < 60; i++) {
+                const d = new Date(today); d.setDate(d.getDate() - i);
+                const key = d.toISOString().slice(0,10);
+                const log = allLogs[key] || {};
+                const dayItems = loadDcItems();
+                const dayDone = dayItems.filter(it => log[it.id]).length;
+                if (dayDone === dayItems.length && dayItems.length > 0) streak++;
+                else if (i > 0) break;
+            }
+            document.getElementById('dcStreakLabel').textContent = streak > 1 ? `🔥 ${streak}일 연속` : '';
+
+            // 카테고리별 렌더
+            const container = document.getElementById('dcTodaySections');
+            container.innerHTML = '';
+
+            DC_CATS.forEach(cat => {
+                const catItems = items.filter(it => it.cat === cat.key);
+                if (!catItems.length) return;
+                const catDone = catItems.filter(it => dayLog[it.id]).length;
+                const isComplete = catDone === catItems.length;
+
+                const sec = document.createElement('div');
+                sec.className = 'dc-section';
+                sec.innerHTML = `
+                    <div class="dc-section-header" onclick="dcToggleSection(this)">
+                        <span class="dc-section-icon">${cat.icon}</span>
+                        <span class="dc-section-title">${cat.key}</span>
+                        <span class="dc-section-count ${isComplete ? 'complete' : ''}">${catDone} / ${catItems.length}</span>
+                        <span class="dc-section-arrow">▾</span>
+                    </div>
+                    <div class="dc-items" id="dc-items-${cat.key}"></div>
+                `;
+                container.appendChild(sec);
+
+                const itemsEl = sec.querySelector('#dc-items-' + cat.key);
+                catItems.forEach(item => {
+                    const checked = !!dayLog[item.id];
+                    const div = document.createElement('div');
+                    div.className = 'dc-item' + (checked ? ' checked' : '');
+                    div.innerHTML = `
+                        <div class="dc-checkbox">${checked ? '✓' : ''}</div>
+                        <span class="dc-item-text">${item.text}</span>
+                        ${item.preset ? '<span class="dc-item-badge">기본</span>' : ''}
+                    `;
+                    div.onclick = () => dcToggleCheck(item.id);
+                    itemsEl.appendChild(div);
+                });
+            });
+        }
+
+        function dcToggleCheck(itemId) {
+            const logs = loadDcLogs();
+            if (!logs[dcCurrentDate]) logs[dcCurrentDate] = {};
+            logs[dcCurrentDate][itemId] = !logs[dcCurrentDate][itemId];
+            if (!logs[dcCurrentDate][itemId]) delete logs[dcCurrentDate][itemId];
+            // 빈 날짜 정리
+            if (!Object.keys(logs[dcCurrentDate]).length) delete logs[dcCurrentDate];
+            saveDcLogs(logs);
+            renderDcToday();
+        }
+
+        function dcToggleSection(header) {
+            header.closest('.dc-section').classList.toggle('collapsed');
+        }
+
+        // ── 히스토리 뷰 ──
+        function dcHistFilter(cat, btn) {
+            dcHistCat = cat;
+            document.querySelectorAll('.dc-hist-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderDcHistory();
+        }
+
+        function renderDcHistory() {
+            const logs  = loadDcLogs();
+            const items = loadDcItems();
+            const container = document.getElementById('dcHistoryList');
+
+            const dates = Object.keys(logs).sort((a,b) => b.localeCompare(a));
+            if (!dates.length) {
+                container.innerHTML = '<div class="dc-empty">📭 아직 기록이 없어요.<br>오늘 체크를 시작해보세요!</div>';
+                return;
+            }
+
+            container.innerHTML = dates.map(date => {
+                const dayLog = logs[date];
+                const filtered = dcHistCat === '전체' ? items : items.filter(it => it.cat === dcHistCat);
+                const done  = filtered.filter(it => dayLog[it.id]).length;
+                const total = filtered.length;
+                const pct   = total ? Math.round((done/total)*100) : 0;
+                const color = pct >= 100 ? '#34d399' : pct >= 60 ? '#fbbf24' : '#f87171';
+                const d = new Date(date + 'T00:00:00');
+                const days = ['일','월','화','수','목','금','토'];
+
+                const chips = filtered.map(it => {
+                    const d2 = !!dayLog[it.id];
+                    return `<span class="dc-hist-chip ${d2 ? 'done' : ''}">${d2 ? '✓' : '✗'} ${it.text}</span>`;
+                }).join('');
+
+                return `
+                <div class="dc-hist-row-wrap">
+                    <div class="dc-hist-row" onclick="this.closest('.dc-hist-row-wrap').querySelector('.dc-hist-detail').style.display = this.closest('.dc-hist-row-wrap').querySelector('.dc-hist-detail').style.display==='flex'?'none':'flex'">
+                        <div class="dc-hist-date">${(d.getMonth()+1)}/${d.getDate()} (${days[d.getDay()]})</div>
+                        <div class="dc-hist-bar-wrap"><div class="dc-hist-bar" style="width:${pct}%;background:${color};"></div></div>
+                        <div class="dc-hist-pct" style="color:${color}">${pct}%</div>
+                        <div class="dc-hist-count">${done}/${total}</div>
+                    </div>
+                    <div class="dc-hist-detail" style="display:none;padding:10px 14px 14px;flex-wrap:wrap;gap:6px;">${chips}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ── 항목 관리 뷰 ──
+        function renderDcManage() {
+            const items = loadDcItems();
+            const container = document.getElementById('dcManageSections');
+            container.innerHTML = '';
+
+            DC_CATS.forEach(cat => {
+                const catItems = items.filter(it => it.cat === cat.key);
+                const sec = document.createElement('div');
+                sec.className = 'dc-section';
+                sec.innerHTML = `
+                    <div class="dc-section-header" onclick="dcToggleSection(this)">
+                        <span class="dc-section-icon">${cat.icon}</span>
+                        <span class="dc-section-title">${cat.key}</span>
+                        <span class="dc-section-count">${catItems.length}개</span>
+                        <span class="dc-section-arrow">▾</span>
+                    </div>
+                    <div class="dc-items">
+                        <div id="dc-manage-${cat.key}"></div>
+                        <div class="dc-add-row">
+                            <input type="text" class="dc-add-input" id="dc-input-${cat.key}" placeholder="${cat.key} 항목 추가..." onkeydown="if(event.key==='Enter')dcAddItem('${cat.key}')">
+                            <button class="dc-add-btn" onclick="dcAddItem('${cat.key}')">+ 추가</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(sec);
+
+                const list = sec.querySelector('#dc-manage-' + cat.key);
+                catItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'dc-item';
+                    div.innerHTML = `
+                        <div class="dc-checkbox" style="cursor:default;border-color:rgba(255,255,255,0.1);"></div>
+                        <span class="dc-item-text">${item.text}</span>
+                        ${item.preset ? '<span class="dc-item-badge">기본</span>' : ''}
+                        <button class="dc-item-del" onclick="dcDeleteItem('${item.id}')">🗑</button>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        function dcAddItem(cat) {
+            const input = document.getElementById('dc-input-' + cat);
+            const text  = input.value.trim();
+            if (!text) { input.focus(); return; }
+            const items = loadDcItems();
+            items.push({ id: 'u' + Date.now(), text, cat, preset: false });
+            saveDcItems(items);
+            input.value = '';
+            renderDcManage();
+            if (dcCurrentView === 'today') renderDcToday();
+        }
+
+        function dcDeleteItem(id) {
+            const items = loadDcItems();
+            const item  = items.find(it => it.id === id);
+            if (!item) return;
+            if (!confirm(`"${item.text}" 항목을 삭제할까요?\n과거 기록에서도 제거됩니다.`)) return;
+            saveDcItems(items.filter(it => it.id !== id));
+            renderDcManage();
+            if (dcCurrentView === 'today') renderDcToday();
+        }
+
+        function renderDcAll() {
+            renderDcToday();
+            if (dcCurrentView === 'history') renderDcHistory();
+            if (dcCurrentView === 'manage') renderDcManage();
+        }
+
+        // ========== INIT (수정) ==========
+        function init() {
+            setDate();
+            renderMandaratGrid();
+            renderKPICards();
+            renderBarChart();
+            renderDonutCharts();
+            updateOverallProgress();
+            setupChecklists();
+            syncStatDisplays();
+            renderTimeline();
+            renderDcAll();
         }
 
         init();
